@@ -134,10 +134,17 @@ export function onLevelFailed(progress, n) {
   return next;
 }
 
-/** Dùng trợ giúp hay chơi lại giữa chừng: màn này hết sạch. */
+/** Dùng trợ giúp: màn này hết sạch. */
 export function markDirty(progress) {
   if (progress.dirty) return progress;
   const next = { ...progress, dirty: true };
+  saveProgress(next);
+  return next;
+}
+
+/** Bỏ dở màn để chơi lại: hết sạch, và chuỗi thắng liên tiếp đứt như khi thua. */
+export function onLevelRestarted(progress) {
+  const next = { ...progress, dirty: true, winStreak: 0 };
   saveProgress(next);
   return next;
 }

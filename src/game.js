@@ -6,7 +6,7 @@ import { nextDeduction, stateFromBoard } from "./solver.js";
 import { Tutorial, tutorialPuzzle } from "./tutorial.js";
 import { T, explain, applyStatic, LANGUAGES, getLocale, setLocale } from "./strings.js";
 import {
-  levelRecord, autoMarksFor, onLevelWon, onLevelFailed, markDirty,
+  levelRecord, autoMarksFor, onLevelWon, onLevelFailed, onLevelRestarted, markDirty,
   loadProgress, markCleared, clearProgress, currentLevel, starsFor,
   touchStreak, streakDoneToday, addCoins, spendCoins, useFree,
   COIN_REWARD, COIN_COST,
@@ -644,8 +644,8 @@ $("btn-close-settings").addEventListener("click", () => (ui.settings.hidden = tr
 
 ui.restart.addEventListener("click", () => {
   ui.settings.hidden = true;
-  // Chơi lại giữa chừng thì màn này không còn tính là thắng sạch.
-  state.progress = markDirty(state.progress);
+  // Chơi lại giữa chừng: màn này không còn tính là thắng sạch, và chuỗi thắng đứt.
+  state.progress = onLevelRestarted(state.progress);
   startLevel(state.level);
 });
 

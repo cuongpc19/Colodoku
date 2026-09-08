@@ -26,6 +26,7 @@ const FONT = {
   "I": ["###", ".#.", ".#.", ".#.", "###"],
   "Q": ["####", "#..#", "#..#", "####", "...#"],
   "|": ["#", "#", "#", "#", "#"], // số 1 gầy, cho chỗ chật
+  "1tall": [".#.", "##.", ".#.", ".#.", ".#.", ".#.", "###"], // số 1 cao, cho bàn 10×10
 };
 
 /** Đặt chữ lên lưới: mỗi nét là một vùng, mỗi lỗ kín bên trong chữ cũng là một vùng. */
@@ -134,7 +135,7 @@ function pi(n) {
 const SPECS = {
   10: { size: 7, draw: (n) => text(n, ["1"]), rank: [1, 2] },
   20: { size: 8, draw: (n) => text(n, ["2"]), rank: [2, 2] },
-  30: { size: 9, draw: (n) => text(n, ["3", "0"]), rank: [2, 3] },
+  30: { size: 9, draw: (n) => text(n, ["3", "0"]), rank: [2, 4] }, // màn 30 của họ cũng bậc 4
   40: { size: 8, draw: (n) => window(n), rank: [2, 3] },
   50: { size: 9, draw: (n) => text(n, ["5", "0"]), rank: [3, 4] },
   55: { size: 9, draw: (n) => wave(n), rank: [3, 4] },
@@ -144,9 +145,9 @@ const SPECS = {
   75: { size: 9, draw: (n) => pi(n), rank: [3, 4] },
   80: { size: 9, draw: (n) => text(n, ["I", "Q"]), rank: [3, 4] },
   90: { size: 9, draw: (n) => text(n, ["9", "0"]), rank: [3, 4] },
-  100: { size: 10, draw: (n) => text(n, ["|", "0", "0"]), rank: [2, 4] },
+  100: { size: 10, draw: (n) => text(n, ["1tall"], 1, 1), rank: [2, 4], seconds: 300 }, // họ cũng vẽ số 1 ở màn 100
   123: { size: 9, draw: (n) => text(n, ["|", "2", "3"]), rank: [3, 4] },
-  456: { size: 9, draw: (n) => text(n, ["4", "5", "6"], 0), rank: [3, 4] },
+  456: { size: 9, draw: (n) => text(n, ["4", "5", "6"], 0), rank: [3, 4], seconds: 300 },
 };
 
 /**
@@ -195,7 +196,7 @@ function buildSpecial(level, spec) {
   let best = null;
   const started = Date.now();
   // Mỗi màn tối đa hai phút; không ra thì dùng bàn gần nhất hoặc bỏ (dùng màn thường).
-  for (let seed = 1; seed < 20000 && Date.now() - started < 120_000; seed++) {
+  for (let seed = 1; seed < 40000 && Date.now() - started < (spec.seconds || 120) * 1000; seed++) {
     const rand = rng(level * 7919 + seed);
     const solution = pictureSolution(n, picture, pictureCount, rand);
     if (!solution) continue;

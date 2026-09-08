@@ -277,6 +277,32 @@ main {
   100% { transform: scale(1); }
 }
 
+/* --------------------------------------------------------- con kiến trên ô
+
+   z-index để vệt loé lúc đặt (::before, absolute) không phủ trắng lên nó. */
+.cell.cat::after {
+  content: "";
+  position: relative;
+  z-index: 1;
+  width: 1.15em;
+  height: 1.15em;
+  background: var(--ant) center / contain no-repeat;
+}
+
+/* Đặt kiến: hiện ngay ở cỡ thật rồi bung quá cỡ và nảy về — cú bấm đúp phải
+   thấy "đã tay". Easing để trơn, độ nảy nằm hết trong keyframe; trộn cả hai thì
+   đoạn cuối bị giật. */
+.cell.pop { z-index: 2; }
+.cell.pop::after { animation: antpop 0.36s ease-out; }
+
+@keyframes antpop {
+  0% { transform: scale(0.9); }
+  35% { transform: scale(1.34); }
+  62% { transform: scale(0.95); }
+  82% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
 .cell.conflict {
   box-shadow: 0 0 0 3px var(--danger);
   animation: shake 0.3s;

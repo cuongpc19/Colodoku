@@ -57,15 +57,16 @@ function click() {
   const source = ac.createBufferSource();
   source.buffer = buffer;
   const filter = ac.createBiquadFilter();
+  // Lọc dải trầm, hẹp, nhỏ tiếng: một cái chạm khẽ chứ không phải cú gõ.
   filter.type = "bandpass";
-  filter.frequency.value = 700;
-  filter.Q.value = 1.2;
+  filter.frequency.value = 600;
+  filter.Q.value = 2;
   const amp = ac.createGain();
-  amp.gain.value = 0.9;
+  amp.gain.value = 0.28;
   source.connect(filter).connect(amp).connect(ac.destination);
   source.start();
-  // thêm một cú "thụp" trầm rất ngắn cho có thân tiếng
-  tone({ from: 220, to: 140, duration: 0.05, gain: 0.12 });
+  // một hơi trầm rất khẽ cho có thân tiếng
+  tone({ from: 200, to: 150, duration: 0.04, gain: 0.035 });
 }
 
 export const sound = {

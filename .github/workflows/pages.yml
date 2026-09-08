@@ -1,0 +1,49 @@
+# Đưa game lên GitHub Pages mỗi lần đẩy lên main.
+#
+# Không có bước build: game là HTML + ES module thuần, chạy thẳng từ thư mục.
+# Chỉ chép đúng những gì trang cần — ảnh nguồn trong Manythings/, tool dựng dữ
+# liệu và README không phải thứ người chơi tải về.
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Đẩy liên tiếp thì chỉ giữ lần cuối, không xếp hàng chồng nhau.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Kiểm tra logic bàn cờ và tuyến chơi
+        run: |
+          node tools/smoke.mjs
+          node tools/flow_test.mjs
+
+      - name: Gom file cần cho trang
+        run: |
+          mkdir -p _site
+          cp -r index.html lab.html src data assets _site/
+
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deploy
+        uses: actions/deploy-pages@v4

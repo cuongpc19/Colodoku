@@ -46,23 +46,26 @@ function tone({ type = "sine", from, to = from, duration, gain = 0.2, at = 0 }) 
   osc.stop(start + duration + 0.02);
 }
 
-/** Tiếng gõ: nhiễu trắng lọc cao, tắt trong 35ms. */
+/** Tiếng gõ: nhiễu trắng lọc dải trầm (như gõ lên gỗ), tắt trong 45ms. */
 function click() {
   const ac = ctx();
   if (!ac) return;
-  const length = Math.floor(ac.sampleRate * 0.035);
+  const length = Math.floor(ac.sampleRate * 0.045);
   const buffer = ac.createBuffer(1, length, ac.sampleRate);
   const data = buffer.getChannelData(0);
   for (let i = 0; i < length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / length) ** 2;
   const source = ac.createBufferSource();
   source.buffer = buffer;
   const filter = ac.createBiquadFilter();
-  filter.type = "highpass";
-  filter.frequency.value = 2400;
+  filter.type = "bandpass";
+  filter.frequency.value = 700;
+  filter.Q.value = 1.2;
   const amp = ac.createGain();
-  amp.gain.value = 0.35;
+  amp.gain.value = 0.9;
   source.connect(filter).connect(amp).connect(ac.destination);
   source.start();
+  // thêm một cú "thụp" trầm rất ngắn cho có thân tiếng
+  tone({ from: 220, to: 140, duration: 0.05, gain: 0.12 });
 }
 
 export const sound = {

@@ -182,6 +182,7 @@ check(AS_HARD_FROM === 3, "từ màn 3 y hệt Meowdoku");
 let p = { strategy: 1, cleanWins: 0, fails: 0, retryLevels: 0, retryStrategy: 0, dirty: false, retried: false, cleared: 0 };
 for (let n = 1; n <= 5; n++) { check(planLevel(p, n).rank === 1, `màn ${n} phải bậc 1`); p = onLevelWon(p, n); }
 check(p.strategy === 1, "5 màn đầu không được đẩy chiến lược lên");
+check(planLevel(p, 5).rank === 1 && planLevel(p, 6).rank === 2, "màn 5 bậc 1, màn 6 đã rút bậc 2 (sàn 2 từ màn 6)");
 p = onLevelWon(p, 6); check(p.strategy === 1 && p.cleanWins === 1, "màn 6 thắng sạch lần 1: chưa lên bậc");
 p = onLevelWon(p, 7); check(p.strategy === 2 && p.cleanWins === 0, "thắng sạch 2 lần liên tiếp: lên bậc 2");
 p = onLevelWon(p, 8); p = onLevelWon(p, 9); check(p.strategy === 2, "trước màn 21 trần là bậc 2");

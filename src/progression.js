@@ -57,7 +57,9 @@ export function planLevel(progress, n) {
   const size = sizeFor(n);
   if (isHardLevel(n)) return { level: n, size, rank: 5, strategy: 5, hard: true };
 
-  let strategy = n <= 5 ? 1 : n >= 51 ? Math.max(progress.strategy || 1, 2) : progress.strategy || 1;
+  // Meowdoku chỉ ép sàn bậc 2 từ màn 51; mình ép ngay từ màn 6 vì 6-10 ở bậc 1
+  // quá nhàn (thua thì vẫn tụt về 1 được, vì máy trạng thái không đổi).
+  let strategy = n <= 5 ? 1 : n >= 6 ? Math.max(progress.strategy || 1, 2) : progress.strategy || 1;
   strategy = Math.min(strategy, strategyCap(n));
   const rank = strategy >= 3 ? randInt(2, strategy) : strategy;
   return { level: n, size, rank, strategy, hard: false };

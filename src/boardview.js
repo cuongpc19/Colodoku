@@ -25,6 +25,9 @@ export class BoardView {
     this.validate = options.validate || (() => true);
     this.onReject = options.onReject || (() => {});
     this.onChange = options.onChange || (() => {});
+    // Âm thanh: đặt kiến / đánh ✕ — game.js nối vào sound.js.
+    this.onPlace = options.onPlace || (() => {});
+    this.onMark = options.onMark || (() => {});
     // Trả về false để chặn một nước đi — tutorial dùng cái này để ép đúng thao tác.
     this.allowMove = options.allowMove || (() => true);
 
@@ -252,6 +255,8 @@ export class BoardView {
   commit(changes) {
     if (this.board.apply(changes)) {
       this.render();
+      if (changes.some(([, , v]) => v === CAT)) this.onPlace();
+      else this.onMark();
       this.onChange();
     }
   }

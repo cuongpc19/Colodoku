@@ -114,5 +114,6 @@
   "wipeWarn": "Thao tác này xoá sạch mọi thứ đã lưu trên thiết bị này và chơi lại từ phần hướng dẫn. Không khôi phục được.",
   "wipeLosing": "Bạn sẽ mất: {0} màn đã qua · {1} xu · chuỗi {2} ngày",
   "wipeYes": "Xoá tất cả",
-  "thisColour": "này"
+  "thisColour": "này",
+  "sound": "Âm thanh"
 }

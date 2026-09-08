@@ -951,6 +951,8 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
   font-size: 14px;
   text-align: start;
 }
+.setting-row input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--accent); }
+
 .setting-row select {
   flex: 1;
   min-width: 0;

@@ -144,6 +144,7 @@ Câu giải thích của bộ giải có nhắc hàng/cột/màu thì viết s�
 | `src/levels.js` | Bàn tutorial + hai màn đầu (tự sinh, chọn tay) và bảng màu |
 | `src/strings.js` | Bảng chữ: nạp ngôn ngữ, đổi ngôn ngữ, đổ chữ vào HTML |
 | `src/progression.js` | Bộ máy chọn màn (chép luật Meowdoku) và lưu tiến trình |
+| `src/sound.js` | Âm thanh tổng hợp bằng Web Audio (gõ ✕, đặt kiến, đặt sai), không có file |
 | `src/tutorial.js` | 8 bước hướng dẫn, tính ô cần bấm từ luật |
 | `src/game.js` | Vòng chơi chính |
 | `src/lab.js` | Trang phân tích |

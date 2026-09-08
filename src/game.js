@@ -5,6 +5,7 @@ import { BoardView } from "./boardview.js";
 import { nextDeduction, stateFromBoard } from "./solver.js";
 import { Tutorial, tutorialPuzzle } from "./tutorial.js";
 import { T, explain, applyStatic, LANGUAGES, getLocale, setLocale } from "./strings.js";
+import { sound } from "./sound.js";
 import {
   levelRecord, autoMarksFor, onLevelWon, onLevelFailed, onLevelRestarted, markDirty,
   loadProgress, markCleared, clearProgress, currentLevel, starsFor,
@@ -55,6 +56,7 @@ const ui = {
   winArt: $("win-art"), winReward: $("win-reward"), confetti: $("confetti"),
   next: $("btn-next"), replay: $("btn-replay"),
   settings: $("settings"), settingsNote: $("settings-note"), language: $("opt-language"),
+  soundToggle: $("opt-sound"),
   confirm: $("confirm"), wipeLosing: $("wipe-losing"),
   restart: $("btn-restart"),
 };
@@ -85,6 +87,8 @@ const view = new BoardView($("board"), {
   // Meowdoku bắt lỗi ngay lúc đặt chứ không để người chơi ôm một thế cờ sai.
   validate: (r, c) => Boolean(state.tutorial) || state.puzzle.solution[r] === c,
   onReject: (r, c) => onWrongPlacement(r, c),
+  onPlace: () => sound.pop(),
+  onMark: () => sound.tick(),
 });
 
 // ------------------------------------------------------------- điều hướng
@@ -263,6 +267,7 @@ function onBoardChange() {
 
 /** Đặt sai chỗ: ✕ đỏ vĩnh viễn trên ô đó, mất một mạng, chuỗi điểm về 0. */
 function onWrongPlacement(r, c) {
+  sound.buzz();
   state.chain = 0;
   state.lives--;
   view.markWrong(r, c);
@@ -627,7 +632,13 @@ document.addEventListener(
 
 // ------------------------------------------------------------------ cài đặt
 
+ui.soundToggle.addEventListener("change", () => {
+  sound.enabled = ui.soundToggle.checked;
+  if (sound.enabled) sound.pop(); // nghe thử ngay
+});
+
 function refreshSettings() {
+  ui.soundToggle.checked = sound.enabled;
   ui.settingsNote.textContent = T.settingsNote(state.progress.streak || 0, state.progress.best || 0);
   // Chỉ chơi lại được khi đang ở trong một màn thật — không phải trang chủ, không phải hướng dẫn.
   ui.restart.hidden = screens.play.hidden || Boolean(state.tutorial);

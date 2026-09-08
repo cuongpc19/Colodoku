@@ -114,5 +114,6 @@
   "wipeWarn": "This erases everything saved on this device and starts the game over from the tutorial. It cannot be undone.",
   "wipeLosing": "You will lose: {0} levels cleared · {1} coins · {2}-day streak",
   "wipeYes": "Delete everything",
-  "thisColour": "this colour"
+  "thisColour": "this colour",
+  "sound": "Sound"
 }

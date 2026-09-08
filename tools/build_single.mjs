@@ -14,7 +14,7 @@ const readJson = (path, fallback) => (existsSync(new URL(path, root)) ? JSON.par
 
 // Thứ tự phụ thuộc — nối tay thay vì gọi bundler, dự án không có bước build nào khác.
 const MODULES = [
-  "src/puzzle.js", "src/solver.js", "src/levels.js", "src/strings.js",
+  "src/puzzle.js", "src/solver.js", "src/levels.js", "src/strings.js", "src/sound.js",
   "src/boardview.js", "src/tutorial.js", "src/progression.js", "src/game.js",
 ];
 

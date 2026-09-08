@@ -14,6 +14,8 @@
      --gN là màu ô, --kN là bản đậm hơn dùng cho chữ trên nền trắng. */
   /* Nhân vật kiến — dùng lại ở bàn cờ, mini-map, logo và chip đếm. */
   --ant: url("../assets/ant-512.png");
+  --ant-happy: url("../assets/ant-happy-512.png");
+  --ant-sad: url("../assets/ant-sad-512.png");
 
   --g0: #40b5bf; --g1: #f2975e; --g2: #8fe47f; --g3: #ca638e;
   --g4: #f6dc87; --g5: #c8ab07; --g6: #f08ce2; --g7: #8872d6;
@@ -131,6 +133,46 @@ main {
   background: var(--ant) center / contain no-repeat;
 }
 
+/* Kiến bối rối, dùng ở màn hết mạng. Cùng cỡ với kiến reo mừng nhưng chỉ có
+   nhịp vào, không nhún — thua rồi thì đừng nhảy nhót. */
+.ant-sad {
+  display: block;
+  width: min(124px, 34vw);
+  height: min(124px, 34vw);
+  margin: 0 auto;
+  background: var(--ant-sad) center / contain no-repeat;
+  animation: antsorry 0.5s ease-out;
+}
+
+@keyframes antsorry {
+  0% { transform: translateY(-14%) scale(0.86); opacity: 0; }
+  60% { transform: translateY(0) scale(1); opacity: 1; }
+  80% { transform: rotate(-3deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* Kiến reo mừng, chỉ dùng ở hộp thoại thắng màn. */
+.ant-happy {
+  display: block;
+  width: min(124px, 34vw);
+  height: min(124px, 34vw);
+  margin: 0 auto;
+  background: var(--ant-happy) center / contain no-repeat;
+  /* Bung vào một nhịp rồi nhún nhẹ mãi — hộp thoại đứng im trông như ảnh chụp. */
+  animation: antcheer 0.44s cubic-bezier(0.34, 1.56, 0.64, 1),
+    antbob 1.8s ease-in-out 0.44s infinite;
+}
+
+@keyframes antcheer {
+  0% { transform: scale(0.4) rotate(-8deg); opacity: 0; }
+  60% { transform: scale(1.12) rotate(3deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+@keyframes antbob {
+  50% { transform: translateY(-5%) rotate(-2deg); }
+}
+
 .cell:hover { filter: brightness(1.06); }
 
 .cell.mark::after {
@@ -205,6 +247,10 @@ button {
 button:hover:not(:disabled) { border-color: var(--accent); }
 button:disabled { opacity: 0.45; cursor: default; }
 button.ghost { background: transparent; color: var(--muted); }
+/* Nút cho hành động không lùi được. */
+button.danger { color: #fff; background: var(--danger); border-color: var(--danger); font-weight: 600; }
+button.danger:hover:not(:disabled) { filter: brightness(1.06); }
+.warn { margin: 0; font-size: 14.5px; line-height: 1.5; color: var(--danger); }
 
 .toggle { display: flex; gap: 6px; align-items: center; font-size: 13px; color: var(--muted); }
 

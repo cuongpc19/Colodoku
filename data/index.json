@@ -1,0 +1,369 @@
+{
+ "banks": [
+  {
+   "slug": "classic-10x10",
+   "variant": "classic",
+   "size": 10,
+   "count": 2504,
+   "tiers": {
+    "1": 14,
+    "2": 512,
+    "3": 766,
+    "4": 1012,
+    "5": 200
+   }
+  },
+  {
+   "slug": "classic-12x12",
+   "variant": "classic",
+   "size": 12,
+   "count": 800,
+   "tiers": {
+    "2": 200,
+    "3": 200,
+    "4": 200,
+    "5": 200
+   }
+  },
+  {
+   "slug": "classic-4x4",
+   "variant": "classic",
+   "size": 4,
+   "count": 36,
+   "tiers": {
+    "1": 10,
+    "2": 8,
+    "3": 8,
+    "4": 7,
+    "5": 3
+   }
+  },
+  {
+   "slug": "classic-5x5",
+   "variant": "classic",
+   "size": 5,
+   "count": 49,
+   "tiers": {
+    "1": 10,
+    "2": 9,
+    "3": 10,
+    "4": 10,
+    "5": 10
+   }
+  },
+  {
+   "slug": "classic-6x6",
+   "variant": "classic",
+   "size": 6,
+   "count": 913,
+   "tiers": {
+    "1": 199,
+    "2": 196,
+    "3": 193,
+    "4": 167,
+    "5": 158
+   }
+  },
+  {
+   "slug": "classic-7x7",
+   "variant": "classic",
+   "size": 7,
+   "count": 1929,
+   "tiers": {
+    "1": 200,
+    "2": 393,
+    "3": 555,
+    "4": 557,
+    "5": 224
+   }
+  },
+  {
+   "slug": "classic-8x8",
+   "variant": "classic",
+   "size": 8,
+   "count": 2440,
+   "tiers": {
+    "1": 200,
+    "2": 321,
+    "3": 494,
+    "4": 1006,
+    "5": 419
+   }
+  },
+  {
+   "slug": "classic-9x9",
+   "variant": "classic",
+   "size": 9,
+   "count": 2551,
+   "tiers": {
+    "1": 186,
+    "2": 369,
+    "3": 592,
+    "4": 1123,
+    "5": 281
+   }
+  },
+  {
+   "slug": "gc-10x10",
+   "variant": "gc",
+   "size": 10,
+   "count": 1163,
+   "tiers": {
+    "1": 100,
+    "2": 300,
+    "3": 418,
+    "4": 135,
+    "5": 210
+   }
+  },
+  {
+   "slug": "gc-11x11",
+   "variant": "gc",
+   "size": 11,
+   "count": 1500,
+   "tiers": {
+    "2": 100,
+    "3": 500,
+    "4": 500,
+    "5": 400
+   }
+  },
+  {
+   "slug": "gc-12x12",
+   "variant": "gc",
+   "size": 12,
+   "count": 903,
+   "tiers": {
+    "2": 100,
+    "3": 100,
+    "4": 401,
+    "5": 302
+   }
+  },
+  {
+   "slug": "gc-6x6",
+   "variant": "gc",
+   "size": 6,
+   "count": 121,
+   "tiers": {
+    "1": 10,
+    "2": 6,
+    "3": 5,
+    "4": 100
+   }
+  },
+  {
+   "slug": "gc-8x8",
+   "variant": "gc",
+   "size": 8,
+   "count": 878,
+   "tiers": {
+    "1": 28,
+    "2": 300,
+    "3": 300,
+    "4": 150,
+    "5": 100
+   }
+  },
+  {
+   "slug": "gc-9x9",
+   "variant": "gc",
+   "size": 9,
+   "count": 761,
+   "tiers": {
+    "1": 30,
+    "2": 301,
+    "3": 300,
+    "4": 110,
+    "5": 20
+   }
+  },
+  {
+   "slug": "gcsample-6x6",
+   "variant": "gcsample",
+   "size": 6,
+   "count": 23,
+   "tiers": {
+    "1": 4,
+    "2": 5,
+    "3": 2,
+    "4": 12
+   }
+  },
+  {
+   "slug": "gcsample-7x7",
+   "variant": "gcsample",
+   "size": 7,
+   "count": 11,
+   "tiers": {
+    "1": 1,
+    "2": 4,
+    "4": 6
+   }
+  },
+  {
+   "slug": "daily",
+   "variant": "daily",
+   "size": 0,
+   "count": 169,
+   "tiers": {
+    "1": 7,
+    "2": 19,
+    "3": 40,
+    "4": 99,
+    "5": 4
+   }
+  },
+  {
+   "slug": "lkmodified",
+   "variant": "lkmodified",
+   "size": 0,
+   "count": 169,
+   "tiers": {
+    "1": 8,
+    "2": 41,
+    "3": 26,
+    "4": 94
+   }
+  },
+  {
+   "slug": "lkstyle-10x10",
+   "variant": "lkstyle",
+   "size": 10,
+   "count": 2406,
+   "tiers": {
+    "2": 500,
+    "3": 500,
+    "4": 809,
+    "5": 597
+   }
+  },
+  {
+   "slug": "lkstyle-11x11",
+   "variant": "lkstyle",
+   "size": 11,
+   "count": 70,
+   "tiers": {
+    "1": 10,
+    "2": 10,
+    "3": 10,
+    "4": 20,
+    "5": 20
+   }
+  },
+  {
+   "slug": "lkstyle-12x12",
+   "variant": "lkstyle",
+   "size": 12,
+   "count": 726,
+   "tiers": {
+    "2": 4,
+    "3": 5,
+    "4": 700,
+    "5": 17
+   }
+  },
+  {
+   "slug": "lkstyle-7x7",
+   "variant": "lkstyle",
+   "size": 7,
+   "count": 1472,
+   "tiers": {
+    "2": 481,
+    "3": 488,
+    "4": 493,
+    "5": 10
+   }
+  },
+  {
+   "slug": "lkstyle-8x8",
+   "variant": "lkstyle",
+   "size": 8,
+   "count": 2368,
+   "tiers": {
+    "2": 500,
+    "3": 500,
+    "4": 868,
+    "5": 500
+   }
+  },
+  {
+   "slug": "lkstyle-9x9",
+   "variant": "lkstyle",
+   "size": 9,
+   "count": 2502,
+   "tiers": {
+    "2": 500,
+    "3": 500,
+    "4": 1002,
+    "5": 500
+   }
+  },
+  {
+   "slug": "onefish-10x10",
+   "variant": "onefish",
+   "size": 10,
+   "count": 600,
+   "tiers": {
+    "3": 300,
+    "4": 300
+   }
+  },
+  {
+   "slug": "onefish-7x7",
+   "variant": "onefish",
+   "size": 7,
+   "count": 2,
+   "tiers": {
+    "3": 1,
+    "4": 1
+   }
+  },
+  {
+   "slug": "onefish-8x8",
+   "variant": "onefish",
+   "size": 8,
+   "count": 600,
+   "tiers": {
+    "3": 300,
+    "4": 300
+   }
+  },
+  {
+   "slug": "onefish-9x9",
+   "variant": "onefish",
+   "size": 9,
+   "count": 600,
+   "tiers": {
+    "3": 300,
+    "4": 300
+   }
+  },
+  {
+   "slug": "sp",
+   "variant": "sp",
+   "size": 0,
+   "count": 57,
+   "tiers": {
+    "1": 2,
+    "2": 10,
+    "3": 9,
+    "4": 35,
+    "5": 1
+   }
+  },
+  {
+   "slug": "sp_tt",
+   "variant": "sp_tt",
+   "size": 0,
+   "count": 432,
+   "tiers": {
+    "1": 27,
+    "2": 81,
+    "3": 84,
+    "4": 229,
+    "5": 11
+   }
+  }
+ ]
+}

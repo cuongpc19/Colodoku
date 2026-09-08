@@ -52,9 +52,11 @@ const ui = {
   hint: $("btn-hint"), hintLeft: $("hint-left"),
   playCoins: $("play-coins"), homeCoins: $("home-coins"),
   win: $("win"), winTitle: $("win-title"), winNote: $("win-note"),
-  winReward: $("win-reward"), confetti: $("confetti"),
+  winArt: $("win-art"), winReward: $("win-reward"), confetti: $("confetti"),
   next: $("btn-next"), replay: $("btn-replay"),
   settings: $("settings"), settingsNote: $("settings-note"), language: $("opt-language"),
+  confirm: $("confirm"), wipeLosing: $("wipe-losing"),
+  restart: $("btn-restart"),
 };
 
 const state = {
@@ -304,6 +306,7 @@ function renderCoach() {
       COIN_REWARD,
     );
     refreshCoins();
+    cheer();
     ui.winTitle.textContent = T.tut.mastered;
     ui.winReward.hidden = false;
     ui.winReward.querySelector("b").textContent = `+${COIN_REWARD}`;
@@ -529,11 +532,11 @@ function finishLevel() {
 const CONFETTI_PIECES = 26;
 
 /**
- * Ba ngôi sao bật lần lượt, sao ăn được thì lóe sáng một nhịp, rồi tới dòng tiền
- * thưởng — pháo giấy rơi suốt phía sau. Nhịp độ lấy theo Marble Sort: mỗi sao cách
- * nhau 0.18s, sao giữa to hơn hai sao bên.
+ * Kiến reo mừng bung vào, rồi tới dòng tiền thưởng, pháo giấy rơi suốt phía sau.
+ * Nhịp lấy theo màn thắng của Marble Sort.
  */
 function celebrate(coins) {
+  cheer();
   ui.winReward.hidden = false;
   ui.winReward.querySelector("b").textContent = `+${coins}`;
 
@@ -552,6 +555,23 @@ function celebrate(coins) {
   }).join("");
 }
 
+/**
+ * Đặt con kiến reo mừng vào hộp thoại. Gán lại innerHTML mỗi lần để animation
+ * chạy từ đầu — thắng màn thứ hai mà kiến đứng im thì mất nửa cái hay.
+ */
+function cheer() {
+  showArt("ant-happy");
+}
+
+/**
+ * Đặt hình vào hộp thoại. Gán lại innerHTML mỗi lần để animation chạy từ đầu —
+ * thắng màn thứ hai mà kiến đứng im thì mất nửa cái hay.
+ */
+function showArt(kind) {
+  ui.winArt.hidden = false;
+  ui.winArt.innerHTML = `<i class="${kind}"></i>`;
+}
+
 /** Dẹp pháo giấy khi đóng hộp thoại — không thì 26 animation cứ chạy mãi. */
 function stopCelebration() {
   ui.confetti.innerHTML = "";
@@ -562,6 +582,8 @@ function gameOver() {
   view.locked = true;
   closeOffer();
   stopCelebration();
+  // Hết mạng: kiến bối rối, không phải kiến reo mừng.
+  showArt("ant-sad");
   ui.winTitle.textContent = T.outOfLives;
   ui.winReward.hidden = true;
   ui.winNote.textContent = T.outOfLivesNote;
@@ -589,6 +611,8 @@ ui.replay.addEventListener("click", () => {
 
 function refreshSettings() {
   ui.settingsNote.textContent = T.settingsNote(state.progress.streak || 0, state.progress.best || 0);
+  // Chỉ chơi lại được khi đang ở trong một màn thật — không phải trang chủ, không phải hướng dẫn.
+  ui.restart.hidden = screens.play.hidden || Boolean(state.tutorial);
   ui.language.value = getLocale();
 }
 
@@ -599,6 +623,11 @@ for (const button of document.querySelectorAll("[data-settings]"))
   });
 
 $("btn-close-settings").addEventListener("click", () => (ui.settings.hidden = true));
+
+ui.restart.addEventListener("click", () => {
+  ui.settings.hidden = true;
+  startLevel(state.level);
+});
 
 // Ô chọn ngôn ngữ: 17 thứ tiếng Meowdoku phát hành, tên viết bằng chính nó.
 ui.language.innerHTML = LANGUAGES
@@ -634,9 +663,19 @@ function relocalize() {
   }
 }
 
+// Xoá dữ liệu là việc không lùi được, nên hỏi lại bằng một hộp thoại riêng có
+// nói rõ mất những gì — thay cho confirm() của trình duyệt.
 $("btn-wipe").addEventListener("click", () => {
-  if (!confirm(T.wipeConfirm)) return;
+  const p = state.progress;
+  ui.wipeLosing.textContent = T.wipeLosing(p.cleared || 0, p.coins || 0, p.streak || 0);
+  ui.confirm.hidden = false;
+});
+
+$("btn-wipe-no").addEventListener("click", () => (ui.confirm.hidden = true));
+
+$("btn-wipe-yes").addEventListener("click", () => {
   state.progress = clearProgress();
+  ui.confirm.hidden = true;
   ui.settings.hidden = true;
   show("home");
 });
@@ -647,7 +686,6 @@ $("btn-play").addEventListener("click", () => {
   if (!state.progress.tutorialDone && state.progress.cleared === 0) return startTutorial();
   startLevel(currentLevel(state.progress));
 });
-$("btn-map").addEventListener("click", () => show("map"));
 $("btn-tutorial").addEventListener("click", startTutorial);
 
 applyStatic();

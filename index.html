@@ -4,6 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <title>Colodoku</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/logo-32.png" />
+    <link rel="apple-touch-icon" href="assets/logo-180.png" />
     <link rel="stylesheet" href="src/style.css" />
   </head>
   <body class="app">
@@ -36,8 +38,6 @@
 
       <p class="home-links">
         <button id="btn-tutorial" class="linkish" data-i18n="howToPlay">How to play</button>
-        <button id="btn-map" class="linkish" data-i18n="levelSelect">Level select</button>
-        <a class="linkish" href="lab.html" data-i18n="labLink">Level design lab</a>
       </p>
       <p class="progress-line"><span id="home-progress">&hellip;</span></p>
     </section>
@@ -136,8 +136,8 @@
       <!-- Pháo giấy rơi sau lưng hộp thoại, dựng bằng JS lúc thắng. -->
       <div id="confetti" class="confetti" aria-hidden="true"></div>
       <div class="dialog">
-        <!-- Chỗ dành cho hình ăn mừng sẽ thay vào sau. -->
-        <div id="win-art" class="logo">&#127881;</div>
+        <!-- Kiến reo mừng; game.js gán lại mỗi lần thắng để animation chạy từ đầu. -->
+        <div id="win-art" class="logo"><i class="ant-happy"></i></div>
         <h2 id="win-title">Well Played</h2>
         <p id="win-reward" class="reward" hidden><i class="coin"></i><b>+0</b></p>
         <p id="win-note" class="win-note"></p>
@@ -159,8 +159,21 @@
           <select id="opt-language"></select>
         </label>
 
+        <button id="btn-restart" class="ghost" data-i18n="restart" hidden>Restart level</button>
         <button id="btn-wipe" class="ghost" data-i18n="wipe">Reset progress</button>
         <button id="btn-close-settings" class="primary big" data-i18n="close">Close</button>
+      </div>
+    </div>
+
+    <!-- ------------------------------------------------- xác nhận xoá dữ liệu -->
+    <div id="confirm" class="overlay" hidden>
+      <div class="dialog">
+        <div class="logo">&#9888;&#65039;</div>
+        <h2 data-i18n="wipeTitle">Delete all your data?</h2>
+        <p class="warn" data-i18n="wipeWarn"></p>
+        <p class="win-note" id="wipe-losing"></p>
+        <button id="btn-wipe-yes" class="danger big" data-i18n="wipeYes">Delete everything</button>
+        <button id="btn-wipe-no" class="primary big" data-i18n="cancel">Cancel</button>
       </div>
     </div>
 

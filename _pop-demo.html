@@ -1,0 +1,86 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Chọn hiệu ứng đặt kiến</title>
+<link rel="stylesheet" href="src/style.css" />
+<style>
+  body { padding: 28px; font-family: inherit; }
+  h1 { margin: 0 0 4px; font-size: 20px; }
+  p.note { margin: 0 0 24px; color: var(--muted); font-size: 13px; }
+  .row { display: flex; flex-wrap: wrap; gap: 26px; }
+  .demo { text-align: center; }
+  .demo .board { --n: 3; --board: 190px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
+  .demo h2 { margin: 12px 0 2px; font-size: 14px; }
+  .demo small { color: var(--muted); font-size: 12px; }
+  .bar { margin-top: 26px; display: flex; gap: 10px; align-items: center; }
+</style>
+<body class="app">
+<h1>Bốn kiểu bung khi đặt kiến</h1>
+<p class="note">Tự chạy lại mỗi 1.8 giây. Bấm vào bàn nào để chạy riêng bàn đó. Chọn được số nào thì bảo tôi.</p>
+<div class="row" id="row"></div>
+<div class="bar"><button class="primary" onclick="playAll()">Chạy lại tất cả</button>
+<label class="toggle"><input type="checkbox" id="slow" /> chậm 3×</label></div>
+
+<style>
+/* 1 — nảy về (đang dùng): hiện ở cỡ thật, bung 1.34 rồi nảy nhẹ hai nhịp */
+.v1.pop::after { animation: pop1 0.36s ease-out; }
+@keyframes pop1 {
+  0% { transform: scale(0.9); } 35% { transform: scale(1.34); }
+  62% { transform: scale(0.95); } 82% { transform: scale(1.05); } 100% { transform: scale(1); }
+}
+/* 2 — dứt khoát: phình một nhịp rồi về thẳng, không nảy */
+.v2.pop::after { animation: pop2 0.22s ease-out; }
+@keyframes pop2 { 0% { transform: scale(1); } 45% { transform: scale(1.38); } 100% { transform: scale(1); } }
+/* 3 — rơi xuống có sức nặng: thả từ trên, chạm ô thì bẹp ra rồi đứng dậy */
+.v3.pop::after { animation: pop3 0.42s cubic-bezier(0.5, 0, 0.75, 0); }
+@keyframes pop3 {
+  0% { transform: translateY(-55%) scale(0.86); opacity: 0; }
+  40% { transform: translateY(0) scale(1); opacity: 1; animation-timing-function: ease-out; }
+  55% { transform: translateY(6%) scale(1.28, 0.76); }
+  75% { transform: translateY(0) scale(0.94, 1.08); }
+  100% { transform: translateY(0) scale(1); }
+}
+/* 4 — bung kèm sóng nền: như 1, thêm vòng sáng lan ra từ ô */
+.v4.pop::after { animation: pop1 0.36s ease-out; }
+.v4.pop::before {
+  content: ""; position: absolute; inset: 0; border-radius: 14%;
+  box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.9); animation: ring4 0.5s ease-out;
+}
+@keyframes ring4 {
+  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.85); }
+  100% { box-shadow: 0 0 0 14px rgba(255, 255, 255, 0); }
+}
+.slowmo .v1.pop::after, .slowmo .v2.pop::after, .slowmo .v3.pop::after,
+.slowmo .v4.pop::after, .slowmo .v4.pop::before { animation-duration: 1.3s; }
+</style>
+
+<script>
+const NAMES = [
+  ["1 · Nảy về", "bung 1.34× rồi nảy nhẹ hai nhịp — đang dùng"],
+  ["2 · Dứt khoát", "phình một nhịp 0.22s, không nảy"],
+  ["3 · Rơi xuống", "thả từ trên, chạm ô thì bẹp rồi đứng dậy"],
+  ["4 · Bung + sóng", "như 1, thêm vòng sáng lan ra"],
+];
+const G = ["--g3", "--g0", "--g6", "--g4"];
+const row = document.getElementById("row");
+NAMES.forEach(([title, desc], i) => {
+  const box = document.createElement("div");
+  box.className = "demo";
+  let cells = "";
+  for (let k = 0; k < 9; k++)
+    cells += `<button class="cell${k === 4 ? " cat v" + (i + 1) : ""}" style="background:var(${G[i]})"></button>`;
+  box.innerHTML = `<div class="board">${cells}</div><h2>${title}</h2><small>${desc}</small>`;
+  box.onclick = () => play(i);
+  row.append(box);
+});
+function play(i) {
+  const n = row.children[i].querySelector(".cat");
+  n.classList.remove("pop");
+  void n.offsetWidth;
+  n.classList.add("pop");
+}
+function playAll() { NAMES.forEach((_, i) => play(i)); }
+document.getElementById("slow").onchange = (e) => document.body.classList.toggle("slowmo", e.target.checked);
+playAll();
+setInterval(playAll, 1800);
+</script>
+</body>

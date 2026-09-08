@@ -1,0 +1,2553 @@
+OptimizedTranslation
+resource_local_to_scene
+resource_name
+messages
+plural_rules_override
+hash_table
+bucket_table
+local://OptimizedTranslation_uters
+OptimizedTranslation
+MEOWDOKU
+Chế Độ Sinh Tồn
+Hôm nay miễn phí %d/%d
+Thử Thách Hằng Ngày
+Bạn có chắc muốn thoát không?
+Bất Khả Cản
+Thiên Tài
+Thông Minh
+Tuyệt Vời
+Huyền Thoại
+Tiếp Tục
+  Chọn Màn
+Còn lại: 
+Hồi Sinh
+Chơi Lại
+Cần gợi ý? Xem ở góc trên bên phải!
+Đã hiểu!
+Nhấn hai lần để đặt mèo vào ô
+Tốt lắm!
+Mỗi màu chỉ một chú mèo
+Các mèo không được kề nhau
+Chỉ còn ô vàng cuối cùng
+Mèo không được ở cùng hàng hoặc cột
+Xuất sắc! Bạn đã nắm được luật!
+Bắt đầu chơi
+Điều khoản dịch vụ
+Chính sách quyền riêng tư
+Tùy chọn quyền riêng tư
+Phiên bản %s
+Đã bật nhạc
+Đã tắt nhạc
+Đã bật âm
+Đã tắt âm
+Đã bật rung
+Đã tắt rung
+Nghiên cứu cho thấy chơi một lát mỗi ngày có thể giúp bạn thông minh hơn.
+Vui lòng đọc và chấp nhận Điều khoản dịch vụ và Chính sách quyền riêng tư của chúng tôi.
+Nhập Môn
+Trung Cấp
+Thử Thách
+Bậc Thầy
+Huyền Thoại
+Ứng viên duy nhất
+Ràng buộc vùng-hàng/cột
+Khóa tập hợp (K
+Khóa nâng cao
+Suy luận chuỗi sâu
+Suy luận nâng cao sâu
+Suy luận chuỗi cực sâu
+Khó    Màn %d
+Chiến thuật màn
+Kho thường
+Kho LK tối ưu
+Chưa dùng
+Ràng buộc vùng: Loại các ô liên quan
+Khóa tập hợp: Loại các ô liên quan
+Khóa tập hợp lớn: Loại các ô liên quan
+Đặt ở đây sẽ mâu thuẫn 
+ loại bỏ
+Hàng và cột thuộc cùng một vùng 
+ ô giao phải có mèo
+Vùng màu
+Vùng này
+Một đơn vị
+%s chỉ còn một ô cho mèo
+Phản Hồi
+Phản hồi của bạn rất quan trọng! Hãy chia sẻ suy nghĩ với chúng tôi.
+Chiến Thuật
+Một hàng/cột/vùng chỉ còn 1 ô
+Các ứng viên vùng tập trung ở một hàng hoặc cột
+K vùng chỉ chiếm K hàng hoặc K cột
+Khóa tập hợp lớn hơn hoặc kiểm tra giả định
+Chuỗi giả định nhiều bước để loại ô
+Chi Tiết
+Văn bản hướng dẫn
+Gợi ý phụ
+Cần gợi ý? Có [color=#d94848]công cụ Gợi Ý[/color] ở góc trên bên phải
+{breath} để đặt mèo vào ô.
+Nhấn hai lần
+Tốt lắm!
+Mỗi [color=#d94848]màu[/color] chỉ một chú mèo.
+Mỗi màu chỉ một chú mèo.
+Các mèo không được [color=#d94848]kề nhau[/color].
+Các mèo không được chung [color=#d94848]cạnh hoặc góc[/color].
+Chỉ còn ô [color=#d94848]vàng[/color] cuối cùng
+[color=#d94848]Nhấn hai lần[/color] để đặt mèo
+Mèo không được ở [color=#d94848]cùng hàng hoặc cột[/color].
+Xuất sắc! Bạn đã nắm được luật!
+Nhấn vào ô trống để loại chúng.
+Vuốt qua các ô này để loại chúng.
+[color=#d94848]Hai chú mèo cuối[/color] ở đâu?
+Bạn tìm được chứ?
+Chỉ còn ô [color=#BC537C]hồng đậm[/color] cuối cùng
+[color=#d94848]Nhấn hai lần[/color] để đặt mèo
+Chỉ còn %s cuối cùng
+[color=#d94848]Nhấn hai lần[/color] để đặt mèo
+Chỉ còn ô [color=#3497CB]xanh[/color] cuối cùng
+[color=#d94848]Nhấn hai lần[/color] để đặt mèo
+Nhấn vào đây để xem gợi ý.
+Hàng này sẽ không còn mèo nữa!
+Nhấn vào ô trống để loại chúng.
+Hàng này sẽ không còn mèo nữa!
+Nhấn vào ô trống để loại chúng.
+[color=#d94848]Nhấn hai lần[/color] để đặt mèo vào ô cuối cùng!
+Tìm [color=#d94848]chú mèo cuối cùng[/color]!
+Đánh giá chúng tôi
+Bạn có thích
+Meowdoku không?
+1 mèo mỗi màu
+1 mèo mỗi cột và hàng
+Mèo không được kề nhau
+Mèo không được chạm nhau
+1 mèo mỗi lưới 9
+1 mèo mỗi 3*3
+QUẢNG CÁO
+Thời gian
+Hoàn Thành Thử Thách
+Bạn vượt %s người chơi!
+Suýt rồi
+Gỡ lỗi bộ giải
+ Quay lại
+Chào mừng
+Chấp nhận
+Vui lòng đọc và chấp nhận [url=%s][color=#489C52]Điều khoản dịch vụ[/color][/url] và [url=%s][color=#489C52]Chính sách quyền riêng tư[/color][/url].
+Thử Thách Hằng Ngày mở khóa ở màn 21
+Bạn đã hoàn thành Thử Thách Hằng Ngày hôm nay
+Kiểm tra quảng cáo
+Kiểm tra push
+Chơi Lại
+"Chơi 30 phút mỗi ngày, bạn sẽ ngủ ngon và sâu hơn."
+"Chúng ta không nhớ những ngày, chúng ta nhớ những khoảnh khắc."
+"Bí mật thật sự của hạnh phúc nằm ở sự quan tâm chân thành đến mọi chi tiết của đời sống thường ngày."
+"Điều thỏa nguyện nhất trong đời là đã có thể trao phần lớn con người mình cho người khác."
+"Cuộc sống là 10 phần trăm những gì bạn tạo ra, và 90 phần trăm cách bạn đón nhận nó."
+"Bóng tối không thể xua tan bóng tối; chỉ ánh sáng làm được. Hận thù không thể xua tan hận thù; chỉ tình yêu làm được."
+"Cuối cùng, điều đáng kể không phải là số năm bạn sống, mà là sự sống trong những năm ấy."
+"Điều quan trọng không phải chuyện gì xảy ra với bạn, mà là bạn phản ứng thế nào."
+"Hãy cười với mình trong gương. Làm vậy mỗi sáng và bạn sẽ thấy đời mình khác đi rất nhiều."
+"Dù cuộc sống mang đến điều gì, tôi đều nhận lấy và biết ơn vì điều đó."
+"Thời gian của bạn có hạn, đừng phí nó để sống cuộc đời của người khác."
+"Cuộc sống như đi xe đạp. Muốn giữ thăng bằng, bạn phải tiếp tục tiến lên."
+"Những điều tốt đẹp nhất trên thế gian không thể thấy hay chạm tới - phải cảm nhận bằng trái tim."
+"Mọi việc luôn tưởng như bất khả thi cho đến khi nó được hoàn thành."
+"Hãy gieo yêu thương ở mọi nơi bạn đến. Đừng để ai rời khỏi bạn mà không vui hơn."
+"Một khi bạn thay ý nghĩ tiêu cực bằng ý nghĩ tích cực, bạn sẽ bắt đầu có kết quả tích cực."
+"Đừng đắm chìm trong quá khứ, đừng mơ về tương lai, hãy tập trung tâm trí vào giây phút hiện tại."
+"Điều quan trọng nhất là truyền cảm hứng cho mọi người, để họ có thể xuất sắc trong bất cứ điều họ muốn làm."
+"Điểm yếu lớn nhất của ta là bỏ cuộc. Cách chắc chắn nhất để thành công là thử thêm một lần nữa."
+"Hãy hướng mắt lên những vì sao, và đặt chân vững trên mặt đất."
+"Bạn phải là sự thay đổi mà bạn muốn thấy ở thế giới này."
+"Người duy nhất bạn nên cố vượt qua là chính bạn ngày hôm qua."
+"Biết thôi chưa đủ; phải ứng dụng. Muốn thôi chưa đủ; phải hành động."
+"Tôi không thể cho bạn công thức chắc thắng, nhưng tôi có thể cho bạn công thức thất bại: cố làm vừa lòng tất cả mọi người."
+"Ta mưu sinh bằng những gì ta nhận, nhưng ta tạo nên cuộc đời bằng những gì ta cho."
+"Lòng dũng cảm không phải lúc nào cũng gầm vang. Đôi khi dũng cảm là tiếng nói nhỏ cuối ngày rằng 'mai mình sẽ thử lại'."
+"Hôm qua là lịch sử. Ngày mai là điều bí ẩn. Hôm nay là món quà; vì thế ta gọi nó là hiện tại."
+"Hoàn hảo là điều không thể đạt được, nhưng nếu theo đuổi hoàn hảo ta sẽ chạm tới sự xuất sắc."
+"Hãy làm điều mà trái tim bạn cho là đúng - vì dù sao bạn cũng sẽ bị chỉ trích."
+"Hạnh phúc không nằm trong của cải, cũng chẳng ở vàng bạc, hạnh phúc trú trong tâm hồn."
+"Mục đích của đời ta là được hạnh phúc."
+"Khó khăn không phải biển báo dừng, chúng là biển chỉ đường."
+"Nhiều thất bại trong đời thuộc về những người không nhận ra họ đã gần thành công đến mức nào khi bỏ cuộc."
+"Dũng cảm là chống lại sợ hãi, làm chủ sợ hãi, chứ không phải không có sợ hãi."
+"Thái độ, chứ không phải năng khiếu, sẽ quyết định độ cao bạn đạt tới."
+"Người ta sẽ quên bạn nói gì, quên bạn làm gì, nhưng sẽ không bao giờ quên bạn đã khiến họ cảm thấy thế nào."
+"Thái độ là điều nhỏ bé tạo nên khác biệt LỚN."
+"Dù bạn nghĩ mình làm được hay không làm được, bạn đều đúng!"
+"Nếu bạn thay đổi cách nhìn sự việc, thì sự việc bạn nhìn cũng thay đổi."
+"Tiến bộ là thay đổi; hoàn hảo là thay đổi thường xuyên."
+"Đặt mục tiêu là bước đầu tiên biến điều vô hình thành hữu hình."
+"Tôi không đổi được hướng gió, nhưng tôi có thể điều chỉnh cánh buồm để luôn đến được đích của mình."
+"Những đám mây trôi vào đời tôi, không còn mang mưa hay bão, mà để thêm sắc màu cho trời chiều của tôi."
+"Hãy bắt đầu từ nơi bạn đang đứng. Dùng những gì bạn có. Làm những gì bạn có thể."
+"Hãy tập trung để làm việc hiệu quả, chứ không phải để bận rộn."
+"Mỗi ngày hãy làm một điều khiến bạn e sợ."
+"Đừng sống quá nghiêm trọng. Bạn sẽ chẳng bao giờ ra khỏi cuộc đời này mà còn sống."
+"Ý nghĩa của sự vật không nằm ở bản thân chúng, mà ở thái độ của ta với chúng."
+"Đừng chỉ đi qua cuộc đời, hãy trưởng thành qua cuộc đời."
+"Cuộc sống vọt lên như mạch nước phun với những ai khoan qua tảng đá trì trệ."
+"Hạnh phúc nảy mầm bên bếp lửa nhà ta, chứ không phải hái được trong vườn người lạ."
+"Mọi thứ đều có điều kỳ diệu, kể cả bóng tối và tĩnh lặng, và tôi học được rằng ở hoàn cảnh nào cũng hãy bằng lòng."
+"Chim ca sau cơn bão; vậy sao con người lại không thể thảnh thơi vui với chút nắng còn lại?"
+"Cơ hội không gõ cửa, nó xuất hiện khi bạn phá cánh cửa ấy ra."
+"Ngày mới đến cùng sức mạnh mới và ý nghĩ mới."
+"Điều bạn làm hôm nay có thể cải thiện mọi ngày mai của bạn."
+"Ta ngấu nghiến mọi lời dối ngọt ngào, nhưng chỉ nhấm nháp từng chút sự thật mà ta thấy đắng."
+"Ba điều không thể che giấu lâu: mặt trời, mặt trăng và sự thật."
+"Hạnh phúc không phải điều bạn hoãn lại cho tương lai; đó là điều bạn thiết kế cho hiện tại."
+"Điều bạn làm hôm nay có thể cải thiện mọi ngày mai của bạn."
+"Hãy luôn hướng mặt về phía ánh nắng - và bóng tối sẽ ngả về sau bạn."
+"Khi bạn say mê điều mình làm, bạn cảm nhận được nguồn năng lượng tích cực ấy. Rất đơn giản."
+"Nhiều người thường nhìn vào mặt tiêu cực của những gì họ nghĩ mình không làm được. Tôi luôn nhìn mặt tích cực của những gì tôi làm được."
+"Cuộc đời ta là tổng hòa của những lựa chọn ta đã thực hiện."
+"Một tiếng cười vui là ánh nắng trong nhà."
+"Hãy yêu thương nhau và giúp người khác vươn tới tầm cao hơn, chỉ đơn giản bằng cách trao đi yêu thương. Yêu thương lan truyền và là năng lượng chữa lành lớn nhất."
+"Chữa lành chính mình gắn liền với việc chữa lành người khác."
+Meowdoku
+Yoko Ono
+Tom Felton
+Steve Jobs
+Đức Phật
+Kobe Bryant
+Khuyết danh
+Khuyết danh
+Democritus
+Khuyết danh
+Mark Twain
+Zig Ziglar
+Henry Ford
+Wayne Dyer
+Tony Robbins
+Jimmy Dean
+Arthur Ashe
+Elbert Hubbard
+Rose Kennedy
+Đức Phật
+Jim Rohn
+Paulo Coelho
+Chuck Norris
+Wayne Dyer
+Sai Baba
+Yoko Ono
+Hồng đậm
+Xanh dương đậm
+Xanh dương nhạt
+Xanh da trời
+Ngọc lam
+Vàng ô-liu
+Ngọc lục bảo
+Xanh lá đậm
+Xanh nước biển
+Vàng kim
+Oải hương
+Tử đinh hương
+Tím violet
+Báo thức thử thách hằng ngày!
+Hôm nay bạn giải được không? 
+Bạn đã sẵn sàng thử thách mình với một Meowdoku mới chưa?
+Chơi Meowdoku là cách thư giãn lành mạnh khỏi những trách nhiệm thường ngày.
+Mỗi ngày một câu đố Meowdoku giúp bạn thành người giải quyết vấn đề hoàn hảo! 
+Chơi Meowdoku hằng ngày rèn luyện khả năng chú ý và tập trung lâu dài của chúng ta! 
+ Những người chơi Meowdoku thường xuyên có trí nhớ, sự chú ý và khả năng suy luận nhạy hơn.
+Meowdoku giúp bạn tĩnh tâm và nói lời tạm biệt với căng thẳng, lo lắng.
+Hoàn thành một Meowdoku mỗi ngày để giữ đầu óc nhạy bén! 
+Lỗi? Liên hệ chúng tôi
+Ở lại nhé, chúng tôi rất trân trọng bạn!
+Quảng cáo chưa sẵn, thử lại sau
+Bạn đã đánh dấu sai ô này! Nhấn để xóa dấu X.
+Cảm ơn phản hồi của bạn!
+Sự giúp đỡ của bạn thật đáng quý :)
+Hàng, cột và các ô lân cận của chú mèo này sẽ không có mèo khác 
+ loại bỏ
+Ứng viên %s đều ở hàng %d 
+ loại các màu khác
+Ứng viên %s đều ở cột %d 
+ loại các màu khác
+Ứng viên hàng %d đều thuộc %s 
+ loại các hàng khác
+Ứng viên cột %d đều thuộc %s 
+ loại các cột khác
+Hàng và cột đều thuộc %s 
+ ô giao phải có mèo
+ chỉ còn một ô cho mèo
+Đặt ở đây sẽ mâu thuẫn 
+ loại ô này
+%s sẽ không còn ô hợp lệ cho mèo
+Đặt ở đây sẽ loại mọi ô trong %s 
+ không thể đặt mèo
+%d màu chung %d hàng 
+ loại các ô khác trong %d hàng này
+%d màu chung %d cột 
+ loại các ô khác trong %d cột này
+Đặt ở đây gây mâu thuẫn trực tiếp 
+ loại ô này
+Đặt ở đây gây mâu thuẫn (%d bước) 
+ loại ô này
+Vui lòng cho phép theo dõi
+Hãy giúp chúng tôi tiếp tục cung cấp ứng dụng miễn phí và giảm quảng cáo bạn không thích bằng cách cho phép theo dõi ẩn danh. Bạn có thể thay đổi cài đặt này bất kỳ lúc nào trong cài đặt hệ thống.
+Tiếp Tục
+[color=#ffee00][b]%s[/b][/color] người chơi vượt màn ngay lần đầu!
+[color=#ffee00][b]%s[/b][/color] người chơi đã hoàn thành màn này! Cố lên!
+Cùng chơi tiếp ván còn dở nhé.
+Giải được, IQ = 220.
+Thử thách này đòi hỏi trí tuệ tầm cỡ Einstein.
+IQ của bạn có thực sự sánh với huyền thoại?
+Câu đố này dành cho những bộ óc IQ 240.
+Xem IQ của bạn có xứng vào đại sảnh danh vọng không.
+Vượt qua bàn cờ này, bạn sẽ tư duy như Da Vinci.
+Một hàng/cột/vùng chỉ còn 1 ô
+Các ứng viên vùng tập trung ở một hàng hoặc cột
+K vùng chỉ chiếm K hàng hoặc K cột
+Khóa tập hợp lớn hơn hoặc kiểm tra mâu thuẫn giả thuyết
+Suy luận giả định nhiều bước để loại ứng viên
+Thời gian của bạn vượt {pct} người chơi{br}trong ván này!
+Nhấn để vào Chế độ Nháp
+Miễn phí
+Tự động hoàn thành
+Meow! Chỉ còn một cơ hội!
+Sắp tới rồi!
+Chiến thắng đã trong tầm mắt!
+Chỉ một nỗ lực nữa thôi!
+Bạn gần bắt được hết rồi!
+Nỗ lực tuyệt vời!
+Đừng bỏ cuộc lúc này!
+Thử tốt lắm! Còn vài con nữa!
+Cứ thế nhé, bạn đang đi đúng hướng!
+Bạn làm được mà!
+Cùng Thử Lại!
+Nhảy vào lại ngay!
+Cuộc tìm kiếm vẫn tiếp tục!
+[center][font_size=70][b][color=#FFCC00]%s[/color][/b][/font_size] người chơi đã dùng Hồi Sinh để qua màn này![/center]
+Chưa có nước đi trước đó
+Không có gì để hoàn tác
+Giữ miễn phí: Ủng hộ quyền truy cập miễn phí.
+Quảng cáo phù hợp: Ít làm phiền, đúng chủ đề hơn.
+Thay đổi mọi lúc: Cài đặt hệ thống linh hoạt.
+Phần thưởng quảng cáo đã được khôi phục
+Chúng tôi đã cấp lại phần thưởng quảng cáo mà bạn chưa nhận được trước đó. Cảm ơn bạn đã kiên nhẫn!
+Cách chơi
+Cách chơi
+Meow! +1 HP từ mèo
+Bậc Thầy
+Câu đố KHÓ ư? Xử lý nhẹ nhàng!
+Giải lưới KHÓ nhanh vậy sao? Tuyệt vời!
+Thiên Tài
+Câu đố khó chỉ là màn khởi động với bạn!
+Huyền Thoại
+Chỉ đầu óc nhạy bén mới hạ được lưới KHÓ này!
+Nhạy Bén
+Câu đố KHÓ này không đọ được với logic của bạn!
+Cuối Cùng
+Một câu đố nặng ký, nhưng bạn đã phá được!
+Kiên Trì
+Phải nỗ lực, nhưng màn KHÓ đã bị hạ!
+Xong Rồi Ư?
+Bạn cần ít lượt thử hơn phần lớn người chơi!
+Vượt Qua
+Câu đố KHÓ đó không cản được bạn!
+Thật là bài xoắn não! Cuối cùng bạn cũng ra!
+Hoàn Hảo
+0 lỗi! Mọi chú mèo đều đúng chỗ!
+Không Tì Vết
+0 sai sót! Logic của bạn chuẩn tuyệt đối!
+Hoàn Hảo
+Không một lỗi nào, bạn đúng là bậc thầy!
+Chính Xác
+Không một dấu nào sai. Làm tốt lắm!
+Chiến Thuật
+Bạn làm chủ hoàn toàn màn này.
+Tinh Tường
+Vượt {pct} người chơi! Khả năng quan sát của bạn thật cừ!
+Thông Minh
+Vượt {pct} người chơi! Logic của bạn thật phi thường!
+Xuất Sắc
+Vượt {pct} người chơi! Bạn thể hiện thật hoàn hảo!
+Tuyệt Vời
+Vượt {pct} người chơi! Hơn {diff} so với ván trước của bạn!
+Cuối Cùng
+Câu đố rắc rối, nhưng bạn xử lý rất đẹp!
+Vượt Qua
+Lưới không dễ, nhưng bạn đã tìm ra!
+Làm Được
+Không hề dễ, nhưng logic của bạn đã thắng!
+Nhận 3 Cá
+Dùng để nhận 3 Cá
+Nhấn để đánh dấu X vào cột.
+Hoàn hảo, mèo ơi! [b]{N}[/b] bước. [b]{N}[/b] chú mèo. Không chút do dự.
+[b]Không tì vết![/b] Mỗi bước, một chú mèo. Không chần chừ.
+Giải trong [b]{N}[/b] lượt. Đúng [b]{N}[/b] chú mèo.
+Logic thuần khiết. Không chần chừ.
+[b]Sạch tuyệt đối![/b] [b]{N}[/b] chú mèo. [b]{N}[/b] lượt. Không lãng phí lượt nào.
+Mỗi lượt đi đều là lựa chọn duy nhất.
+[b]{N}[/b] trên [b]{N}[/b]. Gọn gàng hết mức.
+Không phỏng đoán. Chỉ là biết rõ.
+Lũ mèo chẳng có cơ hội nào.
+Suýt hoàn hảo. Làm tốt lắm.
+Ván giải gọn gàng. Chỉ dư một hai bước.
+Tư duy nhạy bén. Gần như không tì vết.
+Hiệu quả và thanh thoát.
+Gần hoàn hảo, mèo ơi. Cứ mài thêm nhé.
+Gần như không tì vết 
+ lần sau làm trong [b]{CATS}[/b] được chứ?
+Lũ mèo hầu như không kịp trốn.
+Top [b]10%[/b] hôm nay. Lũ mèo cảm nhận được.
+Nhanh hơn phần lớn. Chơi hay lắm.
+Ván giải nhạy. Hơn 9 trên 10 người.
+Vượt trên số đông. Làm tốt lắm.
+Ván chơi gọn gàng. Gần chạm đỉnh cao.
+Lũ mèo không dễ chịu đâu. Bạn làm nó trông thật dễ.
+Thêm một bước gần tới đỉnh.
+Ván giải vững vàng. Hơn phần lớn người chơi.
+Làm tốt lắm. Trên trung bình và đang lên.
+Những lượt đi hay. Lũ mèo chẳng dễ dàng.
+Chơi hay. Bạn đang nhạy hơn từng ngày.
+ top 10% gần hơn bạn nghĩ đấy.
+Ván hay. Cứ siết chặt thêm nhé.
+Trên trung bình. Những lượt đi rất hay.
+Ngôn Ngữ
+Tiếng Anh
+Tiếng Trung (Giản thể)
+Tiếng Trung (Phồn thể)
+Tiếng Nhật
+Tiếng Tây Ban Nha
+Tiếng Pháp
+Tiếng Đức
+Tiếng Nga
+Tiếng Bồ Đào Nha
+Tiếng Bồ Đào Nha (Brazil)
+Tiếng Hàn
+Tiếng Thổ Nhĩ Kỳ
+Xác nhận
+Hoàn thành nhanh hơn để nâng thứ hạng toàn cầu!
+[font_size=70]Kỷ lục tốt nhất: Top [/font_size][color=#F19320][font_size=70]%s[/font_size][/color]
+Không, cảm ơn
+Thử Thách
+Hằng Ngày
+Mở khóa ở Màn %d
+Cập nhật quan trọng
+Streak Reward Beta đã kết thúc! Cảm ơn bạn đã ủng hộ. Đây là quà cho bạn!
+Streak Beta đã kết thúc! Cảm ơn bạn đã ủng hộ!
+Tin vui! Chuỗi Hằng Ngày đã được nâng cấp. Duy trì chuỗi ngay để nhận thưởng!
+Nhấn vào mặt trời, khơi mào chuỗi của bạn!
+Chuỗi Hằng Ngày
+Chuỗi hiện tại
+Chuỗi tốt nhất: %d
+[font_size=60][b]Top 20%[/b][/font_size][color=#FFFFFF][font_size=60] 
+ top 10% gần hơn bạn nghĩ.[/font_size][/color]
+[font_size=60]Gần như hoàn hảo 
+ lần sau bạn có thể trong [/font_size][color=#FF83FB][font_size=60][b]8[/b][/font_size][/color][font_size=60] bước không?[/font_size]
+[font_size=60]Hoàn hảo![/font_size][color=#FFFFFF][font_size=60] Mỗi nước một chú mèo. Không do dự.[/font_size][/color]
+[font_size=60]Hôm nay [/font_size][color=#73C9FF][font_size=60][b]top 10%[/b][/font_size][/color][font_size=60]. Đàn mèo cảm nhận được.[/font_size]
+Tiếng Hindi
+Tiếng Filipino
+Tiếng Azerbaijan
+Tiếng Belarus
+Tiếng Croatia
+Tiếng Séc
+Tiếng Đan Mạch
+Tiếng Ả Rập
+Tiếng Phần Lan
+Tiếng Hy Lạp
+Tiếng Hungary
+Tiếng Ba Tư
+Tiếng Do Thái
+Tiếng Litva
+Tiếng Mã Lai
+Tiếng Hà Lan
+Tiếng Na Uy
+Tiếng Ba Lan
+Tiếng Romania
+Tiếng Slovak
+Tiếng Thụy Điển
+Tiếng Thái
+Tiếng Ukraina
+Tiếng Uzbek
+Tiếng Việt
+Tiếng Afrikaans
+Tiếng Amhara
+Tiếng Bengal
+Tiếng Bosnia
+Tiếng Catalan
+Tiếng Gujarat
+Tiếng Iceland
+Tiếng Kazakh
+Tiếng Khmer
+Tiếng Kannada
+Tiếng Lào
+Tiếng Macedonia
+Tiếng Malayalam
+Tiếng Mông Cổ
+Tiếng Marathi
+Tiếng Nepal
+Tiếng Punjab
+Tiếng Sinhala
+Tiếng Slovenia
+Tiếng Serbia
+Tiếng Swahili
+Tiếng Tamil
+Tiếng Telugu
+Tiếng Urdu
+ Ăn trưa cùng tớ nhé?
+Tớ giữ chỗ cho bạn rồi! 
+ Chưa tới lúc chúc ngủ ngon!
+Giải một ván với tớ trước nhé? 
+ Đừng ăn một mình!
+Một câu đố làm bạn với tớ 
+ Tối nay tớ nhớ bạn!
+Thư giãn ở đây với tớ 
+ Nghỉ trưa, nghỉ giải đố!
+Nạp lại năng lượng cùng tớ trước buổi chiều 
+ Kết thúc ngày thật êm!
+Giải với tớ rồi nghỉ nhé 
+ Suỵt, trưa rồi đó!
+Cho não ăn rồi hãy ngủ 
+ Ôm một cái trước khi ngủ?
+Giải một ván, tớ ủ ấm cho 
+ Uể oải buổi trưa?
+Đánh bay nó 
+ giải cùng tớ! 
+ Ngày gần hết rồi!
+Thư giãn cùng tớ, một ván nhẹ 
+ Trưa nay tớ buồn quá!
+Chơi một vòng với tớ nhé? 
+ Đừng ngủ mà thiếu tớ!
+Một câu đố rồi mộng đẹp 
+ Giờ ăn nhẹ cho não!
+Tớ nướng cho bạn món bổ não 
+ Ghế sofa và tớ!
+Combo buổi tối ấm áp nhất 
+ Chừa cho tớ một miếng!
+Và một lúc nghỉ giải đố nữa 
+ Tớ giữ chỗ ấm cho bạn!
+Cuộn tròn lại và giải đố 
+ Nghỉ nhanh, làm mới lớn!
+Năm phút với tớ, đầu óc tươi mới 
+ Hãy để ngày hôm nay qua đi!
+Để tớ làm dịu buổi tối của bạn 
+ Không ăn trưa mà thiếu tớ!
+Vừa ăn vừa giải đố nhé 
+ Tối nay thấy đơn quá...
+Làm bạn với tớ nhé? 
+ Đúng ngọ, giờ của tớ!
+Chiều cái đầu bận rộn của bạn 
+ Giờ nghi thức buổi tối!
+Giải với tớ trước khi tắt đèn 
+ Điểm danh bằng râu mèo!
+Hôm nay bạn có nhớ tớ không? 
+ Râu mèo chúc ngủ ngon!
+Đắp chăn cùng một câu đố 
+ Nạp nhiên liệu buổi chiều!
+Để tớ tiếp sức cho buổi chiều 
+ Làm tan căng thẳng hôm nay!
+Để tớ làm tan căng thẳng của bạn 
+ Xin một cái ôm buổi trưa!
+Giải một ván, tớ kêu rừ rừ 
+ Kể chuyện trước khi ngủ?
+Hay là mình giải một ván 
+ Bỏ cuộn màn hình đi!
+Giải cùng tớ thay vào đó 
+ Câu đố đêm yên tĩnh!
+Chậm lại cùng tớ tối nay 
+ Tớ đợi suốt cả buổi sáng!
+Giờ nghỉ trưa cuối cùng đã tới 
+ Tớ đợi suốt cả buổi tối!
+Cuối cùng bạn cũng về nhà 
+ Giờ trà, giờ của não!
+Nhấm trà cùng tớ, giải đố, cười 
+ Bật chế độ thư giãn!
+Giải với tớ rồi vào giấc mơ 
+ Cần bạn đồng hành buổi trưa?
+Tớ ngay đây, chân sẵn sàng 
+ Cái cọ đầu buổi đêm tới đây!
+Giải một ván để mở khóa nó 
+ Thắng nhỏ giờ ăn trưa!
+Giải một ván, tớ cổ vũ bạn 
+ Phố ngủ, bạn giải đố!
+Làm bạn với tớ, một ván an yên 
+ Cái bụng tớ nói xin chào!
+Câu đố hằng ngày cũng vậy 
+ Lượt ghé cuối cùng hôm nay?
+Tớ mong suốt cả đêm nay 
+ Logic giờ ăn trưa!
+Mài đầu óc cùng tớ nhé 
+ Làm dịu màn đêm!
+Giải với tớ, êm dịu ngọt ngào 
+ Nhớ tớ chưa?
+Từ lúc ăn sáng cơ! 
+ Mặc pyjama chưa?
+Tuyệt, giờ giải cùng tớ nhé 
+ Tỉnh thức giữa ngày!
+Hít thở cùng tớ, một câu đố 
+ Chiều chậm, tĩnh tại nhạy!
+Để tớ làm lắng đầu óc bạn 
+ Hẹn ăn trưa với lũ mèo?
+Bọn tớ hứa sẽ vui lắm 
+ Tớ bắt đầu buồn ngủ rồi...
+Một câu đố trước khi nghỉ nhé? 
+ Đánh bay cơn buồn 1 giờ!
+Giải cùng tớ, năng lượng mới 
+ Bình yên ánh nến!
+Đèn mờ, giải cùng tớ 
+ Tớ giành giờ nghỉ trưa của bạn!
+Hãy dành nó để giải cùng tớ 
+ Chúc ngủ ngon cần một câu đố!
+Và một chút của bạn nữa 
+ Ăn nhẹ, đầu óc nhạy!
+Ghép bữa trưa của bạn với tớ 
+ Ngắm sao và giải đố!
+Ngắm sao cùng tớ rồi giải đố 
+ Giấc trưa đang tới!
+Giải một ván trước rồi cuộn tròn 
+ Pháo đài chăn đã xong!
+Bò vào đây và giải đố 
+ Nửa ngày xong, tự thưởng đi!
+Tớ giữ một phần thưởng câu đố 
+ Hãy thả ngày hôm nay đi!
+Thư giãn cùng tớ, một câu đố 
+ Này, người của giờ trưa!
+Mang đồ ăn và cái đầu tới 
+ Tớ ủ ấm giường rồi!
+Chỉ cần bạn ở đây nữa 
+ Nạp lại trong ba phút!
+Ba phút với tớ, tập trung nhạy 
+ Spa cho não buổi đêm!
+Ván nhẹ cùng tớ, ngủ thật ngon 
+ Lũ mèo đã dọn bàn!
+Câu đố buổi trưa của bạn đã sẵn 
+ Đừng cuộn màn hình trên giường!
+Giải cùng tớ thì hay hơn 
+ Cú hích giữa ngày!
+Hơn cả ly cà phê thứ hai 
+ Khép lại ngày thật dịu!
+Tớ giữ một câu đố êm ái 
+ Tớ mơ được ăn trưa với bạn!
+Mình biến nó thành thật nhé 
+ Đêm của tớ chưa trọn vẹn!
+Nếu thiếu một ván cùng nhau 
+ Nghỉ ăn cơm hộp!
+Chừa tớ một miếng rồi giải đố 
+ Câu đố khép lại đêm!
+Uống trà, giải cùng tớ 
+ Giơ chân chào buổi trưa!
+Đập tay với tớ bằng một ván 
+ Đắp chăn cho tớ nữa nhé!
+Một câu đố rồi đi ngủ 
+ Ván giải đầy nắng!
+Làm sáng giờ nghỉ cùng tớ 
+ Ván giải buổi tối an yên!
+Để tớ làm lặng tiếng ồn 
+ Bạn bỏ câu đố buổi sáng!
+Bù lại vào giờ trưa nhé 
+ Hạn mức ôm buổi tối!
+Chưa đạt vì còn thiếu bạn 
+ Có năm phút không?
+Tớ cũng chỉ cần thế thôi 
+ Bình yên trước giấc ngủ!
+Làm lặng suy nghĩ cùng tớ 
+ Ước buổi trưa của tớ: bạn!
+Và một câu đố cùng nhau 
+ Chạy lăng quăng xong chưa?
+Giờ ngồi xuống và giải đố 
+ Nghỉ bàn làm việc, nghỉ với mèo!
+Rời bàn và tìm tớ nhé 
+ Hạ cánh êm cho hôm nay!
+Hạ cánh êm cùng tớ tối nay 
+ Báo thức giờ ăn: meo!
+Lũ mèo của bạn xin nghỉ 
+ Tớ bật đèn ấm áp rồi!
+Tới giải đố trong ánh sáng đó 
+ Nạp lại sự tập trung!
+Để tớ khởi động lại đầu bạn 
+ Chiến thắng cuối ngày!
+Giải cùng tớ, ngủ thật tự hào 
+ Tớ ở dưới bàn của bạn!
+Nghỉ một lát, tìm tớ nhé 
+ Ngáp rồi đây này...
+Một ván nhanh trước khi mơ? 
+ Món thưởng giữa ngày!
+Tớ giữ cho bạn một phút ngọt ngào 
+ Lún vào ghế sofa đi!
+Lún vào cùng tớ, tan hết căng 
+ Ăn trưa một mình dài lắm...
+Giải một ván với tớ nhé? 
+ Lò sưởi lòng trình diện!
+Ngồi xuống và giải cùng tớ 
+ Thông minh hơn trước bữa trưa!
+Giải cùng tớ, ngày càng nhạy 
+ Rút phích buổi đêm!
+Đổi màn hình lấy tớ nhé 
+ Cốc cốc, trưa rồi!
+Mở cửa cho giờ giải đố 
+ Phần ngọt nhất của đêm?
+Là bạn, giải đố bên tớ 
+ Một câu đố, một chiến thắng!
+Hãy để giờ nghỉ trưa đáng giá 
+ Làm lặng tâm trí!
+Làm lặng tâm trí cùng tớ 
+ Tớ canh câu đố cho bạn!
+Suốt buổi sáng, chỉ vì bạn 
+ Ngủ ngon, nhưng trước đó...
+Một câu đố, xin bạn đấy 
+ Cho não và bụng cùng ăn!
+Combo trưa: cơm cộng câu đố 
+ Gói ngày lại thật gọn!
+Đắp chăn cùng tớ, một ván nhẹ 
+ Chạy lăng quăng buổi trưa!
+Xả nó bằng một ván giải đố 
+ Tớ rừ rừ một câu đố cho bạn!
+Ấm áp và sẵn sàng tối nay 
+ Dừng, hít thở, giải đố!
+Nghi thức buổi trưa an yên của bạn 
+ Bình yên buổi tối đang chờ!
+Tớ giữ sự bình yên buổi tối 
+ Giờ ăn trưa, tớ thích nhất!
+Vì bạn đến thăm tớ 
+ Giờ ngủ vui hơn khi có đôi!
+Ở lại thêm một chút nhé 
+ Tụt năng lượng giữa ngày?
+Một câu đố sẽ đánh thức bạn 
+ Trôi vào giấc thật êm!
+Giải cùng tớ rồi trôi vào giấc 
+ Tớ đặt bẫy giờ ăn trưa!
+Một câu đố ấm để bắt bạn 
+ Tớ đang ở chỗ của bạn!
+Giải một ván, tớ nhích qua 
+ Ăn nhanh, não nhanh hơn!
+Vừa ăn vừa giải cùng nhau 
+ Logic đêm muộn!
+Ở lại với tớ, không cần gấp 
+ Đừng quên mèo của bạn!
+Tớ xếp bữa trưa quanh bạn 
+ Tối nay dài quá!
+Đáng chờ, giờ bạn ở đây rồi 
+ Làm mới cho buổi chiều!
+Một câu đố xua tan mù sương 
+ Thở hết ngày hôm nay ra!
+Thở ra cùng tớ, bình an sâu 
+ Xoa bụng sau bữa trưa nhé?
+Giải một ván, tớ là của bạn 
+ Cuộn tròn rồi giải đố?
+Kế hoạch trước ngủ hay nhất 
+ Thử thách logic giờ trưa!
+Phá nó trước tiếng chuông 
+ Tĩnh lặng trước giấc mơ!
+Ván nhẹ giúp dễ vào giấc 
+ Bắt tớ vào buổi trưa nhé!
+Tớ đang trốn trong một câu đố 
+ Bạn quên tớ rồi sao?
+Tối nay tớ thức đợi bạn 
+ Ván giải phía nắng!
+Làm sáng giờ nghỉ trưa của bạn 
+ Khép lại bằng một chiến thắng!
+Một câu đố, niềm tự hào an yên 
+ Meo nghĩa là tới giờ nghỉ!
+Hãy nghe lời mèo của bạn 
+ Chân mèo buồn ngủ đây!
+Một ván cuối cùng nhau nhé? 
+ Nạp thêm cho não đi!
+Nhiên liệu câu đố năm phút 
+ Ánh dịu, tâm dịu!
+Giờ giải đố buổi tối êm ái 
+ Tớ đếm từng giờ!
+Cho tới lượt ghé giờ trưa 
+ Sữa ấm và câu đố nhé?
+Kế hoạch mèo hoàn hảo tối nay 
+ Phòng gym cho não giờ trưa!
+Tập nhẹ, tiến bộ lớn 
+ Buông ra, chậm lại!
+Câu đố đêm làm tan cơn gấp 
+ Đuổi bắt, bạn là người đuổi!
+Đuổi tớ qua một câu đố 
+ Bạn là lời chúc ngủ của tớ!
+Một ván làm nó thêm ngọt 
+ Nghỉ êm, đầu óc nhạy!
+Ván nhẹ, tĩnh tại tức thì 
+ Nhẹ nhàng vào đêm!
+Một ván yên, một lòng tĩnh 
+ Bạn ăn trưa trình diện!
+Sẵn sàng khi bạn sẵn sàng 
+ Pháo đài gối đã dựng!
+Giải ở đây trước khi ngủ 
+ Hút mì và giải đố!
+Mì cộng thêm một câu đố 
+ Làm lặng ngày bận rộn!
+Một ván nhẹ làm lặng tất cả 
+ Tớ ủ ấm chỗ cho bạn!
+Tới giải trước giấc trưa nhé 
+ Thuế ngủ ngon: một câu đố!
+Trả đi rồi cuộn tròn 
+ Đà tiến giữa ngày!
+Một chiến thắng giữ bạn lăn bánh 
+ Ánh tối dịu, tâm trí êm!
+Giải chậm, ngủ sâu 
+ Bạn, tớ, bữa trưa là yêu!
+Thêm một câu đố cho vui 
+ Tớ mơ mình giải một ván!
+Biến nó thành thật tối nay 
+ Thư giãn giữa trưa!
+Một ván an yên giữa ngày 
+ Chế độ tổ ấm!
+Trùm ấm rồi giải đố 
+ Giải cứu giờ ăn trưa!
+Tớ sẽ cứu bạn khỏi buồn tẻ 
+ Đèn đêm đã bật!
+Chỉ để dành cho câu đố của mình 
+ Nghỉ não cỡ một miếng!
+Chỉ một câu đố ấm áp thôi 
+ Cuối cùng cũng bình yên!
+Kết ngày bằng logic 
+ Tớ đang chấm bữa trưa của bạn!
+Giải một ván cho tớ nể 
+ Thức cùng tớ nhé?
+Một câu đố rồi nghỉ 
+ Nửa đường, hoan hô!
+Chào buổi trưa bằng một ván 
+ Lắng lại suy nghĩ đi!
+Một ván tĩnh trước khi ngủ 
+ Giao tiếng rừ rừ buổi trưa!
+Giải một ván để mở khóa 
+ Giờ ngủ, phơi bụng lên!
+Giải một ván, xoa bụng tớ 
+ Xua tan mù sương buổi sáng!
+Một câu đố mài sự tập trung 
+ Làm lặng các màn hình!
+Đổi cuộn màn hình lấy một ván 
+ Ăn trưa một mình buồn lắm!
+Cho tớ theo cùng, được chứ? 
+ Tớ đắp chăn cho câu đố rồi!
+Ấm áp và đang chờ tối nay 
+ Thực đơn cho tâm trí lành!
+Đặc biệt hôm nay: một câu đố 
+ Thưởng nhẹ buổi tối!
+Một ván, một nụ cười an yên 
+ Lăn bụng giữa trưa!
+Đáp xuống một câu đố cùng tớ 
+ Giờ ngủ của mèo nữa!
+Giải cùng nhau rồi vào mơ 
+ Chuông giờ ăn đã reo!
+Tới giờ giải đố hằng ngày 
+ Giảm đèn và thư giãn!
+Ván êm, đêm càng êm hơn 
+ Tớ mang mặt đáng yêu ra!
+Chỉ để dụ bạn quay lại 
+ Tiếng meo cuối cùng hôm nay!
+Tới giải đố rồi đi ngủ 
+ Lên hương giữa ngày!
+Thông minh và vui hơn trước 1 giờ 
+ Chậm lại, chậm thật sâu!
+Một câu đố an yên đang chờ 
+ Bữa trưa ngon hơn khi có tớ!
+Khoa học chứng minh... có lẽ vậy 
+ Người bạn đêm tớ thích nhất!
+Ở lại giải một lát nhé 
+ Logic nhanh, bình yên lớn!
+Một ván làm tan căng thẳng trưa 
+ Dịu lại trước khi ngủ!
+Một câu đố làm dịu tất cả 
+ Giờ thưởng cho lũ mèo!
+Giải một ván, cả hai đều thắng 
+ Nụ chúc ngủ ngon cần...
+Một câu đố trước, được chứ? 
+ Cà phê không chữa được!
+Nhưng một câu đố thì có thể 
+ Khép ngày thật dịu!
+Ván nhẹ nhàng, mộng ngọt ngào 
+ Tan làm đi thôi!
+Giờ trưa là của tớ, nhớ chứ? 
+ Tớ ngáp to lắm rồi!
+Một câu đố rồi ngủ chút 
+ Cú huých nhẹ buổi trưa!
+Lũ mèo giữ cho bạn một câu đố 
+ Buổi tối, chậm và ngọt!
+Một ván tĩnh để khép lại 
+ Tớ đang gõ chân đây!
+Nghỉ trưa, ngay bây giờ nhé 
+ Cuộn tròn cùng tớ đi!
+Câu đố ấm, mèo ấm hơn 
+ Tăng lực buổi trưa!
+Giải, cười, chinh phục buổi chiều 
+ Câu đố của cú đêm!
+Giờ tĩnh lặng, đầu óc trong 
+ Bạn là điểm sáng bữa trưa!
+Ghé qua và giải cùng tớ 
+ Đừng ngủ ngay mà!
+Tớ giữ một câu đố 
+ Não nở hoa giữa ngày!
+Vươn vai cho đầu óc một chút 
+ Tâm tĩnh rồi hãy nghỉ!
+Một ván nhẹ nhàng tối nay 
+ Giờ trưa, lao tới đây nào!
+Câu đố ấm áp, không cần gấp 
+ Bạn cùng giờ ngủ đây!
+Giải một ván, ngủ thật ngon 
+ Thưởng cho buổi sáng của bạn!
+Một câu đố nói làm tốt lắm 
+ Hãy để hôm nay nghỉ ngơi!
+Một ván an yên rồi đi ngủ 
+ Ăn trưa với mèo của bạn?
+Tớ đã đồng ý rồi đấy! 
+ Ngủ ngon nhé, người của tớ!
+Một ván cuối cùng bên nhau 
+Bật Giọng Nói
+Tắt Giọng Nói
+Vui lòng kiểm tra kết nối mạng.
+X-Assist đã kết thúc! Cảm ơn bạn đã ủng hộ!
+X-Assist đã được nâng cấp. Thử ngay nhé!
+Bảng Xếp Hạng
+Nhanh như chớp! +%d
+Nhanh nhạy! +%d
+Chắc chắn & sắc bén! +%d
+Tổng điểm=%d
+Chúng tôi đã điều chỉnh vài chi tiết để cải thiện trải nghiệm tổng thể. Cảm ơn bạn đã ủng hộ!
+Mèo của bạn vẫn luôn nghĩ về bạn
+Một chút bạn mèo đồng hành, giúp đầu óc bạn nhạy bén mỗi ngày
+Cho Phép Thông Báo
+Bảng Xếp Hạng
+Đi Nhận Thưởng
+Phiên Mới
+[center]Chơi để tìm [img=66x64]res://assets/sprites/game/tool_cat_item.png[/img] và tăng hạng trong mỗi sự kiện. Hãy nhắm tới hạng cao hơn![/center]
+[center]Chơi để thu thập [img=80x80]res://assets/sprites/game/fish_full.png[/img] và tăng hạng trong mỗi sự kiện. Hãy nhắm tới hạng cao hơn![/center]
+Chạm để Tiếp Tục
+Hoàn thành các màn chính
+Dẫn đầu Bảng Xếp Hạng
+Tìm mèo để tăng hạng của bạn
+Thu thập cá để tăng hạng của bạn
+Nhận khung và quà độc quyền
+Nhận khung độc quyền
+[center][font_size=40]Tiến bộ ấn tượng! Bạn đã vọt lên [/font_size][color=#F19320][font_size=46][b]%d[/b][/font_size][/color][font_size=40] bậc.[/font_size][/center]
+Bạn đã giành hạng nhất [color=#%s][font=%s][font_size=80]%d[/font_size][/font][/color] lần!
+Bạn đã giành hạng nhì [color=#%s][font=%s][font_size=80]%d[/font_size][/font][/color] lần!
+Bạn đã giành hạng ba [color=#%s][font=%s][font_size=80]%d[/font_size][/font][/color] lần!
+[center][font_size=40]Xuất sắc! Bạn đang ở vị trí thứ nhất.[/font_size][/center]
+[center][font_size=40]Làm tốt lắm! Bạn đã giành vị trí thứ hai.[/font_size][/center]
+[center][font_size=40]Chúc mừng! Bạn hiện ở vị trí thứ ba.[/font_size][/center]
+[center][font_size=40]Tiến bộ ấn tượng! Bạn đã vọt lên [/font_size][color=#F19320][font_size=46][b]%d[/b][/font_size][/color][font_size=40] bậc.[/font_size][/center]
+[center][font_size=40]Hoan hô! Hạng của bạn tăng thêm [/font_size][color=#F19320][font_size=46][b]%d[/b][/font_size][/color][font_size=40] bậc.[/font_size][/center]
+[center][font_size=40]Tuyệt vời! Bạn leo nhanh thêm [/font_size][color=#F19320][font_size=46][b]%d[/b][/font_size][/color][font_size=40] bậc.[/font_size][/center]
+[center][font_size=40]Tốt lắm! Bạn đi lên thêm [/font_size][color=#F19320][font_size=46][b]%d[/b][/font_size][/color][font_size=40] bậc.[/font_size][/center]
+Trang Cá Nhân
+Ảnh Đại Diện
+Xác Nhận
+Giành vị trí thứ nhất trong thử thách để nhận khung này!
+Xuất chúng
+Bạn đã nghiền nát câu đố KHÓ này ngay lần đầu!
+Không thể cản
+Cấp độ KHÓ này không làm chậm bạn được!
+Bộ óc thiên tài
+Màn trình diễn thiên tài thực sự trên lưới KHÓ này!
+Phi thường
+Khiến câu đố KHÓ trông như làn gió nhẹ!
+Vượt trội
+Logic hoàn hảo ngay từ đầu!
+Choáng ngợp
+Chiến thắng hoàn hảo trên lưới phức tạp thế này!
+Ngoạn mục
+Khó ư? Không phải với bộ óc rực rỡ của bạn!
+Bạn đã điều hướng câu đố thử thách này hoàn hảo!
+Không thực
+Logic đẳng cấp cao nhất được trưng bày ở đây!
+Vinh quang
+Thật là chiến thắng nhanh và hoàn hảo ở cấp KHÓ!
+Khải hoàn
+Sự kiên trì của bạn trên câu đố KHÓ này đã đền đáp!
+Kiên cường
+Bạn tiếp tục thử và cuối cùng đã bẻ khóa mã khó!
+Chiến thắng
+Chế độ khó bị chinh phục bằng quyết tâm thuần túy!
+Không lay chuyển
+Bạn không bao giờ bỏ cuộc, và điều đó thật xứng đáng!
+Bắt được rồi
+Cần thêm chút công sức, nhưng chiến thắng tự hào là của bạn!
+Nhà vô địch
+Nhà vô địch thật sự vượt qua câu đố khó nhất!
+Bất khuất
+Chế độ khó thử thách bạn, nhưng bạn đứng vững và thắng!
+Làm tốt lắm
+Mất chút thời gian, nhưng cấp KHÓ hoàn toàn là của bạn!
+Cuộc chiến khiến chiến thắng vất vả này ngọt ngào hơn!
+Thành công
+Bạn đã đánh bại một câu đố thật sự cứng đầu và ranh mãnh!
+Chuyên gia
+Bạn đặt mỗi chú mèo đúng nơi thuộc về!
+Bất khả xâm phạm
+Bảng thành tích hoàn toàn sạch! Logic của bạn thật kinh ngạc!
+Purr-fect
+0 sai sót! Mỗi nước đi được tính toán hoàn hảo!
+Lớp bậc thầy
+Không một sơ suất! Bạn là chuyên gia giải đố!
+Chính xác
+Mỗi vị trí đặt 100% chính xác và tinh vi!
+Phẫu thuật
+Logic chính xác không một sai lầm!
+Liền mạch
+Một lượt chơi hoàn toàn mượt từ đầu đến cuối!
+Thực thi hoàn hảo từ đầu đến cuối!
+Mỗi nước đi được tính toán và 100% đúng!
+Không tì vết
+Hồ sơ trong sạch! Bạn khiến điều này trông quá dễ!
+Thành Công
+Cuối cùng bạn đã tìm ra mẹo ẩn giấu!
+Đã Giải Quyết
+Bạn đã kiên nhẫn xử lý hết những chỗ rắc rối!
+Xuất Sắc
+Đường đi gập ghềnh, nhưng bạn đã tới đích thành công!
+Đã Vượt Qua
+Bạn đã giải mã câu đố thật xuất sắc và kiên nhẫn!
+Làm Tốt Lắm
+Bạn đã điều chỉnh chiến thuật và tìm ra giải pháp đúng!
+Hoàn Thành
+Câu đố có vài khúc quanh, nhưng bạn vẫn thắng!
+Xong Rồi
+Mất một lúc, nhưng cuối cùng lũ mèo đã tìm được chỗ của mình!
+Bạn đã gỡ rối lưới khó này thành công!
+Bàn cờ rắc rối, nhưng bạn đã theo tới cuối!
+Đã Mở Khóa
+Bạn đã dọn sạch mớ rối và giành chiến thắng xứng đáng!
+Khéo Lắm
+Bạn đã đi qua màn này thật đẹp và mượt.
+Một chiến thắng vững vàng ngay lần thử đầu tiên!
+Tuyệt Hảo
+Bạn đã giải lưới này bằng logic điềm tĩnh và vững vàng!
+Lần thử đầu và bạn đã chốt trọn giải pháp!
+Một ván giải rất gọn trên lưới khó một cách dễ chịu!
+Tuyệt Vời
+Trực giác mạnh của bạn dẫn thẳng tới đích!
+Chơi Hay
+Xử lý câu đố này thật bậc thầy từ đầu đến cuối!
+Nước Đi Thông Minh
+Bạn đã thật sự chứng minh kỹ năng giải đố ở đây!
+Tuyệt Diệu
+Bạn đã phá mã thật dễ dàng và nhanh chóng!
+Đỉnh Cao
+Một màn thể hiện tuyệt vời ngay từ vạch xuất phát!
+Chế độ họa tiết
+Chơi ngay
+Mắt Đại Bàng
+Liên Hoàn
+Thời gian
+Vượt qua
+Bậc thầy
+Câu đố KHÓ? Xử lý nhẹ nhàng!
+Không thể tin
+Giải lưới KHÓ nhanh vậy? Tuyệt vời!
+Thiên tài
+Câu đố khó chỉ là khởi động với bạn!
+Huyền thoại
+Chỉ trí tuệ sắc bén mới đánh bại lưới KHÓ này!
+Câu đố KHÓ này không sánh nổi với logic của bạn!
+Cuối cùng
+Câu đố khó nhằn, nhưng bạn đã phá được!
+Đòi hỏi nỗ lực, nhưng cấp KHÓ đã bị đánh bại!
+Bạn cần ít lần thử hơn hầu hết!
+Vượt qua
+Câu đố KHÓ đó không ngăn được bạn!
+Thật là bài não! Cuối cùng bạn đã có!
+Hoàn hảo
+0 lỗi! Mỗi chú mèo đặt hoàn hảo!
+Không tì vết
+0 sai sót! Logic của bạn chính xác tuyệt đối!
+Hoàn hảo
+Không lỗi, bạn là bậc thầy thực thụ!
+Chuẩn xác
+Không một dấu sai. Làm tốt lắm!
+Chiến lược
+Bạn đã hoàn toàn làm chủ cấp độ này.
+Thông minh
+Bạn điều hướng cấp độ này đẹp và mượt.
+Chiến thắng vững chắc ngay lần thử đầu!
+Tuyệt vời
+Bạn giải lưới này với logic bình tĩnh và vững chắc!
+Xuất sắc
+Lần đầu thử và bạn đã trúng đích!
+Giải quyết sạch sẽ trên lưới thú vị và hóc búa!
+Ấn tượng
+Trực giác mạnh mẽ dẫn bạn thẳng đến đích!
+Chơi hay
+Xử lý xuất sắc câu đố này từ đầu đến cuối!
+Nước đi khôn ngoan
+Bạn đã thực sự chứng minh kỹ năng giải đố!
+Tuyệt vời
+Bạn bẻ khóa mã dễ dàng và nhanh chóng!
+Đẳng cấp
+Màn trình diễn tuyệt vời ngay từ vạch xuất phát!
+Cuối cùng
+Câu đố hóc búa, nhưng bạn xử lý rất đẹp!
+Vượt qua
+Không phải lưới dễ, nhưng bạn đã tìm ra!
+Đã làm được
+Không dễ, nhưng logic của bạn thắng!
+Thành công
+Cuối cùng bạn đã tìm ra mẹo ẩn giấu!
+Bạn kiên nhẫn vượt qua mọi chỗ khó!
+Xuất sắc
+Con đường gập ghềnh, nhưng bạn đến đích!
+Hoàn thành
+Bạn giải mã câu đố rực rỡ và kiên nhẫn!
+Bạn điều chỉnh chiến lược và tìm ra giải pháp đúng!
+Xong xuôi
+Câu đố tung ra khúc quanh, nhưng bạn vẫn thắng!
+Bắt được
+Mất chút thời gian, nhưng cuối cùng những chú mèo cũng tìm được chỗ!
+Bạn đã gỡ rối lưới hóc búa này thành công!
+Kiên trì
+Ván khó, nhưng bạn đi đến cuối!
+Đã mở khóa
+Bạn dọn dẹp mớ hỗn độn và giành chiến thắng xứng đáng!
+Những chú mèo giữ chỗ cho bạn 
+ đi thôi!
+Câu đố mới, phiêu lưu mới! Mèo không thể chờ!
+Mèo tò mò 
+ bạn có bẻ khóa được không?
+Meo~ Mèo đã đợi bạn!
+Ván mới! Mèo cổ vũ bạn!
+Mèo nghe nói cái này hóc búa. Cho chúng xem tài của bạn!
+Cẩn thận, hooman 
+ mèo bảo cái này cắn đấy!
+Mèo trông lo lắng... cái này là Khó!
+Chào mừng trở lại! Mèo đã giữ ấm chỗ cho bạn.
+Mèo biết bạn sẽ quay lại 
+ thử lại nào!
+Vòng hai! Mèo cổ vũ bạn!
+Quay lại thêm? Mèo trân trọng sự kiên trì!
+Mèo không từ bỏ bạn. Bạn cũng đừng!
+Meo~ Một lần thử nữa là được!
+Bạn đang hăng máu! Ngay cả mèo cũng ấn tượng!
+Mèo đang xem... không áp lực, nhưng chúng tin bạn!
+Chuỗi purr-fect! Mèo có kỳ vọng cao.
+Những chú mèo thông minh nhất không cần gợi ý. Bạn là một trong số đó?
+Không gợi ý, không hoàn tác 
+ bạn đúng là thiên tài mèo!
+Ngay cả chú mèo lười nhất cũng tự hào về vòng vừa rồi!
+Mèo bảo bạn khiến nó trông dễ. Lần nữa nhé?
+Có tin đồn bạn giải nhanh hơn giấc ngủ mèo.
+Mèo gừ gừ tự hào sau lần giải mới nhất của bạn!
+Meo~ Mèo muốn xem lại lần nữa!
+{0} người chơi vượt qua cấp này ngay lần đầu!
+Tỷ lệ lần đầu của cấp này là {0} 
+ bạn đánh bại được xác suất chứ?
+Người chơi trung bình thử {0} lần. Đến lượt bạn!
+Chỉ {0} giải cấp này mà không dùng công cụ. Nhận thử thách?
+{0} người chơi đã hoàn thành cấp này 
+ tham gia nào!
+Bạn không đơn độc 
+ {0} người chơi cũng đã thử lại.
+{0} người chơi vượt qua sau khi thử lại. Bạn cũng làm được!
+Hầu hết cần {0} lần 
+ tiếp tục nào!
+Chỉ {0} người chơi giải cấp trước mà không có gợi ý 
+ bạn là một trong số đó!
+Bạn vượt qua mà không cần trợ giúp 
+ top {0} toàn cầu!
+Không công cụ! Điều đó đưa bạn lên trước {0} người chơi.
+Sự thật thú vị: {0} người chơi cần gợi ý. Không phải bạn!
+{0} người chơi đã khởi động lại cấp trước. Bạn giải ngay lần đầu!
+Đó là giải sạch! Chỉ {0} có thể nói điều tương tự.
+Không lỗi! Bạn ở top {0} cấp này.
+{0} cần hoàn tác cấp trước. Bạn còn không chớp mắt!
+Mèo đã kiểm tra 
+ {0} người chơi vượt qua ngay lần đầu!
+Meo~ Mèo nói {0} thấy cấp này hóc búa. Còn bạn?
+Mèo lén xem thống kê 
+ chỉ {0} giải cái này không cần công cụ!
+Một chú mèo thì thầm: trung bình {0} lần ở cấp này!
+Mèo trông lo lắng 
+ chỉ {0} vượt qua cấp Khó này ngay lần đầu!
+Chào mừng trở lại! Mèo nói {0} cũng thử lại.
+Mèo kiểm tra 
+ {0} vượt qua sau khi thử lại. Bạn làm được!
+Meo~ Đừng lo, {0} người chơi cần hơn một lần thử ở đây!
+Mèo không bao giờ bỏ cuộc, và {0} người chơi đã thử lại cũng vậy!
+Mèo kiểm tra 
+ chỉ {0} giải cái đó không có gợi ý. Bạn thật đặc biệt!
+Gừ~ {0} người chơi cần trợ giúp cấp trước. Nhưng không phải bạn, hooman thông minh!
+Mèo khoe khoang về bạn 
+ top {0} toàn cầu, không công cụ!
+Meo! {0} khởi động lại cái đó. Bạn khiến nó trông dễ!
+Mèo nói chỉ {0} hoàn thành mà không hoàn tác. Chào mừng vào câu lạc bộ!
+Một chú mèo kể: {0} dùng gợi ý vòng trước. Bạn? Không!
+{0} cần khởi động lại. Mèo biết bạn không cần!
+Mèo đếm rồi: bạn nhanh hơn {0} tổng số người chơi!
+Sẵn sàng cho thử thách mới chưa, mèo con?
+Ván mới, các bạn mèo 
+ đến giờ chơi!
+Tò mò rồi, mèo con? Xem trong này có gì!
+Meo~ Nào các bạn mèo, câu đố đang chờ!
+Nhảy lên nào, mèo con 
+ cuộc phiêu lưu bắt đầu!
+Người ta bảo hóc búa lắm, các mèo. Thử không?
+Cẩn thận, mèo con 
+ cái này cắn đấy!
+Vểnh tai lên, các mèo 
+ cái này Khó đấy!
+Chào mừng trở lại, mèo con 
+ chỗ vẫn còn ấm!
+Biết bạn sẽ quay lại, các mèo 
+ thử lại nào!
+Vòng hai, mèo con 
+ bạn làm được!
+Quay lại thêm, mèo con? Đó là tinh thần!
+Đừng bỏ cuộc, mèo con 
+ thêm lần nữa!
+Meo~ Một lần thử nữa là được, mèo con!
+Đang hăng, mèo con 
+ ngay cả chúng ta cũng ấn tượng!
+Không áp lực, các mèo 
+ nhưng chúng tôi tin bạn!
+Chuỗi purr-fect, mèo con 
+ tiếp tục nào!
+Chỉ mèo thông minh nhất mới bỏ qua gợi ý 
+ đó là bạn!
+Không gợi ý, không hoàn tác 
+ bạn là thiên tài, mèo con!
+Ngay cả chú mèo lười nhất giờ cũng tự hào về bạn!
+Bạn khiến nó trông dễ, mèo con 
+ lần nữa?
+Nhanh hơn giấc ngủ mèo, mèo con 
+ ấn tượng!
+Gừ gừ tự hào, mèo con 
+ làm tốt lắm!
+Meo~ Xem lại nào, các mèo 
+ một vòng nữa!
+Đã Bật Chế Độ Mẫu
+Đã Tắt Chế Độ Mẫu
+Bảng Xếp Hạng đã được nâng cấp. Cảm ơn bạn đã ủng hộ!
+Sự kiện Quà Tặng Giới Hạn đã kết thúc. Cảm ơn bạn đã tham gia Sự kiện Đặc biệt của chúng tôi! Mùa Giải Thường đã bắt đầu!
+Phục Hồi
+[color=#F19320]%s[/color] ngày Chuỗi Hằng Ngày bị gián đoạn!
+Xem video để tiếp tục từ chỗ bạn dừng lại.
+[color=#F19320]%s[/color] ngày Chuỗi Hằng Ngày bị gián đoạn!
+Xem video để phục hồi chúng.
+Đang tải...vui lòng đợi
+ Kiểm tra trí não giữa ngày
+Một câu đố, tập trung hơn 
+ Điểm danh hàng ngày: Buổi trưa
+Giữ vững chuỗi ngày hôm nay 
+ Phút thư giãn cho bản thân
+Một khoảnh khắc yên bình, dành riêng cho bạn 
+ 5 phút thư giãn logic
+Chơi một ván nhanh trước khi hết giờ nghỉ trưa 
+ 5 phút, thói quen lớn
+Hành động nhỏ mỗi ngày tạo nên kết quả lớn 
+ Món quà giữa ngày dành cho bạn
+Năm phút bình yên, không vội vã 
+ Thử thách câu đố buổi trưa
+Thử thách hàng ngày của bạn đã sẵn sàng 
+ Đừng bỏ lỡ hôm nay
+Đừng để đứt chuỗi ngày nhé 
+ Hít một hơi thật sâu rồi chơi nào
+Hãy để tâm trí bạn thư giãn một chút 
+ Đừng làm đứt chuỗi ngày
+Chỉ một câu đố để duy trì chuỗi 
+ Nhắc nhở thói quen giữa ngày
+Một câu đố duy trì thói quen 
+ Chút dịu dàng cho buổi trưa
+Cho tâm trí bạn một phút nghỉ ngơi nhẹ nhàng 
+ Rèn luyện trí não vào buổi trưa
+Bài tập rèn luyện logic nhanh 
+ Chuỗi ngày của bạn, qua từng ngày
+Duy trì chuỗi ngày qua giờ nghỉ trưa 
+ Sống chậm lại một chút
+Một câu đố nhẹ nhàng, không áp lực 
+ Đã mở khóa cấp độ mới
+Xem bạn có giải được không nhé 
+ Kiểm tra độ kiên trì
+Giải nhanh một câu đố, tạo thói quen tốt 
+ Khởi động lại giữa ngày
+Phút nghỉ ngơi yên bình trước khi vào buổi chiều 
+ Đánh tan cơn buồn ngủ buổi trưa
+Logic giúp đánh thức trí não bạn 
+ Thói quen giờ nghỉ trưa
+Hãy biến nó thành một phần trong ngày của bạn 
+ Nuông chiều tâm trí bạn
+Thư giãn nhẹ nhàng với câu đố buổi trưa 
+ Lưới câu đố hôm nay đang chờ bạn
+Hoàn thành trước 1 giờ chiều nhé 
+ Những chiến thắng nhỏ tích lũy dần
+Một câu đố buổi trưa cũng rất giá trị 
+ Chỉ cần hít thở và giải đố
+Không có gì vội vã, chỉ có sự bình yên 
+ Lấy lại sự tập trung nhanh chóng
+Một câu đố, tâm trí thông suốt 
+ Theo dõi thói quen: Khung giờ trưa
+Hoàn thành trước 1h trưa nhé 
+ Trạm nghỉ trưa dịu êm
+Tạm gác lại buổi sáng một chút nhé 
+ Thử thách giờ nghỉ trưa
+Thử tài logic trong 3 phút 
+ Giữ vững phong độ
+Hôm qua đã giải được. Hôm nay cũng thế nhé 
+ Dành cho bản thân phút giây yên tĩnh
+Một câu đố bình yên, chỉ năm phút 
+ Khởi động trí não buổi trưa
+Giữ cho trí óc luôn nhạy bén 
+ Thói quen hằng ngày đang nhớ bạn đấy
+Hoàn thành câu đố hôm nay nào 
+ Phút nghỉ ngơi trí não, phiên bản buổi trưa
+Không cần vội, cứ thư thả thôi 
+ Một lượt chơi, một chiến thắng
+Nhận ngay trước khi hết buổi trưa nhé 
+ Kiểm tra tiến độ: Giữa ngày
+Xem bạn đã đi được bao xa rồi nhé 
+ Cho phép bản thân tạm dừng một chút
+Chỉ năm phút thôi cũng đáng giá 
+ Kiểm tra chuỗi giải đố
+Duy trì chuỗi ngày hôm nay nào 
+ Một nhiệm vụ, phiên bản buổi trưa
+Gạch bỏ nó khỏi danh sách của bạn nào 
+ Lời nhắc nhở nhẹ nhàng buổi trưa
+Bạn xứng đáng có một phút giây yên tĩnh 
+ Bài tập tập trung buổi trưa
+Rèn luyện trí não chỉ trong vài phút 
+ Nhắc nhở duy trì chuỗi
+Đừng để bị đứt chuỗi hôm nay nhé 
+ Khởi động nhẹ nhàng trước buổi chiều
+Thư giãn đầu óc với một câu đố 
+ Độ khó thử thách hôm nay: Khó
+Liệu bạn có giải được không 
+ Kiểm tra kỷ luật giữa ngày
+Một câu đố nhanh giúp xây dựng thói quen 
+ Góc bình yên của bạn vào buổi trưa
+Một góc trốn yên bình trong chốc lát 
+ Khởi động lại trí não buổi trưa
+Xóa tan sương mù trí não bằng logic 
+ Thói quen tốt nhất của bạn từ trước đến nay
+Hãy thử sức vào buổi trưa nhé 
+ Thư giãn trong một phút
+Để những ồn ào buổi sáng tan biến 
+ Lưới câu đố chưa giải từ sáng
+Hãy hoàn thành nó trong giờ nghỉ nhé 
+ Giờ nghỉ trưa, nâng cấp bản thân
+Biến thời gian rảnh rỗi thành sự tiến bộ 
+ Một chút yêu thương bản thân
+5 phút tĩnh lặng giữa trưa 
+ Thắng nhanh trước 1 giờ chiều
+Một câu đố, một chiến thắng 
+ Mục tiêu hàng ngày: 1 Câu đố
+Giữa trưa là thời điểm tuyệt vời để giải đố 
+ Khởi đầu buổi chiều nhẹ nhàng
+Bắt đầu nhẹ nhàng với một câu đố thư giãn 
+ Giờ nghỉ logic, không chỉ là nghỉ cà phê
+Đánh thức trí não, không chỉ cơ thể bạn 
+ Kiểm tra chuỗi của bạn
+Đừng để đứt chuỗi nhé 
+ Tạm dừng, hít thở, giải đố nhẹ nhàng
+Không áp lực, chỉ có bình yên 
+ Câu đố mới, kỷ lục mới
+Hãy thử vượt qua thời gian tốt nhất của bạn 
+ Thói quen nhỏ, phát triển lớn
+Mỗi ngày một câu đố giữa trưa 
+ Phút dịu êm giữa trưa
+Một chút thư thái cho cả ngày dài 
+ Thử thách tập trung giữa trưa
+3 phút để rèn luyện tư duy nhạy bén 
+ Thời gian ý nghĩa: Giờ trưa
+Biến giờ nghỉ của bạn thành một thói quen 
+ Thời gian yên tĩnh, ngay lúc này
+Bạn xứng đáng có một phút nghỉ ngơi bình yên 
+ Chuỗi ngày của bạn đang cần bạn
+Giải một câu đố để duy trì chuỗi nhé 
+ Cập nhật tiến trình hàng tuần
+Xem chuỗi ngày của bạn trong tuần này 
+ Thả lỏng đôi vai của bạn
+Một câu đố nhẹ nhàng để giải tỏa căng thẳng 
+ Nửa ngày đã trôi qua
+Tự thưởng cho bản thân một câu đố nhé 
+ Lượt chơi hôm nay: Còn trống
+Giải câu đố giữa trưa ngay nào 
+ Khoảnh khắc dành riêng cho bạn
+Yên tĩnh, êm đềm, không vội vã 
+ Cảnh báo đầu óc mơ màng
+Một câu đố nhanh sẽ giúp bạn tỉnh táo ngay 
+ Vòng lặp thói quen: Nhắc nhở giữa trưa
+Giải đố xong rồi tiếp tục ngày mới thôi 
+ Sự tĩnh lặng giữa trưa
+Tìm một chút yên bình trong ngày bận rộn 
+ Thử thách giải nhanh giữa trưa
+Bạn có thể giải câu đố này nhanh đến mức nào 
+ Thêm một câu đố vào thói quen của bạn
+Đến giờ trưa rồi, đúng lịch trình nhé 
+ Cho tâm trí nghỉ ngơi một chút
+Một câu đố nhẹ nhàng, không tính giờ 
+ Lên cấp giờ nghỉ trưa
+Vừa ăn vừa tiến bộ 
+ Kiên trì thắng dồn dập
+Một câu đố nhỏ vào buổi trưa 
+ Phút nghỉ ngơi nhẹ nhàng buổi trưa
+Bạn không cần lý do để nghỉ ngơi mà 
+ Giờ ăn nhẹ cùng logic
+Thử thách trí tuệ gọn nhẹ 
+ Đừng đặt lại bộ đếm
+Giải ngay để giữ chuỗi 
+ Thư giãn giữa ngày
+Một khoảnh khắc bình yên, chỉ thế thôi 
+ Độ khó hôm nay: Đang tăng
+Sẵn sàng cho bàn chơi khó hơn 
+ Điểm danh thói quen giữa ngày
+Nỗ lực vì chính mình 
+ Nghi thức trưa yên bình của bạn
+Nhẹ nhàng bắt đầu, nhẹ nhàng kết thúc 
+ Tập trung cao độ giữa ngày
+Một câu đố, không chút phân tâm 
+ Xây dựng thói quen qua mỗi buổi trưa
+Lượt luyện tập hôm nay đã sẵn sàng 
+ Nghỉ năm phút, chỉ dành cho bạn
+Một câu đố bình yên, không chút lo toan 
+ Phá kỷ lục thời gian hôm qua
+Hôm nay bạn có thể giải nhanh hơn không 
+ Bảo vệ chuỗi: Phiên bản buổi trưa
+Giải một bàn để bảo toàn chuỗi 
+ Bình yên giữa ngày, không vội vã
+Hãy để tâm trí thư thái nhẹ nhàng 
+ Thử thách buổi trưa đã mở
+Các câu đố giới hạn làm mới mỗi ngày 
+ Nghi thức tập trung của bạn
+Vẫn khung giờ đó, vẫn thói quen đó, buổi trưa 
+ Một nốt lặng nhẹ nhàng trước khi tiếp tục
+Hít thở sâu rồi tiếp tục nào 
+ Tạm gác ồn ào, mài sắc tư duy
+Một câu đố logic vào buổi trưa 
+ Điểm danh thói quen
+Lại đến giờ đó rồi 
+ Cho tâm trí một chút không gian
+Một khoảng nghỉ bình yên ngay buổi trưa 
+ Cấp độ tiếp theo đang chờ bạn
+Mở khóa ngay trong giờ nghỉ trưa 
+ Tự theo dõi thành tích
+Một câu đố buổi trưa, một điểm số 
+ Trưa bình yên, lòng thư thái
+Một khoảnh khắc nhẹ nhàng giữa ngày bận rộn 
+ Động lực giữa ngày
+Giữ vững chuỗi phong độ nhé 
+ Luyện Não Buổi Tối
+Một câu đố trước khi khép lại ngày dài 
+ Điểm Danh Mỗi Đêm
+Giữ vững chuỗi của bạn trước khi ngủ nhé 
+ Thư Giãn Nhẹ Nhàng
+Phút giây tĩnh lặng trước giờ ngủ 
+ Thử Thách Tối Nay Đã Sẵn Sàng
+Xem bạn có giải được không nhé 
+ 5 Phút Trước Khi Ngủ
+Thói quen nhỏ tích lũy mỗi ngày 
+ Món Quà Cho Bản Thân Tối Nay
+Năm phút bình yên, không chút vội vã 
+ Đừng Để Đứt Chuỗi Tối Nay
+Chỉ cần một lượt giải để tiếp tục 
+ Đừng Bỏ Lỡ Tối Nay
+Đừng để mất chuỗi thắng nhé 
+ Thư Giãn Trước Khi Ngủ
+Để đầu óc thư thái nhẹ nhàng 
+ Thư Giãn Cùng Tư Duy
+Thử thách nhẹ nhàng trước giờ ngủ 
+ Nhắc Nhở Thói Quen Trước Khi Ngủ
+Một câu đố để duy trì thói quen 
+ Một Chút Nhẹ Nhàng Cho Buổi Tối
+Cho tâm trí một chút bình yên cuối ngày 
+ Cấp Độ Mới Đã Mở Khóa Tối Nay
+Sẵn sàng thử sức chưa nào 
+ Chuỗi Thắng Của Bạn Qua Mỗi Đêm
+Giữ vững phong độ tối nay nhé 
+ Thư Giãn Trước Giờ Ngủ
+Một câu đố nhẹ nhàng, không áp lực 
+ Xua Tan Mệt Mỏi Buổi Tối
+Một câu đố nhanh giúp bạn tập trung hơn 
+ Điểm Danh Thói Quen: Buổi Tối
+Giải đố nhanh, xây dựng thói quen vững chắc 
+ Tái Tạo Năng Lượng Buổi Tối
+Phút nghỉ ngơi thư thái trước khi ngủ 
+ Lượt Cuối Giải Đố Hôm Nay
+Giải xong rồi tắt đèn đi ngủ thôi 
+ Thói Quen Buổi Tối
+Hãy biến nó thành một phần buổi tối của bạn 
+ Nuông Chiều Tâm Trí Tối Nay
+Một câu đố nhẹ nhàng trước khi ngủ 
+ Khởi Động Lại Sự Tập Trung Buổi Tối
+Chỉ một câu đố để giải tỏa tâm trí 
+ Những Chiến Thắng Nhỏ Trước Khi Ngủ
+Giải một câu đố tối nay cũng rất ý nghĩa 
+ Chỉ Cần Hít Thở Và Thư Thả Giải Đố
+Không vội vã, chỉ cần bình yên 
+ Thử Thách Trước Giờ Đi Ngủ
+Thử thách tư duy vào những giờ phút tĩnh lặng 
+ Theo dõi thói quen: Khung giờ tối
+Hoàn thành trước nửa đêm nhé 
+ Khép lại ngày hôm nay thật nhẹ nhàng
+Để ngày trôi qua thật nhẹ nhàng 
+ Nâng cấp IQ tối nay
+Giữ đầu óc nhạy bén trước khi ngủ 
+ Giữ vững phong độ tối nay
+Hôm qua đã giải được. Hôm nay cũng thế nhé 
+ Tự thưởng cho mình sự yên bình tối nay
+Một câu đố bình yên, chỉ năm phút 
+ Một ván trước khi tắt đèn
+Giành chiến thắng tối nay nào 
+ Thói quen hằng ngày đang chờ bạn
+Hoàn thành câu đố hôm nay trước khi ngủ 
+ Thư giãn tâm trí, Phiên bản ban đêm
+Không vội vã, chỉ cần thư thái 
+ Kiểm tra chuỗi: Tối nay
+Duy trì chuỗi trước nửa đêm 
+ Kiểm tra tiến trình: Tối nay
+Xem hôm nay bạn đã tiến bộ thế nào 
+ Cho phép bản thân nghỉ ngơi
+Chỉ năm phút cũng rất ý nghĩa 
+ Luyện tập tập trung ban đêm
+Vài phút cho đầu óc nhạy bén hơn 
+ Một nhiệm vụ, Phiên bản ban đêm
+Hoàn thành trước khi ngủ nhé 
+ Lời nhắc nhẹ nhàng trước giờ ngủ
+Bạn xứng đáng có một kết thúc ngày yên bình 
+ Độ khó tối nay: Khó
+Thử thách bản thân giải xem nào 
+ Nhắc nhở duy trì chuỗi tối nay
+Đừng để đứt chuỗi hôm nay nhé 
+ Thư giãn nhẹ nhàng trước khi ngủ
+Thư thái tâm trí với một câu đố 
+ Giải tỏa tâm trí buổi tối
+Xóa tan ồn ào hôm nay bằng logic 
+ Kiểm tra kỷ luật ban đêm
+Một câu đố nhanh giúp rèn thói quen 
+ Góc bình yên của bạn tối nay
+Một góc trốn bình yên, ngắn ngủi 
+ Bảng đố vẫn chưa được giải
+Hoàn thành trước khi ngủ nhé 
+ Thói quen tốt nhất, thử thách mỗi tối
+Thử ngay trước khi ngủ 
+ Thư giãn một lát tối nay
+Để những ồn ào trong ngày tan biến 
+ Chiến thắng nhanh trước khi ngủ
+Một câu đố, một chiến thắng 
+ Giờ nghỉ buổi tối, nâng tầm bản thân
+Biến nó thành bước tiến bộ 
+ Chút Yêu Chiều Bản Thân Mỗi Tối
+Năm phút tĩnh lặng trước khi ngủ 
+ Rèn Logic Trước Khi Tắt Đèn
+Rèn luyện trí não, không chỉ là nghỉ ngơi 
+ Mục Tiêu Hằng Ngày: 1 Câu Đố
+Tối nay là cơ hội cuối cùng trong ngày 
+ Thư Giãn Trước Giấc Ngủ
+Khép lại ngày dài bằng một câu đố bình yên 
+ Câu Đố Mới, Kỷ Lục Mới
+Phá kỷ lục thời gian của bạn tối nay nhé 
+ Kiểm Tra Chuỗi Ngày Tối Nay
+Đừng để đứt chuỗi nhé 
+ Dừng Lại, Thở Đều, Ngủ Ngon
+Không áp lực, chỉ có sự bình yên 
+ Thử Thách Tập Trung Tối Nay
+3 phút để trí não thêm nhạy bén 
+ Thói Quen Nhỏ, Phiên Bản Mỗi Tối
+Một câu đố trước khi ngủ 
+ Buổi Tối Dịu Êm
+Một chút bình yên trước khi nghỉ ngơi 
+ Chuỗi Ngày Cần Bạn Duy Trì Tối Nay
+Chỉ một câu đố để giữ vững chuỗi 
+ Thời Gian Ý Nghĩa: Tối Nay
+Biến buổi tối thành một thói quen 
+ Phút Giây Tĩnh Lặng Trước Khi Ngủ
+Bạn xứng đáng có một kết thúc ngày thật bình yên 
+ Ngày Sắp Khép Lại
+Tự thưởng cho mình một câu đố nhé 
+ Tiến Trình Tuần, Cập Nhật Tối Nay
+Xem chuỗi ngày của bạn trong tuần này 
+ Thả Lỏng Đôi Vai Tối Nay
+Một câu đố nhẹ nhàng để xua tan căng thẳng 
+ Giải Tỏa Đầu Óc Cuối Ngày
+Một câu đố nhanh giúp khởi động lại tâm trí 
+ Khung Giờ Tối Nay: Đang Trống
+Lấp đầy buổi tối bằng một câu đố ngay thôi 
+ Khoảnh Khắc Dành Riêng Cho Bạn Tối Nay
+Yên bình, thư thả, không vội vã 
+ Giải Đố Siêu Tốc Tối Nay
+Bạn có thể giải câu đố này nhanh đến mức nào 
+ Vòng Lặp Thói Quen: Kích Hoạt Mỗi Tối
+Giải đố xong rồi thảnh thơi đi ngủ 
+ Đêm Tĩnh Lặng
+Tìm một chút bình yên trước khi ngủ 
+ Lên Cấp Trước Khi Ngủ
+Tiến bộ một chút trước khi chìm vào giấc ngủ 
+ Thói Quen Của Bạn Cần Câu Đố Tối Nay
+Đúng lịch trình trước khi đi ngủ 
+ Thư Giãn Tâm Trí Trước Khi Cơ Thể Nghỉ Ngơi
+Một câu đố nhẹ nhàng, không áp lực thời gian 
+ Thử Thách Logic Nhẹ Trước Khi Ngủ
+Thử thách trí tuệ nhanh gọn 
+ Kiên Trì Hơn Cường Độ, Tối Nay
+Một câu đố nhỏ trước khi ngủ 
+ Một Phút Nghỉ Ngơi Nhẹ Nhàng Tối Nay
+Bạn không cần lý do để nghỉ ngơi 
+ Độ Khó Tối Nay: Đang Tăng
+Sẵn sàng cho một lưới khó hơn 
+ Đừng Để Bộ Đếm Trở Về 0 Qua Đêm
+Giải ngay, giữ vững bộ đếm 
+ Khép Lại Ngày Dài Nhẹ Nhàng
+Một khoảnh khắc bình yên, chỉ đơn giản là thế 
+ Tập Trung Buổi Tối, Sẵn Sàng
+Một câu đố, không chút xao nhãng 
+ Điểm Danh Thói Quen Mỗi Tối
+Dành thời gian cho bản thân tối nay nhé 
+ Nghi Thức Đi Ngủ Bình Yên
+Thả lỏng nhẹ nhàng, từ từ thư giãn 
+ Vượt Qua Thời Gian Hôm Nay
+Tối nay bạn có thể giải nhanh hơn không 
+ Duy Trì Mỗi Tối
+Lượt luyện tập tối nay đã sẵn sàng 
+ Nghỉ Năm Phút Trước Khi Ngủ
+Một câu đố bình yên, không áp lực 
+ Thử Thách Đêm Đã Bắt Đầu
+Các câu đố giới hạn làm mới mỗi ngày 
+ Bảo Vệ Chuỗi: Phiên Bản Ban Đêm
+Chỉ một lượt giải để giữ an toàn 
+ Đêm Bình Yên, Không Vội Vã
+Để tâm trí bạn nhẹ nhàng thư thái 
+ Lắng Dịu Ngày Dài, Rèn Luyện Tâm Trí
+Một câu đố logic trước khi ngủ 
+ Nghi Thức Tập Trung Mỗi Tối
+Vẫn giờ này, vẫn thói quen này, tối nay 
+ Phút Nghỉ Ngơi Nhẹ Nhàng Trước Khi Ngủ
+Hít thở sâu, rồi nghỉ ngơi 
+ Cấp Độ Ngày Mai Đang Chờ Đón
+Đi trước một bước trước khi ngủ 
+ Điểm Danh Thói Quen: Giờ Đi Ngủ
+Lại đến giờ rồi 
+ Để Tâm Trí Được Lắng Dịu
+Một phút nghỉ ngơi bình yên, ngay trước khi ngủ 
+ Động Lực Buổi Tối
+Duy trì chuỗi thật mạnh mẽ 
+ Tự Ghi Điểm Cho Bản Thân Tối Nay
+Một câu đố, một điểm 
+ Đêm Thanh Bình, Lòng Trọn Vẹn
+Một kết thúc nhẹ nhàng cho ngày bận rộn 
+ Cơ Hội Cuối Cùng Cho Câu Đố Hôm Nay
+Giải ngay trước khi ngày mới bắt đầu 
+Chạm vào chiếc chuông, thắp sáng chuỗi của bạn!
+Chạm vào cuộn len, thắp sáng chuỗi của bạn!
+Chạm vào bàn chân mèo, thắp sáng chuỗi của bạn!
+Chạm vào mèo, thắp sáng chuỗi của bạn!
+Chạm vào thùng giấy, thắp sáng chuỗi của bạn!
+Kho Màn %d×%d
+LK Tối ưu %dx%d
+Nhập số màn
+Kho thường
+Kho LK biến thể
+Xoay/soi gương
+Kho LK tối ưu
+Họa tiết số
+Kho họa tiết đặc biệt SP
+Về Trang Chủ
+< Quay lại
+Chọn cấp chiến thuật
+Kho lưu trữ LinkedIn Queens
+%d×%d ~ %d×%d  LinkedIn tối ưu
+%d màn  ·  Xếp theo ngày
+%d màn  ·  LK biến thể
+Choáng ngợp
+Tuyệt vời
+Hoàn hảo
+Xuất sắc
+Siêu đỉnh
+Cấp bạc hà mèo
+Vồ mồi sử thi
+Cuộn lông huyền thoại
+Chuỗi đã bị gián đoạn {0} ngày!
+Xem quảng cáo để khôi phục.
+Khôi phục
+Xem quảng cáo để tiếp tục từ tiến trình gần nhất.
+Tiếp tục
+Đang tải, vui lòng chờ
+Mèo Rạng Đông
+Mèo Buổi Sáng
+Mèo Sáng Muộn
+Mèo Giữa Trưa
+Mèo Lười
+Mèo Hoàng Hôn
+Mèo Nửa Đêm
+Thức trước cả rạng đông. Mèo cũng vậy.
+Bảng đầu tiên của ngày. Thời điểm tuyệt nhất.
+Buổi sáng, bảng nào cũng trôi mượt.
+Chúng ngủ. Bạn giải.
+Giờ cao điểm của mèo.
+Thời điểm hoàn hảo để thư giãn.
+thức đêm
+ là do mèo phát minh.
+Qua nửa đêm. Bạn là một trong chúng tôi.
+Hôm nay thuộc 1% điểm danh sớm nhất.
+Hôm nay thuộc 3% điểm danh sớm nhất.
+Hôm nay thuộc 5% điểm danh sớm nhất.
+Hôm nay thuộc 10% điểm danh sớm nhất.
+Hôm nay thuộc 20% điểm danh sớm nhất.
+Hôm nay thuộc 30% điểm danh sớm nhất.
+Vẫn có 8% mèo đang giải cùng bạn.
+Vẫn có 10% mèo đang giải cùng bạn.
+Khá lắm! Bạn đang ở #%d!
+Tuyệt vời! Bạn kết thúc ở #%d!
+THƯỞNG KHÔNG 
+Xuất sắc! Bạn hiện đang ở vị trí thứ 1!
+Làm tốt lắm! Bạn hiện đang trong top 2!
+Chúc mừng! Bạn hiện đang trong top 3!
+Tốt lắm! Bạn hiện đang trong top {0}!
+Quá tuyệt! Bạn kết thúc ở vị trí thứ {0}!
+Lỗi mạng. Vui lòng kiểm tra kết nối của bạn.
+Không quảng cáo
+Thêm nhiều đặc quyền Premium giá trị
+Không có quảng cáo banner
+Không có quảng cáo chuyển tiếp
+%d Tọa Độ / ngày
+%d Gợi Ý / ngày
+Khôi phục giao dịch
+Khoản thanh toán sẽ được trừ qua Apple ID/tài khoản Google của bạn sau khi bạn xác nhận mua
+Gói đăng ký sẽ tự động gia hạn, trừ khi bạn tắt gia hạn tự động ít nhất 24 giờ trước khi chu kỳ hiện tại kết thúc
+Kích hoạt Premium thành công!
+Dùng ngay
+Không có quảng cáo banner
+Không có quảng cáo chuyển tiếp
+%d Tọa Độ mỗi khi bạn mở ứng dụng
+%d Gợi Ý mỗi khi bạn mở ứng dụng
+Premium có hiệu lực đến %s
+Ngày hết hạn
+Mua Premium
+Mua không thành công. Vui lòng thử lại sau.
+Đã khôi phục giao dịch!
+Không tìm thấy giao dịch trước đó.
+Meowdoku Premium
+Hàng tuần
+Hàng tháng
+Hàng năm
+Các giao dịch này là gói đăng ký tự động gia hạn. Khoản thanh toán sẽ được trừ vào tài khoản Apple ID của bạn sau khi bạn xác nhận mua. Gói đăng ký sẽ tự động gia hạn, trừ khi tính năng tự động gia hạn được tắt ít nhất 24 giờ trước khi chu kỳ hiện tại kết thúc. Phí gia hạn sẽ được trừ vào tài khoản của bạn trong vòng 24 giờ trước khi chu kỳ hiện tại kết thúc. Sau khi mua, bạn có thể quản lý và tắt tính năng tự động gia hạn của gói đăng ký trong phần cài đặt tài khoản của bạn trên App Store.
+Nếu bạn hủy gói đăng ký, khoản phí của chu kỳ thanh toán hiện tại sẽ không được hoàn lại và bạn vẫn có thể sử dụng toàn bộ đặc quyền của gói đăng ký cho đến khi chu kỳ hiện tại kết thúc. Việc hủy chỉ có hiệu lực sau khi chu kỳ đăng ký hiện tại của bạn hết hạn.
+Đây là các gói đăng ký tự động gia hạn. Khoản thanh toán sẽ được trừ vào tài khoản Google Play của bạn sau khi bạn xác nhận mua. Gói đăng ký của bạn sẽ tự động gia hạn, trừ khi tính năng tự động gia hạn được tắt ít nhất 24 giờ trước khi chu kỳ thanh toán hiện tại kết thúc. Phí gia hạn sẽ được xử lý trong vòng 24 giờ trước khi thời hạn đang hoạt động của bạn hết hiệu lực. Bạn có thể quản lý hoặc hủy gói đăng ký bất cứ lúc nào tại trang Gói thuê bao trong phần cài đặt tài khoản Google Play. Nếu bạn hủy, bạn vẫn được sử dụng đầy đủ toàn bộ đặc quyền của gói đăng ký cho đến khi chu kỳ thanh toán hiện tại kết thúc. Chúng tôi không hoàn lại một phần khoản phí của chu kỳ thanh toán đang diễn ra, và việc hoàn tiền tuân theo chính sách hoàn tiền chính thức của Google Play. Việc hủy chỉ có hiệu lực sau khi chu kỳ đăng ký hiện tại của bạn kết thúc.
+Bạn đã đăng ký gói Hàng tuần. Để thay đổi hoặc hủy, hãy vào Cài đặt iOS > Apple ID > Đăng ký.
+Bạn đã đăng ký gói Hàng tháng. Để thay đổi hoặc hủy, hãy vào Cài đặt iOS > Apple ID > Đăng ký.
+Bạn đã đăng ký gói Hàng năm. Để thay đổi hoặc hủy, hãy vào Cài đặt iOS > Apple ID > Đăng ký.
+Bạn đã đăng ký gói Hàng tuần. Để thay đổi hoặc hủy, hãy mở Google Play > Trang cá nhân của bạn > Khoản thanh toán và gói thuê bao > Gói thuê bao.
+Bạn đã đăng ký gói Hàng tháng. Để thay đổi hoặc hủy, hãy mở Google Play > Trang cá nhân của bạn > Khoản thanh toán và gói thuê bao > Gói thuê bao.
+Bạn đã đăng ký gói Hàng năm. Để thay đổi hoặc hủy, hãy mở Google Play > Trang cá nhân của bạn > Khoản thanh toán và gói thuê bao > Gói thuê bao.
+Để thay đổi hoặc hủy gói đăng ký, hãy vào Cài đặt iOS > Apple ID > Đăng ký.
+Để thay đổi hoặc hủy gói đăng ký, hãy mở Google Play > Trang cá nhân của bạn > Khoản thanh toán và gói thuê bao > Gói thuê bao.
+Không có kết nối. Không thể hoàn tất giao dịch.
+Khôi phục không thành công.
+Đang kiểm tra gói đăng ký của bạn. Vui lòng thử lại sau một lát.
+Meowdoku Premium Plus
+Vui lòng kết nối Internet để xem các gói đăng ký.
+Phần thưởng
+Đây là phần thưởng của bạn!
+Phần thưởng hằng ngày
+Đây là phần thưởng hằng ngày dành cho thành viên Premium của bạn!
+Đang khôi phục
+Nhảy đến Màn %d
+Chế Độ Thử Thách
+Chỉ có Cá Vàng 
+ cẩn thận nhé!
+Trên bảng xếp hạng, {0} Cá Vàng được tính là {1} Cá!
+Nhận 1 Cá
+{month} {year}
+Đã hủy gói đăng ký.
+Đang tải
+Chuột chỉ chạy qua ô không có mèo ẩn.
+Vật phẩm Chuột đã kết thúc! Cảm ơn bạn đã ủng hộ. Đây là quà cho bạn!
+Vật phẩm Nháp đã kết thúc! Cảm ơn bạn đã ủng hộ. Đây là quà cho bạn!
+Lưu tiến trình của bạn
+Đăng xuất
+Xóa tài khoản
+Lưu tiến trình
+Đăng nhập bằng Facebook
+Đăng nhập bằng Google
+Đăng nhập bằng Apple
+Đang đăng nhập
+Đăng nhập thành công!
+Đã đăng nhập bằng %s!
+Thất bại!
+Đăng nhập bằng %s thất bại!
+Không có kết nối!
+Vui lòng kiểm tra kết nối internet của bạn!
+Chọn tiến trình
+Phát hiện nhiều bản lưu. Vui lòng chọn một bản.
+Giữ tiến trình trên máy
+Khôi phục tiến trình trên đám mây
+Lưu lần cuối: %s
+Tiến trình màn: %d
+Vật phẩm: %d
+Tài khoản của tôi
+Bạn đã đăng nhập bằng %s. Nếu muốn đổi tài khoản, hãy đăng xuất trước!
+Bạn muốn đăng xuất khỏi %s?
+Chúng tôi rất tiếc khi bạn muốn xóa tài khoản game.{br}Lưu ý: xóa tài khoản sẽ xóa vĩnh viễn toàn bộ dữ liệu liên quan, bao gồm tiến trình màn, Gợi Ý và Tọa Độ, và không thể khôi phục.{br}Nếu bạn đã chắc chắn, hãy nhấn
+Xóa tài khoản
+bên dưới.
+Tài khoản của bạn đã bị xóa. Hãy đóng và mở lại Meowdoku để bắt đầu trải nghiệm mới!
+<font color='#808080'>Giữ vững chuỗi của bạn trước khi ngủ nhé 
+<font color='#808080'>Xem bạn có giải được không nhé 
+<font color='#808080'>
+ 5 Phút Trước Khi Ngủ</font>
+<font color='#808080'>Năm phút bình yên, không vội vã 
+<font color='#808080'>Chỉ cần một lượt giải để tiếp tục 
+<font color='#808080'>
+ Đừng Bỏ Lỡ Tối Nay</font>
+<font color='#808080'>Một câu đố duy trì thói quen 
+<font color='#808080'>Sẵn sàng thử sức chưa nào 
+<font color='#808080'>Giữ vững phong độ tối nay nhé 
+<font color='#808080'>
+ Điểm Danh Thói Quen: Buổi </font><font color='#00BD20'>Tối</font>
+<font color='#808080'>Giải nhanh một câu đố, tạo thói quen tốt 
+<font color='#808080'>Giải xong rồi tắt đèn đi ngủ thôi 
+<font color='#808080'>Giải một câu đố tối nay cũng rất ý nghĩa 
+<font color='#808080'>Hoàn thành trước nửa đêm nhé 
+<font color='#808080'>Duy trì chuỗi trước nửa đêm 
+<font color='#808080'>Đừng để bị đứt chuỗi hôm nay nhé 
+<font color='#808080'>Một câu đố nhanh giúp xây dựng thói quen 
+<font color='#808080'>Hoàn thành trước khi ngủ nhé 
+<font color='#808080'>Thử ngay trước khi ngủ 
+<font color='#808080'>Một câu đố, một chiến thắng 
+<font color='#808080'>Rèn luyện trí não, không chỉ là nghỉ ngơi 
+<font color='#808080'>Phá kỷ lục thời gian của bạn tối nay nhé 
+<font color='#808080'>Đừng để đứt chuỗi nhé 
+<font color='#808080'>Một câu đố trước khi ngủ 
+<font color='#808080'>Chỉ một câu đố để giữ vững chuỗi 
+<font color='#808080'>
+ Thời Gian Ý Nghĩa: Tối Nay</font>
+<font color='#808080'>
+ Ngày Sắp Khép Lại</font>
+<font color='#808080'>
+ Tiến Trình Tuần, Cập Nhật Tối Nay</font>
+<font color='#808080'>Giải đố xong rồi thảnh thơi đi ngủ 
+<font color='#808080'>Một câu đố nhỏ trước khi ngủ 
+<font color='#808080'>
+ Độ Khó Tối Nay: Đang Tăng</font>
+<font color='#808080'>Lượt luyện tập tối nay đã sẵn sàng 
+<font color='#808080'>
+ Thử Thách Đêm Đã Bắt Đầu</font>
+<font color='#808080'>Giải một bàn để bảo toàn chuỗi 
+<font color='#808080'>
+ Nghi Thức Tập Trung Mỗi Tối</font>
+<font color='#808080'>Lại đến giờ đó rồi 
+<font color='#808080'>
+ Động Lực Buổi Tối</font>
+<font color='#808080'>Giải ngay trước khi ngày mới bắt đầu 
+<font color='#00BD20'>
+ Điểm Danh Mỗi Đêm</font>
+<font color='#00BD20'>Giữ vững chuỗi của bạn trước khi ngủ nhé 
+<font color='#0099D6'>
+ Thử Thách Tối Nay Đã Sẵn Sàng</font>
+<font color='#0099D6'>Xem bạn có giải được không nhé 
+<font color='#00BD20'>
+ 5 Phút Trước Khi Ngủ</font>
+<font color='#00BD20'>Hành động nhỏ mỗi ngày tạo nên kết quả lớn 
+<font color='#FF2BD8'>
+ Món Quà Cho Bản Thân Tối Nay</font>
+<font color='#FF2BD8'>Năm phút bình yên, không vội vã 
+<font color='#00BD20'>
+ Đừng Để Đứt Chuỗi Tối Nay</font>
+<font color='#00BD20'>Chỉ cần một lượt giải để tiếp tục 
+<font color='#00BD20'>
+ Đừng Bỏ Lỡ Tối Nay</font>
+<font color='#00BD20'>Đừng để đứt chuỗi ngày nhé 
+<font color='#00BD20'>
+ Nhắc Nhở Thói Quen Trước Khi Ngủ</font>
+<font color='#00BD20'>Một câu đố duy trì thói quen 
+<font color='#0099D6'>
+ Cấp Độ Mới Đã Mở Khóa Tối Nay</font>
+<font color='#0099D6'>Sẵn sàng thử sức chưa nào 
+<font color='#00BD20'>
+ Chuỗi Thắng Của Bạn Qua Mỗi Đêm</font>
+<font color='#00BD20'>Giữ vững phong độ tối nay nhé 
+<font color='#00BD20'>
+ Điểm Danh Thói Quen: Buổi Tối</font>
+<font color='#00BD20'>Giải nhanh một câu đố, tạo thói quen tốt 
+<font color='#0099D6'>
+ Lượt Cuối Giải Đố Hôm Nay</font>
+<font color='#0099D6'>Giải xong rồi tắt đèn đi ngủ thôi 
+<font color='#FF2BD8'>
+ Những Chiến Thắng Nhỏ Trước Khi Ngủ</font>
+<font color='#FF2BD8'>Giải một câu đố tối nay cũng rất ý nghĩa 
+<font color='#00BD20'>Hoàn thành trước nửa đêm nhé 
+<font color='#FF5E00'>
+ Một ván trước khi tắt đèn</font>
+<font color='#00BD20'>
+ Kiểm tra chuỗi: Tối nay</font>
+<font color='#00BD20'>Duy trì chuỗi trước nửa đêm 
+<font color='#00BD20'>
+ Nhắc nhở duy trì chuỗi tối nay</font>
+<font color='#00BD20'>Đừng để bị đứt chuỗi hôm nay nhé 
+<font color='#00BD20'>
+ Kiểm tra kỷ luật ban đêm</font>
+<font color='#00BD20'>Một câu đố nhanh giúp xây dựng thói quen 
+<font color='#0099D6'>
+ Bảng đố vẫn chưa được giải</font>
+<font color='#0099D6'>Hoàn thành trước khi ngủ nhé 
+<font color='#00BD20'>
+ Thói quen tốt nhất, thử thách mỗi tối</font>
+<font color='#00BD20'>Thử ngay trước khi ngủ 
+<font color='#FF2BD8'>Một câu đố, một chiến thắng 
+<font color='#FF5E00'>
+ Rèn Logic Trước Khi Tắt Đèn</font>
+<font color='#FF5E00'>Rèn luyện trí não, không chỉ là nghỉ ngơi 
+<font color='#00BD20'>
+ Mục tiêu hàng ngày: 1 Câu đố</font>
+<font color='#0099D6'>
+ Câu Đố Mới, Kỷ Lục Mới</font>
+<font color='#0099D6'>Phá kỷ lục thời gian của bạn tối nay nhé 
+<font color='#00BD20'>
+ Kiểm Tra Chuỗi Ngày Tối Nay</font>
+<font color='#00BD20'>Đừng để đứt chuỗi nhé 
+<font color='#00BD20'>
+ Thói Quen Nhỏ, Phiên Bản Mỗi Tối</font>
+<font color='#00BD20'>Một câu đố trước khi ngủ 
+<font color='#00BD20'>
+ Chuỗi Ngày Cần Bạn Duy Trì Tối Nay</font>
+<font color='#00BD20'>Chỉ một câu đố để giữ vững chuỗi 
+<font color='#00BD20'>
+ Thời Gian Ý Nghĩa: Tối Nay</font>
+<font color='#00BD20'>Biến buổi tối thành một thói quen 
+<font color='#FF2BD8'>
+ Ngày Sắp Khép Lại</font>
+<font color='#FF2BD8'>Tự thưởng cho mình một câu đố nhé 
+<font color='#00BD20'>
+ Tiến Trình Tuần, Cập Nhật Tối Nay</font>
+<font color='#00BD20'>
+ Vòng Lặp Thói Quen: Kích Hoạt Mỗi Tối</font>
+<font color='#00BD20'>Giải đố xong rồi thảnh thơi đi ngủ 
+<font color='#00BD20'>
+ Kiên Trì Hơn Cường Độ, Tối Nay</font>
+<font color='#00BD20'>Một câu đố nhỏ trước khi ngủ 
+<font color='#0099D6'>
+ Độ Khó Tối Nay: Đang Tăng</font>
+<font color='#0099D6'>Sẵn sàng cho một lưới khó hơn 
+<font color='#00BD20'>
+ Duy Trì Mỗi Tối</font>
+<font color='#00BD20'>Lượt luyện tập tối nay đã sẵn sàng 
+<font color='#00BD20'>
+ Thử Thách Đêm Đã Bắt Đầu</font>
+<font color='#00BD20'>Các câu đố giới hạn làm mới mỗi ngày 
+<font color='#00BD20'>
+ Bảo Vệ Chuỗi: Phiên Bản Ban Đêm</font>
+<font color='#00BD20'>Giải một bàn để bảo toàn chuỗi 
+<font color='#00BD20'>
+ Nghi Thức Tập Trung Mỗi Tối</font>
+<font color='#00BD20'>Vẫn giờ này, vẫn thói quen này, tối nay 
+<font color='#00BD20'>
+ Điểm Danh Thói Quen: Giờ Đi Ngủ</font>
+<font color='#00BD20'>Lại đến giờ đó rồi 
+<font color='#00BD20'>
+ Động Lực Buổi Tối</font>
+<font color='#00BD20'>Duy trì chuỗi thật mạnh mẽ 
+<font color='#FF5E00'>
+ Cơ Hội Cuối Cùng Cho Câu Đố Hôm Nay</font>
+<font color='#FF5E00'>Giải ngay trước khi ngày mới bắt đầu 
+<font color='#00BD20'>
+ Điểm Danh Mỗi Đêm</font>
+<font color='#808080'>Giữ vững chuỗi của bạn trước khi ngủ nhé 
+<font color='#0099D6'>
+ Thử Thách Tối Nay Đã Sẵn Sàng</font>
+<font color='#808080'>Xem bạn có giải được không nhé 
+<font color='#00BD20'>
+ 5 Phút Trước Khi Ngủ</font>
+<font color='#808080'>Hành động nhỏ mỗi ngày tạo nên kết quả lớn 
+<font color='#FF2BD8'>
+ Món Quà Cho Bản Thân Tối Nay</font>
+<font color='#808080'>Năm phút bình yên, không vội vã 
+<font color='#00BD20'>
+ Đừng Để Đứt Chuỗi Tối Nay</font>
+<font color='#808080'>Chỉ cần một lượt giải để tiếp tục 
+<font color='#00BD20'>
+ Đừng Bỏ Lỡ Tối Nay</font>
+<font color='#808080'>Đừng để đứt chuỗi ngày nhé 
+<font color='#00BD20'>
+ Nhắc Nhở Thói Quen Trước Khi Ngủ</font>
+<font color='#808080'>Một câu đố duy trì thói quen 
+<font color='#0099D6'>
+ Cấp Độ Mới Đã Mở Khóa Tối Nay</font>
+<font color='#808080'>Sẵn sàng thử sức chưa nào 
+<font color='#00BD20'>
+ Chuỗi Thắng Của Bạn Qua Mỗi Đêm</font>
+<font color='#808080'>Giữ vững phong độ tối nay nhé 
+<font color='#00BD20'>
+ Điểm Danh Thói Quen: Buổi Tối</font>
+<font color='#808080'>Giải nhanh một câu đố, tạo thói quen tốt 
+<font color='#0099D6'>
+ Lượt Cuối Giải Đố Hôm Nay</font>
+<font color='#808080'>Giải xong rồi tắt đèn đi ngủ thôi 
+<font color='#FF2BD8'>
+ Những Chiến Thắng Nhỏ Trước Khi Ngủ</font>
+<font color='#808080'>Giải một câu đố tối nay cũng rất ý nghĩa 
+<font color='#808080'>Hoàn thành trước nửa đêm nhé 
+<font color='#FF5E00'>
+ Một ván trước khi tắt đèn</font>
+<font color='#00BD20'>
+ Kiểm tra chuỗi: Tối nay</font>
+<font color='#808080'>Duy trì chuỗi trước nửa đêm 
+<font color='#00BD20'>
+ Nhắc nhở duy trì chuỗi tối nay</font>
+<font color='#808080'>Đừng để bị đứt chuỗi hôm nay nhé 
+<font color='#00BD20'>
+ Kiểm tra kỷ luật ban đêm</font>
+<font color='#808080'>Một câu đố nhanh giúp xây dựng thói quen 
+<font color='#0099D6'>
+ Bảng đố vẫn chưa được giải</font>
+<font color='#808080'>Hoàn thành trước khi ngủ nhé 
+<font color='#00BD20'>
+ Thói quen tốt nhất, thử thách mỗi tối</font>
+<font color='#808080'>Thử ngay trước khi ngủ 
+<font color='#808080'>Một câu đố, một chiến thắng 
+<font color='#FF5E00'>
+ Rèn Logic Trước Khi Tắt Đèn</font>
+<font color='#808080'>Rèn luyện trí não, không chỉ là nghỉ ngơi 
+<font color='#00BD20'>
+ Mục tiêu hàng ngày: 1 Câu đố</font>
+<font color='#0099D6'>
+ Câu Đố Mới, Kỷ Lục Mới</font>
+<font color='#808080'>Phá kỷ lục thời gian của bạn tối nay nhé 
+<font color='#00BD20'>
+ Kiểm Tra Chuỗi Ngày Tối Nay</font>
+<font color='#808080'>Đừng để đứt chuỗi nhé 
+<font color='#00BD20'>
+ Thói Quen Nhỏ, Phiên Bản Mỗi Tối</font>
+<font color='#808080'>Một câu đố trước khi ngủ 
+<font color='#00BD20'>
+ Chuỗi Ngày Cần Bạn Duy Trì Tối Nay</font>
+<font color='#808080'>Chỉ một câu đố để giữ vững chuỗi 
+<font color='#00BD20'>
+ Thời Gian Ý Nghĩa: Tối Nay</font>
+<font color='#808080'>Biến buổi tối thành một thói quen 
+<font color='#FF2BD8'>
+ Ngày Sắp Khép Lại</font>
+<font color='#808080'>Tự thưởng cho mình một câu đố nhé 
+<font color='#00BD20'>
+ Tiến Trình Tuần, Cập Nhật Tối Nay</font>
+<font color='#00BD20'>
+ Vòng Lặp Thói Quen: Kích Hoạt Mỗi Tối</font>
+<font color='#808080'>Giải đố xong rồi thảnh thơi đi ngủ 
+<font color='#00BD20'>
+ Kiên Trì Hơn Cường Độ, Tối Nay</font>
+<font color='#808080'>Một câu đố nhỏ trước khi ngủ 
+<font color='#0099D6'>
+ Độ Khó Tối Nay: Đang Tăng</font>
+<font color='#808080'>Sẵn sàng cho một lưới khó hơn 
+<font color='#00BD20'>
+ Duy Trì Mỗi Tối</font>
+<font color='#808080'>Lượt luyện tập tối nay đã sẵn sàng 
+<font color='#00BD20'>
+ Thử Thách Đêm Đã Bắt Đầu</font>
+<font color='#808080'>Các câu đố giới hạn làm mới mỗi ngày 
+<font color='#00BD20'>
+ Bảo Vệ Chuỗi: Phiên Bản Ban Đêm</font>
+<font color='#808080'>Giải một bàn để bảo toàn chuỗi 
+<font color='#00BD20'>
+ Nghi Thức Tập Trung Mỗi Tối</font>
+<font color='#808080'>Vẫn giờ này, vẫn thói quen này, tối nay 
+<font color='#00BD20'>
+ Điểm Danh Thói Quen: Giờ Đi Ngủ</font>
+<font color='#808080'>Lại đến giờ đó rồi 
+<font color='#00BD20'>
+ Động Lực Buổi Tối</font>
+<font color='#808080'>Duy trì chuỗi thật mạnh mẽ 
+<font color='#FF5E00'>
+ Cơ Hội Cuối Cùng Cho Câu Đố Hôm Nay</font>
+<font color='#808080'>Giải ngay trước khi ngày mới bắt đầu 
+<font color='#808080'>
+ Điểm Danh Mỗi Đêm</font>
+<font color='#00BD20'>Giữ vững chuỗi của bạn trước khi ngủ nhé 
+<font color='#808080'>
+ Thử Thách Tối Nay Đã Sẵn Sàng</font>
+<font color='#0099D6'>Xem bạn có giải được không nhé 
+<font color='#808080'>
+ 5 Phút Trước Khi Ngủ</font>
+<font color='#00BD20'>Hành động nhỏ mỗi ngày tạo nên kết quả lớn 
+<font color='#808080'>
+ Món Quà Cho Bản Thân Tối Nay</font>
+<font color='#FF2BD8'>Năm phút bình yên, không vội vã 
+<font color='#808080'>
+ Đừng Để Đứt Chuỗi Tối Nay</font>
+<font color='#00BD20'>Chỉ cần một lượt giải để tiếp tục 
+<font color='#808080'>
+ Đừng Bỏ Lỡ Tối Nay</font>
+<font color='#00BD20'>Đừng để đứt chuỗi ngày nhé 
+<font color='#808080'>
+ Nhắc Nhở Thói Quen Trước Khi Ngủ</font>
+<font color='#00BD20'>Một câu đố duy trì thói quen 
+<font color='#808080'>
+ Cấp Độ Mới Đã Mở Khóa Tối Nay</font>
+<font color='#0099D6'>Sẵn sàng thử sức chưa nào 
+<font color='#808080'>
+ Chuỗi Thắng Của Bạn Qua Mỗi Đêm</font>
+<font color='#00BD20'>Giữ vững phong độ tối nay nhé 
+<font color='#808080'>
+ Điểm Danh Thói Quen: Buổi Tối</font>
+<font color='#00BD20'>Giải nhanh một câu đố, tạo thói quen tốt 
+<font color='#808080'>
+ Lượt Cuối Giải Đố Hôm Nay</font>
+<font color='#0099D6'>Giải xong rồi tắt đèn đi ngủ thôi 
+<font color='#808080'>
+ Những Chiến Thắng Nhỏ Trước Khi Ngủ</font>
+<font color='#FF2BD8'>Giải một câu đố tối nay cũng rất ý nghĩa 
+<font color='#00BD20'>Hoàn thành trước nửa đêm nhé 
+<font color='#808080'>
+ Một ván trước khi tắt đèn</font>
+<font color='#808080'>
+ Kiểm tra chuỗi: Tối nay</font>
+<font color='#00BD20'>Duy trì chuỗi trước nửa đêm 
+<font color='#808080'>
+ Nhắc nhở duy trì chuỗi tối nay</font>
+<font color='#00BD20'>Đừng để bị đứt chuỗi hôm nay nhé 
+<font color='#808080'>
+ Kiểm tra kỷ luật ban đêm</font>
+<font color='#00BD20'>Một câu đố nhanh giúp xây dựng thói quen 
+<font color='#808080'>
+ Bảng đố vẫn chưa được giải</font>
+<font color='#0099D6'>Hoàn thành trước khi ngủ nhé 
+<font color='#808080'>
+ Thói quen tốt nhất, thử thách mỗi tối</font>
+<font color='#00BD20'>Thử ngay trước khi ngủ 
+<font color='#FF2BD8'>Một câu đố, một chiến thắng 
+<font color='#808080'>
+ Rèn Logic Trước Khi Tắt Đèn</font>
+<font color='#FF5E00'>Rèn luyện trí não, không chỉ là nghỉ ngơi 
+<font color='#808080'>
+ Mục tiêu hàng ngày: 1 Câu đố</font>
+<font color='#808080'>
+ Câu Đố Mới, Kỷ Lục Mới</font>
+<font color='#0099D6'>Phá kỷ lục thời gian của bạn tối nay nhé 
+<font color='#808080'>
+ Kiểm Tra Chuỗi Ngày Tối Nay</font>
+<font color='#00BD20'>Đừng để đứt chuỗi nhé 
+<font color='#808080'>
+ Thói Quen Nhỏ, Phiên Bản Mỗi Tối</font>
+<font color='#00BD20'>Một câu đố trước khi ngủ 
+<font color='#808080'>
+ Chuỗi Ngày Cần Bạn Duy Trì Tối Nay</font>
+<font color='#00BD20'>Chỉ một câu đố để giữ vững chuỗi 
+<font color='#808080'>
+ Thời Gian Ý Nghĩa: Tối Nay</font>
+<font color='#00BD20'>Biến buổi tối thành một thói quen 
+<font color='#808080'>
+ Ngày Sắp Khép Lại</font>
+<font color='#FF2BD8'>Tự thưởng cho mình một câu đố nhé 
+<font color='#808080'>
+ Tiến Trình Tuần, Cập Nhật Tối Nay</font>
+<font color='#808080'>
+ Vòng Lặp Thói Quen: Kích Hoạt Mỗi Tối</font>
+<font color='#00BD20'>Giải đố xong rồi thảnh thơi đi ngủ 
+<font color='#808080'>
+ Kiên Trì Hơn Cường Độ, Tối Nay</font>
+<font color='#00BD20'>Một câu đố nhỏ trước khi ngủ 
+<font color='#808080'>
+ Độ Khó Tối Nay: Đang Tăng</font>
+<font color='#0099D6'>Sẵn sàng cho một lưới khó hơn 
+<font color='#808080'>
+ Duy Trì Mỗi Tối</font>
+<font color='#00BD20'>Lượt luyện tập tối nay đã sẵn sàng 
+<font color='#808080'>
+ Thử Thách Đêm Đã Bắt Đầu</font>
+<font color='#00BD20'>Các câu đố giới hạn làm mới mỗi ngày 
+<font color='#808080'>
+ Bảo Vệ Chuỗi: Phiên Bản Ban Đêm</font>
+<font color='#00BD20'>Giải một bàn để bảo toàn chuỗi 
+<font color='#808080'>
+ Nghi Thức Tập Trung Mỗi Tối</font>
+<font color='#00BD20'>Vẫn giờ này, vẫn thói quen này, tối nay 
+<font color='#808080'>
+ Điểm Danh Thói Quen: Giờ Đi Ngủ</font>
+<font color='#00BD20'>Lại đến giờ đó rồi 
+<font color='#808080'>
+ Động Lực Buổi Tối</font>
+<font color='#00BD20'>Duy trì chuỗi thật mạnh mẽ 
+<font color='#808080'>
+ Cơ Hội Cuối Cùng Cho Câu Đố Hôm Nay</font>
+<font color='#FF5E00'>Giải ngay trước khi ngày mới bắt đầu 
+<font color='#808080'>Bài tập trí não hằng ngày đã sẵn sàng. Giải ngay! 
+<font color='#808080'>
+ Một câu đố ấm áp đang chờ!</font>
+<font color='#808080'>Câu đố hôm nay không tự giải được đâu!</font>
+<font color='#808080'>Một câu đố nhẹ nhàng, sẵn sàng khi bạn muốn 
+<font color='#808080'>
+ Hôm nay có tò mò không?</font>
+<font color='#808080'>Tôi đã rù rù chuẩn bị một câu đố riêng cho bạn 
+<font color='#808080'>Tôi ngắm câu đố này cả buổi sáng rồi. Giúp tôi nhé? 
+<font color='#808080'>Đến chia sẻ một khoảnh khắc vui với chúng 
+<font color='#808080'>Bạn là con người tôi thích nhất. Đến thăm tôi nhé? 
+<font color='#808080'>Đàn mèo đã chuẩn bị thử thách mới 
+<font color='#808080'>Những người bạn mèo đã chuẩn bị điều đặc biệt 
+<font color='#808080'>Giải xong và cảm nhận chiến thắng 
+<font color='#808080'>Giải quyết bằng logic! 
+<font color='#808080'>
+ Một câu đố, trọn vẹn hài lòng!</font>
+<font color='#808080'>
+ Nhịp độ của bạn là nhịp độ hoàn hảo!</font>
+<font color='#808080'>
+ Câu đố hôm nay đã mở!</font>
+<font color='#808080'>Đến cùng chúng trong khoảnh khắc giải đố ấm áp 
+<font color='#808080'>
+ Thật vui được gặp lại bạn!</font>
+<font color='#808080'>
+ Lại một ngày tuyệt vời!</font>
+<font color='#808080'>Đến xem chúng muốn đi đâu 
+<font color='#808080'>
+ Hít thở và thư giãn!</font>
+<font color='#808080'>
+ Một khoảnh khắc yên tĩnh đang chờ!</font>
+<font color='#808080'>
+ Thêm một ngày, thêm một câu đố!</font>
+<font color='#808080'>Đến khám phá thế giới của chúng 
+<font color='#808080'>Cùng tham gia 
+ câu đố đã mở 
+<font color='#808080'>
+ Nhạy hơn mỗi ngày!</font>
+<font color='#808080'>Mỗi con mèo đều cần một mái nhà 
+<font color='#808080'>
+ Không gấp 
+ cứ từ từ!</font>
+<font color='#808080'>
+ Bạn đáng có một khoảng nghỉ dễ chịu!</font>
+<font color='#EF8C00'>Mèo</font><font color='#808080'> và một câu đố ấm áp đang ở đây vì bạn</font>
+<font color='#808080'>Câu đố hôm nay đã sẵn sàng 
+<font color='#808080'>Đến chào và cùng giải đố nhé 
+<font color='#0099D6'>
+ Câu đố mới đang chờ bạn!</font>
+<font color='#0099D6'>Bài tập trí não hằng ngày đã sẵn sàng. Giải ngay! 
+<font color='#EF8C00'>
+ Một câu đố ấm áp đang chờ!</font>
+<font color='#EF8C00'>Đến dành chút thời gian với mèo của bạn 
+<font color='#EF8C00'>
+ Mèo đang cần bạn!</font>
+<font color='#EF8C00'>Câu đố hôm nay không tự giải được đâu!</font>
+<font color='#00BD20'>
+ Đàn mèo hằng ngày của bạn đã tới!</font>
+<font color='#00BD20'>Một câu đố nhẹ nhàng, sẵn sàng khi bạn muốn 
+<font color='#EF8C00'>
+ Hôm nay có tò mò không?</font>
+<font color='#EF8C00'>Để đàn mèo dẫn bạn vào một chuyến phiêu lưu nhỏ 
+<font color='#EF8C00'>
+ Chào buổi sáng! Là tôi, mèo của bạn đây!</font>
+<font color='#EF8C00'>Tôi đã rù rù chuẩn bị một câu đố riêng cho bạn 
+<font color='#EF8C00'>
+ Mèo đang không yên!</font>
+<font color='#EF8C00'>
+ là tôi, mèo của bạn đây!</font>
+<font color='#EF8C00'>Tôi ngắm câu đố này cả buổi sáng rồi. Giúp tôi nhé? 
+<font color='#EF8C00'>
+ Hôm nay mèo rất vui vẻ!</font>
+<font color='#EF8C00'>Đến chia sẻ một khoảnh khắc vui với chúng 
+<font color='#EF8C00'>
+ Đừng nói với mấy con kia nhé, nhưng...</font>
+<font color='#EF8C00'>Bạn là con người tôi thích nhất. Đến thăm tôi nhé? 
+<font color='#EF8C00'>
+ Đến giờ giải đố Mèo-ning!</font>
+<font color='#EF8C00'>Đàn mèo đã chuẩn bị thử thách mới 
+<font color='#EF8C00'>
+ Mèo đã giữ lại một trái tim cho bạn!</font>
+<font color='#0099D6'>
+ Có lãnh địa mèo mới để khám phá!</font>
+<font color='#0099D6'>Những người bạn mèo đã chuẩn bị điều đặc biệt 
+<font color='#EF8C00'>
+ Bạn đồng hành giải đố của bạn đã tới!</font>
+<font color='#00BD20'>
+ Thử thách hằng ngày đã mở!</font>
+<font color='#00BD20'>Giải xong và cảm nhận chiến thắng 
+<font color='#0099D6'>
+ Tranh chấp lãnh địa!</font>
+<font color='#0099D6'>Giải quyết bằng logic! 
+<font color='#FF2BD8'>
+ Một câu đố, trọn vẹn hài lòng!</font>
+<font color='#FF2BD8'>Khoảnh khắc 
+à ra thế
+ đang chờ bạn 
+<font color='#FF2BD8'>
+ Mỗi câu đố là một món quà nhỏ!</font>
+<font color='#EF8C00'>
+ Nhịp độ của bạn là nhịp độ hoàn hảo!</font>
+<font color='#EF8C00'>Mèo rất vui được đồng hành cùng bạn 
+<font color='#EF8C00'>
+ Câu đố hôm nay đã mở!</font>
+<font color='#EF8C00'>Mèo đã chuẩn bị xong và đang chờ bạn 
+<font color='#EF8C00'>
+ Mèo đang cuộn tròn bên nhau!</font>
+<font color='#EF8C00'>Đến cùng chúng trong khoảnh khắc giải đố ấm áp 
+<font color='#EF8C00'>
+ Thật vui được gặp lại bạn!</font>
+<font color='#0099D6'>
+ Lại một ngày tuyệt vời!</font>
+<font color='#0099D6'>Đàn mèo đã chuẩn bị một chuyến phiêu lưu mới cho bạn 
+<font color='#0099D6'>
+ Mèo mới, lưới mới!</font>
+<font color='#EF8C00'>
+ Hôm nay mèo muốn chơi!</font>
+<font color='#EF8C00'>Đến xem chúng muốn đi đâu 
+<font color='#EF8C00'>
+ Hít thở và thư giãn!</font>
+<font color='#EF8C00'>Một câu đố êm dịu cùng những người bạn mèo 
+<font color='#EF8C00'>
+ Một khoảnh khắc yên tĩnh đang chờ!</font>
+<font color='#EF8C00'>Chỉ có bạn và mèo 
+ không cần gấp 
+<font color='#00BD20'>
+ Thêm một ngày, thêm một câu đố!</font>
+<font color='#00BD20'>Thói quen được xây từng ván một 
+<font color='#FF2BD8'>
+ Mèo đầy những điều bất ngờ đáng yêu!</font>
+<font color='#FF2BD8'>Đến khám phá thế giới của chúng 
+<font color='#00BD20'>
+ Những người giải đố hằng ngày đang chơi!</font>
+<font color='#00BD20'>Cùng tham gia 
+ câu đố đã mở 
+<font color='#00BD20'>
+ Nhạy hơn mỗi ngày!</font>
+<font color='#00BD20'>Câu đố hằng ngày giúp não bạn linh hoạt! 
+<font color='#0099D6'>
+ Phân hết lãnh địa!</font>
+<font color='#0099D6'>Mỗi con mèo đều cần một mái nhà 
+<font color='#EF8C00'>
+ Không gấp 
+ cứ từ từ!</font>
+<font color='#EF8C00'>Mèo sẽ kiên nhẫn chờ bạn 
+<font color='#EF8C00'>
+ Bạn đáng có một khoảng nghỉ dễ chịu!</font>
+<font color='#EF8C00'>Mèo và một câu đố ấm áp đang ở đây vì bạn</font>
+<font color='#EF8C00'>
+ Mèo háo hức muốn gặp bạn!</font>
+<font color='#EF8C00'>Câu đố hôm nay đã sẵn sàng 
+<font color='#EF8C00'>
+ Mèo rất vui vì bạn đã đến!</font>
+<font color='#EF8C00'>Đến chào và cùng giải đố nhé 
+<font color='#0099D6'>
+ Câu đố mới đang chờ bạn!</font>
+<font color='#808080'>Bài tập trí não hằng ngày đã sẵn sàng. Giải ngay! 
+<font color='#EF8C00'>
+ Một câu đố ấm áp đang chờ!</font>
+<font color='#808080'>Đến dành chút thời gian với mèo của bạn 
+<font color='#EF8C00'>
+ Mèo đang cần bạn!</font>
+<font color='#808080'>Câu đố hôm nay không tự giải được đâu!</font>
+<font color='#00BD20'>
+ Đàn mèo hằng ngày của bạn đã tới!</font>
+<font color='#808080'>Một câu đố nhẹ nhàng, sẵn sàng khi bạn muốn 
+<font color='#EF8C00'>
+ Hôm nay có tò mò không?</font>
+<font color='#808080'>Để đàn mèo dẫn bạn vào một chuyến phiêu lưu nhỏ 
+<font color='#EF8C00'>
+ Chào buổi sáng! Là tôi, mèo của bạn đây!</font>
+<font color='#808080'>Tôi đã rù rù chuẩn bị một câu đố riêng cho bạn 
+<font color='#EF8C00'>
+ Mèo đang không yên!</font>
+<font color='#EF8C00'>
+ là tôi, mèo của bạn đây!</font>
+<font color='#808080'>Tôi ngắm câu đố này cả buổi sáng rồi. Giúp tôi nhé? 
+<font color='#EF8C00'>
+ Hôm nay mèo rất vui vẻ!</font>
+<font color='#808080'>Đến chia sẻ một khoảnh khắc vui với chúng 
+<font color='#EF8C00'>
+ Đừng nói với mấy con kia nhé, nhưng...</font>
+<font color='#808080'>Bạn là con người tôi thích nhất. Đến thăm tôi nhé? 
+<font color='#EF8C00'>
+ Đến giờ giải đố Mèo-ning!</font>
+<font color='#808080'>Đàn mèo đã chuẩn bị thử thách mới 
+<font color='#EF8C00'>
+ Mèo đã giữ lại một trái tim cho bạn!</font>
+<font color='#0099D6'>
+ Có lãnh địa mèo mới để khám phá!</font>
+<font color='#808080'>Những người bạn mèo đã chuẩn bị điều đặc biệt 
+<font color='#EF8C00'>
+ Bạn đồng hành giải đố của bạn đã tới!</font>
+<font color='#00BD20'>
+ Thử thách hằng ngày đã mở!</font>
+<font color='#808080'>Giải xong và cảm nhận chiến thắng 
+<font color='#0099D6'>
+ Tranh chấp lãnh địa!</font>
+<font color='#808080'>Giải quyết bằng logic! 
+<font color='#FF2BD8'>
+ Một câu đố, trọn vẹn hài lòng!</font>
+<font color='#808080'>Khoảnh khắc 
+à ra thế
+ đang chờ bạn 
+<font color='#FF2BD8'>
+ Mỗi câu đố là một món quà nhỏ!</font>
+<font color='#EF8C00'>
+ Nhịp độ của bạn là nhịp độ hoàn hảo!</font>
+<font color='#808080'>Mèo rất vui được đồng hành cùng bạn 
+<font color='#EF8C00'>
+ Câu đố hôm nay đã mở!</font>
+<font color='#808080'>Mèo đã chuẩn bị xong và đang chờ bạn 
+<font color='#EF8C00'>
+ Mèo đang cuộn tròn bên nhau!</font>
+<font color='#808080'>Đến cùng chúng trong khoảnh khắc giải đố ấm áp 
+<font color='#EF8C00'>
+ Thật vui được gặp lại bạn!</font>
+<font color='#0099D6'>
+ Lại một ngày tuyệt vời!</font>
+<font color='#808080'>Đàn mèo đã chuẩn bị một chuyến phiêu lưu mới cho bạn 
+<font color='#0099D6'>
+ Mèo mới, lưới mới!</font>
+<font color='#EF8C00'>
+ Hôm nay mèo muốn chơi!</font>
+<font color='#808080'>Đến xem chúng muốn đi đâu 
+<font color='#EF8C00'>
+ Hít thở và thư giãn!</font>
+<font color='#808080'>Một câu đố êm dịu cùng những người bạn mèo 
+<font color='#EF8C00'>
+ Một khoảnh khắc yên tĩnh đang chờ!</font>
+<font color='#808080'>Chỉ có bạn và mèo 
+ không cần gấp 
+<font color='#00BD20'>
+ Thêm một ngày, thêm một câu đố!</font>
+<font color='#808080'>Thói quen được xây từng ván một 
+<font color='#FF2BD8'>
+ Mèo đầy những điều bất ngờ đáng yêu!</font>
+<font color='#808080'>Đến khám phá thế giới của chúng 
+<font color='#00BD20'>
+ Những người giải đố hằng ngày đang chơi!</font>
+<font color='#808080'>Cùng tham gia 
+ câu đố đã mở 
+<font color='#00BD20'>
+ Nhạy hơn mỗi ngày!</font>
+<font color='#808080'>Câu đố hằng ngày giúp não bạn linh hoạt! 
+<font color='#0099D6'>
+ Phân hết lãnh địa!</font>
+<font color='#808080'>Mỗi con mèo đều cần một mái nhà 
+<font color='#EF8C00'>
+ Không gấp 
+ cứ từ từ!</font>
+<font color='#808080'>Mèo sẽ kiên nhẫn chờ bạn 
+<font color='#EF8C00'>
+ Bạn đáng có một khoảng nghỉ dễ chịu!</font>
+<font color='#808080'>Mèo và một câu đố ấm áp đang ở đây vì bạn</font>
+<font color='#EF8C00'>
+ Mèo háo hức muốn gặp bạn!</font>
+<font color='#808080'>Câu đố hôm nay đã sẵn sàng 
+<font color='#EF8C00'>
+ Mèo rất vui vì bạn đã đến!</font>
+<font color='#808080'>Đến chào và cùng giải đố nhé 
+<font color='#808080'>
+ Câu đố mới đang chờ bạn!</font>
+<font color='#0099D6'>Bài tập trí não hằng ngày đã sẵn sàng. Giải ngay! 
+<font color='#808080'>
+ Một câu đố ấm áp đang chờ!</font>
+<font color='#EF8C00'>Đến dành chút thời gian với mèo của bạn 
+<font color='#808080'>
+ Mèo đang cần bạn!</font>
+<font color='#EF8C00'>Câu đố hôm nay không tự giải được đâu!</font>
+<font color='#808080'>
+ Đàn mèo hằng ngày của bạn đã tới!</font>
+<font color='#00BD20'>Một câu đố nhẹ nhàng, sẵn sàng khi bạn muốn 
+<font color='#808080'>
+ Hôm nay có tò mò không?</font>
+<font color='#EF8C00'>Để đàn mèo dẫn bạn vào một chuyến phiêu lưu nhỏ 
+<font color='#808080'>
+ Chào buổi sáng! Là tôi, mèo của bạn đây!</font>
+<font color='#EF8C00'>Tôi đã rù rù chuẩn bị một câu đố riêng cho bạn 
+<font color='#808080'>
+ Mèo đang không yên!</font>
+<font color='#808080'>
+ là tôi, mèo của bạn đây!</font>
+<font color='#EF8C00'>Tôi ngắm câu đố này cả buổi sáng rồi. Giúp tôi nhé? 
+<font color='#808080'>
+ Hôm nay mèo rất vui vẻ!</font>
+<font color='#EF8C00'>Đến chia sẻ một khoảnh khắc vui với chúng 
+<font color='#808080'>
+ Đừng nói với mấy con kia nhé, nhưng...</font>
+<font color='#EF8C00'>Bạn là con người tôi thích nhất. Đến thăm tôi nhé? 
+<font color='#808080'>
+ Đến giờ giải đố Mèo-ning!</font>
+<font color='#EF8C00'>Đàn mèo đã chuẩn bị thử thách mới 
+<font color='#808080'>
+ Mèo đã giữ lại một trái tim cho bạn!</font>
+<font color='#808080'>
+ Có lãnh địa mèo mới để khám phá!</font>
+<font color='#0099D6'>Những người bạn mèo đã chuẩn bị điều đặc biệt 
+<font color='#808080'>
+ Bạn đồng hành giải đố của bạn đã tới!</font>
+<font color='#808080'>
+ Thử thách hằng ngày đã mở!</font>
+<font color='#00BD20'>Giải xong và cảm nhận chiến thắng 
+<font color='#808080'>
+ Tranh chấp lãnh địa!</font>
+<font color='#0099D6'>Giải quyết bằng logic! 
+<font color='#808080'>
+ Một câu đố, trọn vẹn hài lòng!</font>
+<font color='#FF2BD8'>Khoảnh khắc 
+à ra thế
+ đang chờ bạn 
+<font color='#808080'>
+ Mỗi câu đố là một món quà nhỏ!</font>
+<font color='#808080'>
+ Nhịp độ của bạn là nhịp độ hoàn hảo!</font>
+<font color='#EF8C00'>Mèo rất vui được đồng hành cùng bạn 
+<font color='#808080'>
+ Câu đố hôm nay đã mở!</font>
+<font color='#EF8C00'>Mèo đã chuẩn bị xong và đang chờ bạn 
+<font color='#808080'>
+ Mèo đang cuộn tròn bên nhau!</font>
+<font color='#EF8C00'>Đến cùng chúng trong khoảnh khắc giải đố ấm áp 
+<font color='#808080'>
+ Thật vui được gặp lại bạn!</font>
+<font color='#808080'>
+ Lại một ngày tuyệt vời!</font>
+<font color='#0099D6'>Đàn mèo đã chuẩn bị một chuyến phiêu lưu mới cho bạn 
+<font color='#808080'>
+ Mèo mới, lưới mới!</font>
+<font color='#808080'>
+ Hôm nay mèo muốn chơi!</font>
+<font color='#EF8C00'>Đến xem chúng muốn đi đâu 
+<font color='#808080'>
+ Hít thở và thư giãn!</font>
+<font color='#EF8C00'>Một câu đố êm dịu cùng những người bạn mèo 
+<font color='#808080'>
+ Một khoảnh khắc yên tĩnh đang chờ!</font>
+<font color='#EF8C00'>Chỉ có bạn và mèo 
+ không cần gấp 
+<font color='#808080'>
+ Thêm một ngày, thêm một câu đố!</font>
+<font color='#00BD20'>Thói quen được xây từng ván một 
+<font color='#808080'>
+ Mèo đầy những điều bất ngờ đáng yêu!</font>
+<font color='#FF2BD8'>Đến khám phá thế giới của chúng 
+<font color='#808080'>
+ Những người giải đố hằng ngày đang chơi!</font>
+<font color='#00BD20'>Cùng tham gia 
+ câu đố đã mở 
+<font color='#808080'>
+ Nhạy hơn mỗi ngày!</font>
+<font color='#00BD20'>Câu đố hằng ngày giúp não bạn linh hoạt! 
+<font color='#808080'>
+ Phân hết lãnh địa!</font>
+<font color='#0099D6'>Mỗi con mèo đều cần một mái nhà 
+<font color='#808080'>
+ Không gấp 
+ cứ từ từ!</font>
+<font color='#EF8C00'>Mèo sẽ kiên nhẫn chờ bạn 
+<font color='#808080'>
+ Bạn đáng có một khoảng nghỉ dễ chịu!</font>
+<font color='#EF8C00'>Mèo và một câu đố ấm áp đang ở đây vì bạn</font>
+<font color='#808080'>
+ Mèo háo hức muốn gặp bạn!</font>
+<font color='#EF8C00'>Câu đố hôm nay đã sẵn sàng 
+<font color='#808080'>
+ Mèo rất vui vì bạn đã đến!</font>
+<font color='#EF8C00'>Đến chào và cùng giải đố nhé 
+Lưu tiến trình
+Đăng nhập bằng %s
+Thành công
+Đã đăng nhập bằng %s!
+Thất bại!
+Đăng nhập bằng %s thất bại!
+Không có kết nối!
+Vui lòng kiểm tra kết nối internet!
+Chọn tiến trình
+Phát hiện nhiều bản lưu. Vui lòng chọn một.
+giữ tiến trình cục bộ
+phục hồi tiến trình trên đám mây
+tiến trình màn: %s
+Vật phẩm: %s
+Đăng xuất
+Đăng xuất
+Bạn có muốn đăng xuất khỏi %s?
+Xóa tài khoản
+Xóa tài khoản
+Chúng tôi rất tiếc khi bạn muốn xóa tài khoản trò chơi.
+Lưu ý rằng việc xóa tài khoản sẽ xóa vĩnh viễn toàn bộ dữ liệu liên quan, bao gồm màn, gợi ý và định vị, và không thể phục hồi.
+Nếu bạn đã chắc chắn, hãy nhấn «Xóa tài khoản» bên dưới.
+Tài khoản của bạn đã bị xóa! Hãy đóng và mở lại Meowdoku để bắt đầu mới.
+Tiếp Tục
+Chơi Lại
+Không thể xóa tài khoản. Thử lại sau.
+Đăng nhập để lưu tiến trình!
+Tài khoản của tôi
+Bạn đã đăng nhập bằng %s. Nếu muốn đổi tài khoản, hãy đăng xuất trước!
+Không thể đăng xuất. Thử lại sau.
+Vật phẩm Chuột đã kết thúc! Cảm ơn bạn đã ủng hộ.
+Vật phẩm Nháp đã kết thúc! Cảm ơn bạn đã ủng hộ.
+Đây là quà cho bạn!

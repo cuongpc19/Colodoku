@@ -68,16 +68,29 @@ function expand(flat) {
 // lab.html hay một trang nằm thư mục khác đều trỏ đúng chỗ.
 const localeURL = (code) => new URL(`../data/i18n/${code}.json`, import.meta.url);
 
+/** Đọc file ngôn ngữ ở dạng khoá phẳng, chưa bung. */
 async function fetchLocale(code) {
   // Chạy bằng Node (tools/flow_test.mjs chẳng hạn) thì không có fetch cho file://,
   // đọc thẳng đĩa. Nhánh này không bao giờ chạy trên trình duyệt.
   if (typeof document === "undefined") {
     const { readFile } = await import("node:fs/promises");
-    return expand(JSON.parse(await readFile(localeURL(code), "utf8")));
+    return JSON.parse(await readFile(localeURL(code), "utf8"));
   }
   const response = await fetch(localeURL(code));
   if (!response.ok) throw new Error(`${code}: HTTP ${response.status}`);
-  return expand(await response.json());
+  return response.json();
+}
+
+// Bảng tiếng Anh giữ lại làm lưới đỡ: khoá nào thứ tiếng kia chưa dịch thì lấy
+// tạm câu tiếng Anh. Thà lộ một dòng chưa dịch còn hơn hiện ô trống — hoặc vỡ,
+// vì có khoá là hàm và phía dùng sẽ gọi `T.wipeLosing(...)`.
+let fallback = null;
+
+async function loadTable(code) {
+  const flat = await fetchLocale(code);
+  if (code === DEFAULT_LOCALE) fallback = flat;
+  else if (!fallback) fallback = await fetchLocale(DEFAULT_LOCALE).catch(() => null);
+  return expand(fallback ? { ...fallback, ...flat } : flat);
 }
 
 export function getLocale() {
@@ -94,7 +107,7 @@ export async function setLocale(code, { remember = true } = {}) {
 
   let table;
   try {
-    table = await fetchLocale(code);
+    table = await loadTable(code);
   } catch (error) {
     console.warn("Không nạp được ngôn ngữ", code, error);
     return false;

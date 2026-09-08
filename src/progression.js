@@ -78,6 +78,8 @@ export function planLevel(progress, n) {
 export function onLevelWon(progress, n) {
   const next = { ...progress };
   next.cleared = Math.max(next.cleared || 0, n);
+  next.winStreak = (next.winStreak || 0) + 1;
+  next.bestWin = Math.max(next.bestWin || 0, next.winStreak);
   if (n >= 6) {
     const max = strategyCap(n);
     const min = n >= 101 ? 2 : 1;
@@ -127,7 +129,7 @@ export function onLevelWon(progress, n) {
 
 /** Hết mạng: màn này không còn sạch, và tính là một lần thua (từ màn 6). */
 export function onLevelFailed(progress, n) {
-  const next = { ...progress, dirty: true, retried: true };
+  const next = { ...progress, dirty: true, retried: true, winStreak: 0 };
   if (n >= 6) {
     next.cleanWins = 0;
     next.fails = (next.fails || 0) + 1;
@@ -323,6 +325,9 @@ const BLANK = {
   free: { reveal: FREE_USES, hint: FREE_USES },
   // máy chiến lược
   strategy: 1, cleanWins: 0, fails: 0, retryLevels: 0, retryStrategy: 0,
+  // Chuỗi thắng liên tiếp: thắng thì +1, hết mạng thì về 0. Khác hẳn `streak`
+  // bên trên — cái đó đếm ngày điểm danh, cả ngày chơi bao nhiêu ván vẫn là 1.
+  winStreak: 0, bestWin: 0,
   dirty: false, retried: false, current: null, cursors: {},
 };
 

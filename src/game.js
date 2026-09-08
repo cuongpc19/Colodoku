@@ -186,9 +186,9 @@ function startTutorial() {
 function refreshHud() {
   const board = state.board;
   ui.count.textContent = T.counter(board.cats().length, board.size);
-  // Ô bên phải HUD là kỷ lục chuỗi ngày chơi, không phải điểm màn này —
-  // điểm vẫn tính và vẫn hiện ở hộp thoại thắng.
-  ui.best.textContent = state.progress.best || 0;
+  // Ô bên phải HUD là kỷ lục **chuỗi thắng liên tiếp**, không phải chuỗi ngày
+  // điểm danh (`progress.streak`) — cái đó cả ngày chơi bao nhiêu ván vẫn là 1.
+  ui.best.textContent = state.progress.bestWin || 0;
   ui.lives.innerHTML = Array.from(
     { length: LIVES },
     (_, i) => `<i class="life${i < state.lives ? "" : " gone"}"></i>`,
@@ -503,6 +503,7 @@ function finishLevel() {
     COIN_REWARD,
   );
   refreshCoins();
+  refreshHud(); // chuỗi thắng vừa +1, đừng để HUD sau lưng hộp thoại còn số cũ
 
   ui.winTitle.textContent = T.cleared;
   // Không có dòng tổng kết ở màn thắng. Vẫn phải xoá, vì hộp thoại này dùng

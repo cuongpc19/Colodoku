@@ -137,7 +137,7 @@ main {
   cursor: pointer;
   border: 0;
   border-radius: 14%;
-  transition: filter 0.12s;
+  transition: filter 0.12s, transform 0.09s ease-out;
 }
 
 /* Kiến đứng lẻ trong dòng chữ (logo, chip đếm, màn thắng) — cỡ bám font-size chỗ đặt. */
@@ -190,6 +190,10 @@ main {
 }
 
 .cell:hover { filter: brightness(1.06); }
+
+/* Lún xuống lúc còn chạm. Bản gốc co ô đúng 2% — đủ để ngón tay thấy đã bấm
+   trúng, chưa đủ để thành hiệu ứng. */
+.cell.press { transform: scale(0.98); }
 
 /* Vệt loé của ô — chỉ dùng lúc đặt con vật. Số đo lấy từ bản ghi màn hình một
    bản làm lại: vệt trắng nở từ 13% ra kín ô trong 170ms, đậm nhất 59% trắng rồi
@@ -302,6 +306,13 @@ main {
   82% { transform: scale(1.05); }
   100% { transform: scale(1); }
 }
+
+/* Đặt sai: ô đổi hẳn sang đỏ rồi mới vẽ ✕ lên nền đỏ, đúng bản gốc — #ee4305
+   lấy từ chính bản ghi màn hình.
+
+   Dùng box-shadow inset chứ không phải background: màu nền ô là style inline
+   do JS đặt theo vùng, CSS thường không đè được, mà !important thì bẩn. */
+.cell.wrong { box-shadow: inset 0 0 0 100px #ee4305; }
 
 .cell.conflict {
   box-shadow: 0 0 0 3px var(--danger);

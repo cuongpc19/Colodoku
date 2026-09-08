@@ -274,6 +274,7 @@ export class BoardView {
     if (!at || !this.editable(at[0], at[1])) return;
     event.preventDefault(); // với chuột: chặn bôi đen khi kéo qua nhiều ô
     const [r, c] = at;
+    this.pressCell(r, c);
     this.tap.last = at;
     this.tap.dragging = false;
     this.el.setPointerCapture?.(event.pointerId);
@@ -328,6 +329,19 @@ export class BoardView {
   }
 
   onPointerUp() {
+    this.unpress();
     if (this.tap.dragging) this.tap.last = null;
+  }
+
+  /** Ô lún xuống trong lúc ngón tay còn chạm — bản gốc co ô lại 2%. */
+  pressCell(r, c) {
+    this.unpress();
+    this.pressed = this.cells[r]?.[c] ?? null;
+    this.pressed?.classList.add("press");
+  }
+
+  unpress() {
+    this.pressed?.classList.remove("press");
+    this.pressed = null;
   }
 }

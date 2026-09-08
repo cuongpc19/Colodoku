@@ -46,27 +46,17 @@ function tone({ type = "sine", from, to = from, duration, gain = 0.2, at = 0 }) 
   osc.stop(start + duration + 0.02);
 }
 
-/** Tiếng gõ: nhiễu trắng lọc dải trầm (như gõ lên gỗ), tắt trong 45ms. */
+/**
+ * Tiếng chạm khi đánh / gỡ ✕.
+ *
+ * Không dùng nhiễu nữa: đo lại thì nhiễu qua bandpass 600 Hz vẫn còn 14% năng
+ * lượng trên 2 kHz — bộ lọc chỉ dốc 12 dB mỗi quãng tám nên không cắt nổi đuôi
+ * cao, và chính đuôi đó nghe chói. Sine thì không có hoạ âm nào, nên không thể
+ * chói: một nốt trầm tụt xuống, tắt rất nhanh, nghe như ngón tay chạm mặt trống.
+ */
 function click() {
-  const ac = ctx();
-  if (!ac) return;
-  const length = Math.floor(ac.sampleRate * 0.045);
-  const buffer = ac.createBuffer(1, length, ac.sampleRate);
-  const data = buffer.getChannelData(0);
-  for (let i = 0; i < length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / length) ** 2;
-  const source = ac.createBufferSource();
-  source.buffer = buffer;
-  const filter = ac.createBiquadFilter();
-  // Lọc dải trầm, hẹp, nhỏ tiếng: một cái chạm khẽ chứ không phải cú gõ.
-  filter.type = "bandpass";
-  filter.frequency.value = 600;
-  filter.Q.value = 2;
-  const amp = ac.createGain();
-  amp.gain.value = 0.28;
-  source.connect(filter).connect(amp).connect(ac.destination);
-  source.start();
-  // một hơi trầm rất khẽ cho có thân tiếng
-  tone({ from: 200, to: 150, duration: 0.04, gain: 0.035 });
+  tone({ from: 190, to: 130, duration: 0.07, gain: 0.09 });
+  tone({ from: 380, duration: 0.045, gain: 0.028 }); // hoạ âm khẽ cho có hình tiếng
 }
 
 export const sound = {

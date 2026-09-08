@@ -6,7 +6,7 @@
 // là một "chiến lược" tự lên xuống theo thắng sạch / thua; từ bậc 3 mỗi màn rút
 // ngẫu nhiên trong [2, bậc]; cứ 10 màn một màn khó; một số màn là màn đặc biệt
 // vẽ hình; màn 1-10 tặng sẵn một con. Điểm khác duy nhất là chủ ý của mình:
-// trước màn 50 lưới nhỏ hơn họ một cỡ cho dễ vào, từ màn 50 y hệt.
+// hai màn đầu là 4×4 chọn tay cho dễ vào, từ màn 3 y hệt họ.
 
 import { SCRIPTED } from "./levels.js";
 import { T } from "./strings.js";
@@ -14,25 +14,21 @@ import { unpackRegions, packRegions } from "./puzzle.js";
 
 // ------------------------------------------------------------- cỡ lưới
 
-// Meowdoku: 10 màn đầu cố định, từ màn 11 lặp chu kỳ 10.
-const THEIR_FIRST = [4, 5, 6, 6, 8, 6, 7, 8, 9, 7];
-const THEIR_CYCLE = [8, 10, 10, 9, 10, 10, 9, 10, 10, 10];
-// Mình: cùng nhịp nhưng nhỏ hơn một cỡ, riêng 5 màn đầu còn nhỏ hơn nữa.
-const OUR_FIRST = [4, 4, 5, 5, 6, 6, 6, 7, 8, 6];
-const OUR_CYCLE = [7, 9, 9, 8, 9, 9, 8, 9, 9, 9];
+// Meowdoku: 10 màn đầu cố định, từ màn 11 lặp chu kỳ 10. Mình chỉ đổi màn 2
+// (họ 5×5) thành 4×4 chọn tay; từ màn 3 y hệt.
+const FIRST = [4, 4, 6, 6, 8, 6, 7, 8, 9, 7];
+const CYCLE = [8, 10, 10, 9, 10, 10, 9, 10, 10, 10];
 
 /** Từ màn này trở đi khó y hệt Meowdoku. */
-export const AS_HARD_FROM = 50;
+export const AS_HARD_FROM = 3;
 
 export function sizeFor(n) {
   if (n < 1) return 0;
-  const first = n >= AS_HARD_FROM ? THEIR_FIRST : OUR_FIRST;
-  const cycle = n >= AS_HARD_FROM ? THEIR_CYCLE : OUR_CYCLE;
-  return n <= 10 ? first[n - 1] : cycle[(n - 11) % 10];
+  return n <= 10 ? FIRST[n - 1] : CYCLE[(n - 11) % 10];
 }
 
-/** Màn khó định kỳ: bậc 5. Meowdoku bắt đầu từ màn 30, mình từ màn 50. */
-export const isHardLevel = (n) => n >= AS_HARD_FROM && n % 10 === 0;
+/** Màn khó định kỳ: bậc 5, chẵn chục từ màn 30 — y Meowdoku; màn đặc biệt đè lên nếu có. */
+export const isHardLevel = (n) => n >= 21 && n % 10 === 0;
 
 // Màn đặc biệt vẽ hình — đúng số màn Meowdoku đặt, hình thì mình tự vẽ
 // (tools/build_specials.mjs). Màn 200/250/314 của họ là bàn kiểu LinkedIn, không có hình.

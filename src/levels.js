@@ -36,9 +36,9 @@ export const TUTORIAL = {
 };
 
 /**
- * Năm màn mở đầu, do tools/pick_opening.mjs chọn từ bộ sinh của mình: lưới nhỏ
- * hơn Meowdoku (4, 4, 5, 5, 6 thay vì 4, 5, 6, 6, 8), mỗi màn 1-2 màu chỉ có
- * một ô và vùng nền to để người mới nhìn là hiểu.
+ * Hai màn mở đầu, do tools/pick_opening.mjs chọn từ bộ sinh của mình: 4×4 cả
+ * hai (Meowdoku là 4×4 rồi 5×5), mỗi màn 1-2 màu chỉ có một ô và vùng nền to
+ * để người mới nhìn là hiểu. Từ màn 3 cỡ lưới và độ khó y hệt Meowdoku.
  *
  * `given` là con game đặt sẵn khi vào màn, theo đúng luật của Meowdoku cho màn
  * 1-6: con nằm trong vùng nhiều ô, để nước đầu của người chơi là "màu chỉ có
@@ -69,49 +69,6 @@ export const SCRIPTED = [
          "3333",
       s: [1,3,0,2],
       r: 1, st: 4, rk: [4,0,0,0,0], ch: 0,
-    },
-  },
-  {
-    // Màn 3 — 5×5, 2 vùng 1 ô, nền 44%. Bỏ con tặng thì cấp 1.
-    size: 5,
-    given: [[0,0]],
-    record: {
-      m: "01111" +
-         "01111" +
-         "42141" +
-         "44443" +
-         "44444",
-      s: [0,3,1,4,2],
-      r: 1, st: 5, rk: [5,0,0,0,0], ch: 0,
-    },
-  },
-  {
-    // Màn 4 — 5×5, 1 vùng 1 ô, nền 48%. Bỏ con tặng thì cấp 1.
-    size: 5,
-    given: [[1,0]],
-    record: {
-      m: "14044" +
-         "14442" +
-         "33442" +
-         "33344" +
-         "33344",
-      s: [2,0,4,1,3],
-      r: 1, st: 5, rk: [5,0,0,0,0], ch: 0,
-    },
-  },
-  {
-    // Màn 5 — 6×6, 2 vùng 1 ô, nền 47%. Bỏ con tặng thì cấp 1.
-    size: 6,
-    given: [[0,0]],
-    record: {
-      m: "001111" +
-         "000111" +
-         "021113" +
-         "111113" +
-         "114333" +
-         "333355",
-      s: [0,3,1,5,2,4],
-      r: 1, st: 6, rk: [6,0,0,0,0], ch: 0,
     },
   },
 ];

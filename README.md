@@ -33,10 +33,10 @@ Hai trang:
 
 Không có danh sách màn cố định. Bộ máy chọn màn trong [`src/progression.js`](src/progression.js) **chép lại đúng cách Meowdoku chọn màn**, đọc từ GDScript đã giải mã (`data/reference/meowdoku-gdscript/`, giải mã bằng [`tools/dump_gdc.mjs`](tools/dump_gdc.mjs) — file `.gdc` là zstd, không phải "không đọc được" như từng nghĩ):
 
-- **Cỡ lưới cố định theo số màn.** Meowdoku: màn 1–10 là `4 5 6 6 8 6 7 8 9 7`, từ màn 11 lặp chu kỳ `8 10 10 9 10 10 9 10 10 10`. Mình chủ ý dễ hơn trước màn 50: `4 4 5 5 6 6 6 7 8 6` rồi chu kỳ `7 9 9 8 9 9 8 9 9 9` (nhỏ hơn một cỡ); **từ màn 50 y hệt họ**.
+- **Cỡ lưới cố định theo số màn.** Meowdoku: màn 1–10 là `4 5 6 6 8 6 7 8 9 7`, từ màn 11 lặp chu kỳ `8 10 10 9 10 10 9 10 10 10`. Mình chỉ đổi màn 2 thành 4×4 chọn tay; **từ màn 3 y hệt họ**.
 - **Bậc khó là một "chiến lược" tự lên xuống.** Bắt đầu bậc 1; màn 1–5 ép bậc 1. Từ màn 6: thắng *sạch* (không trợ giúp, không thua, không chơi lại) 2 lần liên tiếp thì +1 bậc (từ màn 51: 1 lần); thua 1 lần (màn <21) hay 2 lần (≥21) thì −1; từ màn 21, hai màn liền phải chơi lại ở cùng bậc cũng −1. Trần: màn <21 bậc 2, 21–50 bậc 3, ≥51 bậc 4; sàn từ màn 51 là bậc 2, từ màn 101 không xuống dưới 2.
 - **Bậc ≥3 thì mỗi màn rút ngẫu nhiên trong [2, bậc]** — đây là nhịp "dễ – dễ – khó" thật của họ.
-- **Màn khó định kỳ**: chẵn chục từ màn 50 → bậc 5.
+- **Màn khó định kỳ**: chẵn chục từ màn 30 → bậc 5 (màn đặc biệt đè lên nếu trùng, nên màn khó thật đầu tiên là 110 — y họ).
 - **Màn đặc biệt vẽ hình** ở đúng số màn của họ (10, 20, 30, 40, 50, 55, 60, 62, 70, 75, 80, 90, 100, 123, 456); hình do mình vẽ ([`tools/build_specials.mjs`](tools/build_specials.mjs)): chữ số của chính số màn, cửa sổ, sóng, biểu đồ cột, π, IQ.
 - **Con tặng sẵn ở màn 1–10**: màn 1–6 tặng con nằm trong vùng nhiều ô (để người chơi tự tìm vùng 1 ô), màn 7–10 tặng đúng con ở vùng 1 ô.
 - **Lọc khi rút bàn**: tối đa 2 vùng 1 ô (màn <21), tối đa 1 (≥21).
@@ -44,7 +44,7 @@ Không có danh sách màn cố định. Bộ máy chọn màn trong [`src/progr
 
 Bàn trong kho **hoàn toàn tự sinh** ([`tools/generate_levels.mjs`](tools/generate_levels.mjs) → [`tools/build_pools.mjs`](tools/build_pools.mjs)), nhưng chia vùng theo **hồ sơ hình dạng** rút từ 28.755 màn gốc ([`tools/profile_shapes.mjs`](tools/profile_shapes.mjs) → `data/reference/shape-profile.json`): với từng cỡ × bậc, bao nhiêu vùng 1 ô, 2 ô, 3 ô…, vùng nền to cỡ nào, ô đơn hay nằm ở biên không. Hồ sơ chỉ là thống kê, không mang theo bàn nào của họ, nên kho phát hành được.
 
-Năm màn đầu chọn tay bằng [`tools/pick_opening.mjs`](tools/pick_opening.mjs): mỗi màn 1–2 màu chỉ có một ô, nền to, giải trọn bằng cấp 1, và sau con tặng sẵn luôn còn một "màu một ô" để bắt đầu.
+Hai màn đầu chọn tay bằng [`tools/pick_opening.mjs`](tools/pick_opening.mjs): mỗi màn 1–2 màu chỉ có một ô, nền to, giải trọn bằng cấp 1, và sau con tặng sẵn luôn còn một "màu một ô" để bắt đầu.
 
 Sao mỗi màn: 3 sao nếu không dùng gợi ý, 2 sao nếu dùng 1–2 lần, 1 sao nếu nhiều hơn. Tiến trình (kể cả chiến lược và con trỏ kho) lưu ở `localStorage`.
 
@@ -141,7 +141,7 @@ Câu giải thích của bộ giải có nhắc hàng/cột/màu thì viết s�
 | `src/puzzle.js` | Mô hình bàn cờ, luật chơi, phát hiện xung đột |
 | `src/solver.js` | Bộ giải theo 5 cấp kỹ thuật — dùng cho gợi ý và chấm độ khó |
 | `src/boardview.js` | Vẽ lưới và xử lý thao tác, dùng chung cho game lẫn lab |
-| `src/levels.js` | Bàn tutorial + năm màn đầu (tự sinh, chọn tay) và bảng màu |
+| `src/levels.js` | Bàn tutorial + hai màn đầu (tự sinh, chọn tay) và bảng màu |
 | `src/strings.js` | Bảng chữ: nạp ngôn ngữ, đổi ngôn ngữ, đổ chữ vào HTML |
 | `src/progression.js` | Bộ máy chọn màn (chép luật Meowdoku) và lưu tiến trình |
 | `src/tutorial.js` | 8 bước hướng dẫn, tính ô cần bấm từ luật |
@@ -156,7 +156,7 @@ Câu giải thích của bộ giải có nhắc hàng/cột/màu thì viết s�
 | `tools/generate_levels.mjs` | Bộ sinh bàn theo hồ sơ hình dạng, vá cho duy nhất, chấm bậc |
 | `tools/build_pools.mjs` | Dựng kho bàn `data/pools.json` |
 | `tools/build_specials.mjs` | Dựng màn đặc biệt vẽ hình `data/specials.json` |
-| `tools/pick_opening.mjs` | Chọn năm màn mở đầu |
+| `tools/pick_opening.mjs` | Chọn hai màn mở đầu |
 | `tools/build_single.mjs` | Gói game thành một file HTML, chỉ mang dữ liệu tự sinh |
 | `tools/dump_gdc.mjs` | Giải mã GDScript biên dịch (`.gdc`, Godot 4.5) ra mã giả |
 | `data/` | 30 bank, 28.755 puzzle (4,1 MB) |

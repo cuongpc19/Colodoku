@@ -1,4 +1,4 @@
-// Chọn năm màn mở đầu (1-5) từ bộ sinh của mình — dễ hơn cả Meowdoku.
+// Chọn hai màn mở đầu (1-2) từ bộ sinh của mình — dễ hơn Meowdoku một chút.
 //
 // Meowdoku mở đầu bằng 4×4, 5×5, 6×6, 6×6, 8×8 bậc 1, mỗi màn tặng sẵn một con
 // nằm trong vùng nhiều ô để người chơi tự tìm vùng 1 ô. Mình giữ đúng lối đó
@@ -56,9 +56,6 @@ const background = (level) => {
 const PLAN = [
   { size: 4, singles: 2 },
   { size: 4, singles: 1 },
-  { size: 5, singles: 2 },
-  { size: 5, singles: 1 },
-  { size: 6, singles: 2 },
 ];
 
 const used = new Set();

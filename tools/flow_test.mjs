@@ -70,8 +70,8 @@ function validSolution(record, size) {
 }
 
 // --- sáu bàn mở đầu: giải được, chỉ có đúng một đáp án, đúng vai trò -----------
-check(SCRIPTED.length === 5, `cần đúng 5 màn mở đầu, có ${SCRIPTED.length}`);
-check(SCRIPTED.map((s) => s.size).join() === "4,4,5,5,6", "cỡ lưới 5 màn đầu phải là 4,4,5,5,6");
+check(SCRIPTED.length === 2, `cần đúng 2 màn mở đầu chọn tay, có ${SCRIPTED.length}`);
+check(SCRIPTED.map((s) => s.size).join() === "4,4", "hai màn đầu phải là 4×4");
 for (const [name, def] of [["tutorial", TUTORIAL], ...SCRIPTED.map((s, i) => [`màn ${i + 1}`, s])]) {
   const puzzle = new Puzzle(def.record, def.size);
   const solutions = allSolutions(puzzle);
@@ -173,11 +173,10 @@ check(handCats === 3, `người chơi tự đặt ${handCats} con trong phần d
 console.log(`tutorial: ${tutorial.steps.length} bước · tự đánh ${handMarks} ✕ · tự đặt ${handCats} con`);
 
 // --- bộ máy chọn màn: đúng luật Meowdoku, và nhỏ hơn họ trước màn 50 ------------
-check([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(sizeFor).join() === "4,4,5,5,6,6,6,7,8,6", "cỡ lưới 10 màn đầu");
-check([11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map(sizeFor).join() === "7,9,9,8,9,9,8,9,9,9", "cỡ lưới chu kỳ trước màn 50 phải nhỏ hơn Meowdoku một cỡ");
-check([50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60].map(sizeFor).join() === "10,8,10,10,9,10,10,9,10,10,10", "từ màn 50 cỡ lưới phải y hệt Meowdoku");
-check(!isHardLevel(30) && !isHardLevel(49) && isHardLevel(50) && isHardLevel(110) && !isHardLevel(111), "màn khó định kỳ: từ 50, cứ chẵn chục");
-check(AS_HARD_FROM === 50, "mốc khó y hệt Meowdoku phải là màn 50");
+check([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(sizeFor).join() === "4,4,6,6,8,6,7,8,9,7", "cỡ lưới 10 màn đầu: hai màn 4×4 rồi y Meowdoku");
+check([11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map(sizeFor).join() === "8,10,10,9,10,10,9,10,10,10", "cỡ lưới chu kỳ phải y hệt Meowdoku");
+check(!isHardLevel(20) && isHardLevel(30) && isHardLevel(50) && isHardLevel(110) && !isHardLevel(111), "màn khó định kỳ: chẵn chục từ 30, y Meowdoku");
+check(AS_HARD_FROM === 3, "từ màn 3 y hệt Meowdoku");
 
 // Chiến lược: màn 1-5 ép bậc 1; thắng sạch 2 lần mới lên; trần theo mốc màn.
 let p = { strategy: 1, cleanWins: 0, fails: 0, retryLevels: 0, retryStrategy: 0, dirty: false, retried: false, cleared: 0 };
@@ -195,8 +194,8 @@ const drawn = new Set();
 for (let i = 0; i < 60; i++) drawn.add(planLevel(p, 25).rank);
 check([...drawn].every((r) => r >= 2 && r <= 3) && drawn.size === 2, `bậc 3 phải rút trong {2,3}, thấy ${[...drawn]}`);
 check(planLevel({ ...p, strategy: 1 }, 51).rank === 2, "từ màn 51 sàn là bậc 2");
-check(planLevel({ ...p, strategy: 4 }, 30).rank <= 3, "màn 21-50 trần là bậc 3");
-check(planLevel(p, 50).rank === 5 && planLevel(p, 50).hard, "màn 50 là màn khó bậc 5");
+check(planLevel({ ...p, strategy: 4 }, 31).rank <= 3, "màn 21-50 trần là bậc 3");
+check(planLevel(p, 30).rank === 5 && planLevel(p, 30).hard, "màn 30 là màn khó bậc 5 (màn đặc biệt sẽ đè lên)");
 p = onLevelFailed(p, 25); p = onLevelWon(p, 25); check(p.strategy === 3, "từ màn 21 thua 1 lần chưa xuống bậc");
 p = onLevelFailed(p, 26); p = onLevelWon(p, 26); check(p.strategy === 2, "từ màn 21 thua 2 lần thì xuống bậc");
 p = { ...p, strategy: 3 };
@@ -204,7 +203,7 @@ p = onLevelWon(p, 51); check(p.strategy === 4, "từ màn 51 thắng sạch 1 l�
 p = onLevelWon(p, 52); check(p.strategy === 4, "trần tuyến thường là bậc 4");
 
 // Phép xoay/lật giữ lời giải hợp luật và không trùng bàn gốc (trừ t = 0).
-const sample = SCRIPTED[4].record;
+const sample = { m: "001111" + "000111" + "021113" + "111113" + "114333" + "333355", s: [0, 3, 1, 5, 2, 4] };
 for (let t = 0; t < 8; t++) {
   const turned = transformRecord(sample, 6, t);
   check(validSolution(turned, 6), `phép biến đổi ${t} làm hỏng lời giải`);
@@ -214,7 +213,7 @@ for (let t = 0; t < 8; t++) {
 check(JSON.stringify(transformRecord(transformRecord(sample, 6, 1), 6, 3).s) === JSON.stringify(sample.s), "xoay 4 lần 90° phải về chỗ cũ");
 
 // Con tặng sẵn màn 6-10: màn 6 vùng nhiều ô, màn 7-10 vùng 1 ô; từ màn 11 không tặng.
-const six = SCRIPTED[4].record; // 6×6 có 2 vùng 1 ô
+const six = sample; // 6×6 có 2 vùng 1 ô
 check(prefillFor(7, six, 6).length === 1 && singleRegions(six.m) >= 1, "màn 7 phải tặng con ở vùng 1 ô");
 const [[r7, c7]] = prefillFor(7, six, 6);
 check(six.m.split("").filter((ch) => ch === six.m[r7 * 6 + c7]).length === 1, "con tặng màn 7 không nằm trong vùng 1 ô");

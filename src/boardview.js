@@ -71,7 +71,7 @@ export class BoardView {
         // không phóng to một ký tự có sẵn, mà nét chỉ vẽ được bằng stroke-dashoffset.
         cell.innerHTML =
           '<svg class="x" viewBox="0 0 100 100" aria-hidden="true">' +
-          '<line x1="20" y1="20" x2="80" y2="80" /><line x1="80" y1="20" x2="20" y2="80" /></svg>';
+          '<line x1="27" y1="27" x2="73" y2="73" /><line x1="73" y1="27" x2="27" y2="73" /></svg>';
         cell.style.background = `var(--g${board.puzzle.colourOf(regions[r][c])})`;
         cell.dataset.r = r;
         cell.dataset.c = c;

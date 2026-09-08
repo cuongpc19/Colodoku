@@ -138,7 +138,7 @@ export class BoardView {
   }
 
   clearHighlights() {
-    for (const row of this.cells) for (const node of row) node.classList.remove("hint", "spot", "lit", "ring", "preview");
+    for (const row of this.cells) for (const node of row) node.classList.remove("hint", "spot", "lit", "ring", "preview", "cause");
   }
 
   /**

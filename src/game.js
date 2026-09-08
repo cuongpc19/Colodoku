@@ -383,7 +383,10 @@ function offerMove(move, text) {
   ui.apply.textContent = T.apply;
   ui.apply.hidden = false;
   view.clearHighlights();
-  view.setFocus(move.cells);
+  // Sáng cả ô bị ảnh hưởng lẫn ô gây ra suy luận; ô gây ra có viền riêng để
+  // người chơi thấy "vì mấy ô này" chứ không chỉ thấy kết quả.
+  view.setFocus([...move.cells, ...(move.cause || [])]);
+  if (move.cause) view.highlight(move.cause, "cause");
   if (move.action === "eliminate") view.highlight(move.cells, "preview");
   refreshHud();
 }
@@ -441,7 +444,7 @@ function offerHint() {
   if (!state.tutorial) state.progress = markDirty(state.progress);
   offerMove(
     move,
-    move.text || `${move.action === "place" ? T.hintPlace : T.hintExclude} — ${explain(move.reason)}`,
+    move.text || `${move.action === "place" ? T.hintPlace : T.hintExclude} — ${explain(move.reason, state.puzzle)}`,
   );
   return true;
 }

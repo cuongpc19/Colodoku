@@ -90,7 +90,7 @@ function rank1(state) {
       if (cells.length === 1)
         return {
           rank: 1, action: "place", cells, group: { kind, key },
-          reason: { id: "onlyCell", kind },
+          reason: { id: "onlyCell", kind, key },
         };
     }
   }
@@ -114,8 +114,8 @@ function rank2(state) {
       const remove = state.groupCells(kind, line).filter(([r, c]) => state.regions[r][c] !== region);
       if (remove.length)
         return {
-          rank: 2, action: "eliminate", cells: remove,
-          reason: { id: "regionInLine", kind },
+          rank: 2, action: "eliminate", cells: remove, cause: cells,
+          reason: { id: "regionInLine", kind, region, line },
         };
     }
   }
@@ -131,8 +131,8 @@ function rank2(state) {
         .filter(([r, c]) => (kind === "row" ? r : c) !== key);
       if (remove.length)
         return {
-          rank: 2, action: "eliminate", cells: remove,
-          reason: { id: "lineInRegion", kind },
+          rank: 2, action: "eliminate", cells: remove, cause: cells,
+          reason: { id: "lineInRegion", kind, region, line: key },
         };
     }
   }
@@ -152,7 +152,8 @@ function rank2(state) {
       if (cross)
         return {
           rank: 2, action: "place", cells: [cross], group: { kind: "region", key: region },
-          reason: { id: "crossing" },
+          cause: [...rowCells, ...colCells].filter(([r, c]) => !(r === cross[0] && c === cross[1])),
+          reason: { id: "crossing", region, row, col },
         };
     }
   }
@@ -191,7 +192,8 @@ function setLock(state, kMin, kMax, rank) {
         if (remove.length)
           return {
             rank, action: "eliminate", cells: remove,
-            reason: { id: "setLock", kind, k },
+            cause: combo.flatMap((entry) => state.groupCells("region", entry.region)),
+            reason: { id: "setLock", kind, k, regions: [...regions], lines: [...union] },
           };
       }
     }

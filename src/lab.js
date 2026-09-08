@@ -119,7 +119,7 @@ function walkStep() {
   view.highlight(move.cells, "hint");
 
   const verb = move.action === "place" ? "places an ant" : `excludes ${move.cells.length} cells`;
-  ui.explain.innerHTML = `<b>Rank ${move.rank} — ${T.techniques[move.rank]}:</b> ${verb} because ${explain(move.reason)}.`;
+  ui.explain.innerHTML = `<b>Rank ${move.rank} — ${T.techniques[move.rank]}:</b> ${verb} because ${explain(move.reason, lab.board.puzzle)}.`;
   refreshStatus();
   return true;
 }
@@ -188,7 +188,7 @@ ui.hint.addEventListener("click", () => {
   view.clearHighlights();
   view.highlight(move.cells, "hint");
   const verb = move.action === "place" ? "Place an ant here" : "Exclude these cells";
-  ui.explain.innerHTML = `<b>Rank ${move.rank} — ${T.techniques[move.rank]}.</b> ${verb}: ${explain(move.reason)}.`;
+  ui.explain.innerHTML = `<b>Rank ${move.rank} — ${T.techniques[move.rank]}.</b> ${verb}: ${explain(move.reason, lab.board.puzzle)}.`;
 });
 
 loadIndex().then(switchBank).catch((err) => {

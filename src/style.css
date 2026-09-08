@@ -738,6 +738,14 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
   50% { box-shadow: 0 0 0 7px #fff, 0 0 22px 8px rgba(255, 255, 255, 0.6); }
 }
 
+/* Ô gây ra suy luận trong gợi ý: viền trắng đứt, không đập, để phân biệt với ô sắp bị ✕. */
+.cell.cause {
+  z-index: 4;
+  box-shadow: 0 0 0 3px #fff;
+  outline: 2px dashed rgba(60, 40, 20, 0.55);
+  outline-offset: -6px;
+}
+
 /* Nhịp khen giữa hai bước: bỏ lớp tối, cả bàn sáng bừng lên một cái. */
 .board.flash { filter: brightness(1.1) saturate(1.12); }
 

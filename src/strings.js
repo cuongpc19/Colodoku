@@ -185,11 +185,31 @@ function preferredLocale() {
  * thay danh từ vào một chỗ trống: tiếng Tây Ban Nha, Ý, Nga… đổi giống là đổi
  * cả mạo từ lẫn đuôi tính từ, ghép máy móc kiểu đó là sai ngữ pháp.
  */
-export function explain(reason) {
+/**
+ * Dựng câu giải thích từ `reason` của bộ giải. Tên màu được gọi thẳng và tô đúng
+ * màu đó (Meowdoku cũng viết "Ứng viên [màu] đều ở cột 6"), hàng/cột đánh số
+ * từ 1. Cần `puzzle` để biết vùng nào mang màu nào; thiếu thì gọi chung chung.
+ */
+export function explain(reason, puzzle = null) {
   const entry = T.reasons[reason.id];
   const template = reason.kind ? entry[reason.kind] : entry;
   if (typeof template !== "function") return template;
-  return reason.id === "chain" ? template(reason.depth) : template(reason.k);
+
+  const colour = (region) => {
+    if (puzzle == null || region == null) return T.thisColour;
+    const index = puzzle.colourOf(region);
+    return `<b class="key" style="color: var(--k${index})">${T.colors[index]}</b>`;
+  };
+  const line = (n) => n + 1;
+  switch (reason.id) {
+    case "onlyCell": return template(reason.kind === "region" ? colour(reason.key) : line(reason.key));
+    case "regionInLine":
+    case "lineInRegion": return template(colour(reason.region), line(reason.line));
+    case "crossing": return template(colour(reason.region), line(reason.row), line(reason.col));
+    case "setLock": return template(reason.k, (reason.regions || []).map(colour).join(", "));
+    case "chain": return template(reason.depth);
+    default: return template(reason.k);
+  }
 }
 
 /**

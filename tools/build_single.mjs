@@ -1,17 +1,16 @@
 // Gói cả game vào một file HTML chạy được không cần server.
 //
-// Bản này nhúng sẵn đúng 360 bản ghi mà tuyến chơi dùng tới, thay vì cả 30 bank
-// (28.755 puzzle) — vừa nhẹ đi ~80 lần, vừa mang theo ít dữ liệu của họ nhất có
-// thể. Ảnh con kiến và CSS cũng được nhúng thẳng vào file.
+// Nhúng sẵn kho bàn (data/pools.json), màn đặc biệt (data/specials.json), hai
+// bảng chữ (data/i18n/en.json, vi.json), ảnh con kiến và CSS. Không mang theo
+// một byte nào từ bank giải mã của Meowdoku.
 //
 //   node tools/build_single.mjs        →  dist/colodoku.html
 
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
-import { levelSpec, TOTAL_LEVELS } from "../src/progression.js";
-import { SCRIPTED } from "../src/levels.js";
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 
 const root = new URL("../", import.meta.url);
 const read = (path) => readFileSync(new URL(path, root), "utf8");
+const readJson = (path, fallback) => (existsSync(new URL(path, root)) ? JSON.parse(read(path)) : fallback);
 
 // Thứ tự phụ thuộc — nối tay thay vì gọi bundler, dự án không có bước build nào khác.
 const MODULES = [
@@ -27,23 +26,12 @@ function flatten(source) {
     .trim();
 }
 
-// --- gom bản ghi từng màn -----------------------------------------------
+// --- dữ liệu ---------------------------------------------------------------
 
-const banks = new Map();
-const bankOf = (slug) => {
-  if (!banks.has(slug)) banks.set(slug, JSON.parse(read(`data/${slug}.json`)));
-  return banks.get(slug);
-};
-
-const levels = [];
-for (let n = 1; n <= TOTAL_LEVELS; n++) {
-  if (SCRIPTED[n - 1]) { levels.push(null); continue; } // đã nằm sẵn trong levels.js
-  const spec = levelSpec(n);
-  const bank = bankOf(spec.slug);
-  const list = bank.tiers[spec.rating] || bank.tiers[String(spec.rating + 1)];
-  const record = list[spec.offset % list.length];
-  levels.push({ record, size: bank.size });
-}
+const pools = readJson("data/pools.json", null);
+if (!pools) throw new Error("chưa có data/pools.json — chạy tools/build_pools.mjs trước");
+const specials = readJson("data/specials.json", {});
+const i18n = { en: readJson("data/i18n/en.json"), vi: readJson("data/i18n/vi.json") };
 
 // --- nhúng tài nguyên ----------------------------------------------------
 
@@ -52,7 +40,9 @@ const css = read("src/style.css")
   .replace(/url\("\.\.\/assets\/ant-512\.png"\)/g, `url("data:image/png;base64,${antData}")`);
 
 const script = [
-  `globalThis.__COLODOKU_LEVELS = ${JSON.stringify(levels)};`,
+  `globalThis.__COLODOKU_POOLS = ${JSON.stringify(pools)};`,
+  `globalThis.__COLODOKU_SPECIALS = ${JSON.stringify(specials)};`,
+  `globalThis.__COLODOKU_I18N = ${JSON.stringify(i18n)};`,
   ...MODULES.map((path) => `// ---- ${path} ----\n${flatten(read(path))}`),
 ].join("\n\n");
 
@@ -76,5 +66,6 @@ const artifact = html
 writeFileSync(new URL("dist/colodoku-artifact.html", root), artifact);
 
 const kb = (n) => `${(n / 1024).toFixed(0)} KB`;
-console.log(`dist/colodoku.html · ${kb(html.length)} (kiến ${kb(antData.length)}, ${levels.filter(Boolean).length} màn nhúng sẵn)`);
+const poolCount = Object.values(pools).reduce((a, list) => a + list.length, 0);
+console.log(`dist/colodoku.html · ${kb(html.length)} (kiến ${kb(antData.length)}, ${poolCount} bàn trong ${Object.keys(pools).length} kho, ${Object.keys(specials).length} màn đặc biệt)`);
 console.log(`dist/colodoku-artifact.html · ${kb(artifact.length)}`);

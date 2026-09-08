@@ -1,0 +1,14 @@
+class_name TierFallbackModifier
+extends RefCounted
+func get_modifier_id ( ) -> StringName :
+return &"tier_fallback"
+static func apply ( ctx : LevelSelectContext ) -> void :
+if ctx . is_hard :
+return
+if ctx . tier != "N" :
+return
+var sample : Array = BankData . get_levels_by_tier ( ctx . sz , ctx . rank , "N" )
+if sample . is_empty ( ) :
+sample = BankData . get_lk_style_levels_by_tier ( ctx . sz , ctx . rank , "N" )
+if sample . is_empty ( ) :
+ctx . tier = ""

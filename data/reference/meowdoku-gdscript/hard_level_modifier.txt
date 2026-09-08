@@ -1,0 +1,12 @@
+class_name HardLevelModifier
+extends RefCounted
+func get_modifier_id ( ) -> StringName :
+return &"hard"
+static func apply ( ctx : LevelSelectContext ) -> void :
+if ctx . rank_override > 0 :
+ctx . is_hard = false
+return
+ctx . is_hard = LevelSelector . is_hard_level ( ctx . level_num )
+if ctx . is_hard :
+ctx . rank = 5
+ctx . tier = "N"

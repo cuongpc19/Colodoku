@@ -1,0 +1,28 @@
+class_name LegacyBankCursor
+extends BankCursor
+var _total : int
+func _init ( sz : int , rank : int , tier : String , level_num : int , pools : Dictionary ) -> void :
+_sz = sz
+_rank = rank
+_tier = tier
+_level_num = level_num
+_total = _pool_total ( pools )
+func pos ( ) -> Dictionary :
+var idx : int = GameState . get_bank_index ( _sz , _rank , _tier )
+return {
+"idx" : idx % _total if _total > 0 else 0 ,
+"since_lk" : 0 ,
+"transform" : 0 ,
+"lk_idx" : 0 ,
+"is_main_path" : false ,
+}
+func advance ( entry : Dictionary ) -> void :
+GameState . advance_bank_index ( _sz , _rank , _tier , false )
+func rebind_pools ( pools : Dictionary ) -> void :
+_total = _pool_total ( pools )
+func budget ( ) -> int :
+return _total
+func _pool_total ( pools : Dictionary ) -> int :
+return ( pools . get ( "regular" , [ ] ) as Array ) . size ( )
++ ( pools . get ( "lkstyle" , [ ] ) as Array ) . size ( )
++ ( pools . get ( "gc" , [ ] ) as Array ) . size ( )

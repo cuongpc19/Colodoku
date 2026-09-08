@@ -67,7 +67,12 @@ export class BoardView {
       for (let c = 0; c < n; c++) {
         const cell = document.createElement("div");
         cell.className = "cell";
-        cell.style.background = `var(--g${regions[r][c] % 12})`;
+        // Dấu ✕ là SVG hai nét chứ không phải chữ: bản gốc *vẽ* từng nét ra chứ
+        // không phóng to một ký tự có sẵn, mà nét chỉ vẽ được bằng stroke-dashoffset.
+        cell.innerHTML =
+          '<svg class="x" viewBox="0 0 100 100" aria-hidden="true">' +
+          '<line x1="20" y1="20" x2="80" y2="80" /><line x1="80" y1="20" x2="20" y2="80" /></svg>';
+        cell.style.background = `var(--g${board.puzzle.colourOf(regions[r][c])})`;
         cell.dataset.r = r;
         cell.dataset.c = c;
         this.el.append(cell);
@@ -75,6 +80,10 @@ export class BoardView {
       }
       this.cells.push(row);
     }
+    // Ảnh chụp trạng thái lần vẽ trước. Vào màn thì chép nguyên thế cờ hiện có,
+    // để con vật đặt sẵn không nổ hiệu ứng như vừa mới được đặt.
+    this.shown = this.cells.map((row, r) => row.map((_, c) => board.get(r, c)));
+    this.origin = null;
     this.render();
   }
 
@@ -89,12 +98,43 @@ export class BoardView {
       for (let c = 0; c < board.size; c++) {
         const node = this.cells[r][c];
         const value = board.get(r, c);
+        if (this.shown && this.shown[r][c] !== value) {
+          this.playChange(node, this.shown[r][c], value, r, c);
+          this.shown[r][c] = value;
+        }
         node.classList.toggle("mark", value === MARK);
         node.classList.toggle("cat", value === CAT);
         node.classList.toggle("conflict", clashing.has(`${r},${c}`));
         node.classList.toggle("wrong", this.wrong.has(`${r},${c}`));
       }
     }
+  }
+
+  /**
+   * Nhịp cho một ô vừa đổi trạng thái. Đo từ bản ghi màn hình của game tham
+   * chiếu: ô loé trắng lan từ giữa ra hết 0.44s, dấu ✕ bung quá cỡ 1.34× rồi
+   * lắng về — hai lớp chồng lên nhau nên thấy liền một hơi.
+   *
+   * Loạt ✕ do tự đánh hộ thì lệch pha theo khoảng cách tới ô vừa đặt, lan ra như
+   * sóng; nổ cùng lúc cả chục ô thì thành nháy đèn.
+   */
+  playChange(node, before, after, r, c) {
+    const step = this.origin
+      ? Math.abs(r - this.origin[0]) + Math.abs(c - this.origin[1])
+      : 0;
+    node.style.setProperty("--delay", `${Math.min(step, 6) * 0.035}s`);
+
+    // Gỡ rồi ép reflow, nếu không đổi liên tiếp cùng một ô sẽ không chạy lại.
+    node.classList.remove("flash", "unmark");
+    void node.offsetWidth;
+    // Vệt loé chỉ dành cho lúc đặt con vật. Bản gốc không loé khi đánh ✕ —
+    // ở đó nét vẽ đã đủ nói rồi.
+    if (after === CAT) node.classList.add("flash");
+    if (before === MARK && after === EMPTY) node.classList.add("unmark");
+    // Chờ *mọi* nhịp trên ô xong mới dọn class. Nghe animationend đơn lẻ thì
+    // nhịp ngắn nhất về đích trước và cắt ngang mấy nhịp còn dang dở.
+    Promise.allSettled(node.getAnimations({ subtree: true }).map((a) => a.finished))
+      .then(() => node.classList.remove("flash", "unmark"));
   }
 
   clearHighlights() {
@@ -165,6 +205,7 @@ export class BoardView {
   /** Đặt mèo, kèm tự đánh ✕ mọi ô bị con mèo đó loại nếu bật tuỳ chọn. */
   placeCat(r, c) {
     const board = this.board;
+    this.origin = [r, c]; // tâm sóng cho loạt ✕ tự đánh kèm theo
     if (!this.validate(r, c)) return this.onReject(r, c);
     const changes = [[r, c, CAT]];
     if (this.autoX) {
@@ -180,6 +221,7 @@ export class BoardView {
       }
     }
     this.commit(changes);
+    this.origin = null; // sóng đã phát xong, mấy ô bấm lẻ sau đó không lệch pha
     this.pop(r, c);
   }
 
@@ -222,10 +264,15 @@ export class BoardView {
   }
 
   onPointerDown(event) {
+    // Chặn cử chỉ mặc định của trình duyệt cho MỌI cú chạm lên bàn cờ — kể cả
+    // cú rơi vào ô đã khoá hay lúc cả bàn đang khoá. Mấy nhánh thoát sớm bên
+    // dưới từng bỏ qua preventDefault, và Safari lập tức coi hai cú chạm nhanh
+    // vào đó là "bấm đúp để phóng to" — chỗ rò khiến lỗi lúc bị lúc không.
+    if (event.pointerType !== "mouse") event.preventDefault();
     if (this.locked || !this.board) return;
     const at = this.cellAt(event);
     if (!at || !this.editable(at[0], at[1])) return;
-    event.preventDefault();
+    event.preventDefault(); // với chuột: chặn bôi đen khi kéo qua nhiều ô
     const [r, c] = at;
     this.tap.last = at;
     this.tap.dragging = false;

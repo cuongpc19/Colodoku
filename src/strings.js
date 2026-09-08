@@ -13,26 +13,12 @@
 
 export const DEFAULT_LOCALE = "en";
 
-// Đúng 17 thứ tiếng Meowdoku phát hành trên Play Store (danh sách config.*.apk).
-// `name` là tên ngôn ngữ viết bằng chính nó, để ai cũng nhận ra dòng của mình.
+// Chỉ hai thứ tiếng tự viết. 15 bản dịch còn lại phái sinh từ bản địa hoá của
+// Meowdoku nên đã chuyển sang data/reference/i18n-derived/ — muốn phát hành
+// thêm ngôn ngữ thì dịch mới từ data/i18n/en.json.
 export const LANGUAGES = [
   { code: "en", name: "English" },
-  { code: "ar", name: "العربية", dir: "rtl" },
-  { code: "de", name: "Deutsch" },
-  { code: "es", name: "Español" },
-  { code: "fr", name: "Français" },
-  { code: "hi", name: "हिन्दी" },
-  { code: "id", name: "Bahasa Indonesia" },
-  { code: "it", name: "Italiano" },
-  { code: "ja", name: "日本語" },
-  { code: "ko", name: "한국어" },
-  { code: "my", name: "မြန်မာ" },
-  { code: "pt", name: "Português" },
-  { code: "ru", name: "Русский" },
-  { code: "th", name: "ไทย" },
-  { code: "tr", name: "Türkçe" },
   { code: "vi", name: "Tiếng Việt" },
-  { code: "zh", name: "中文" },
 ];
 
 const STORE_KEY = "colodoku.locale.v1";
@@ -70,6 +56,8 @@ const localeURL = (code) => new URL(`../data/i18n/${code}.json`, import.meta.url
 
 /** Đọc file ngôn ngữ ở dạng khoá phẳng, chưa bung. */
 async function fetchLocale(code) {
+  // Bản một file (tools/build_single.mjs) nhúng sẵn bảng chữ vào global.
+  if (globalThis.__COLODOKU_I18N?.[code]) return globalThis.__COLODOKU_I18N[code];
   // Chạy bằng Node (tools/flow_test.mjs chẳng hạn) thì không có fetch cho file://,
   // đọc thẳng đĩa. Nhánh này không bao giờ chạy trên trình duyệt.
   if (typeof document === "undefined") {

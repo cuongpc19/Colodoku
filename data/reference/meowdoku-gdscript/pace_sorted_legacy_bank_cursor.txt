@@ -1,0 +1,46 @@
+class_name PaceSortedLegacyBankCursor
+extends LegacyBankCursor
+var _pace_group : int
+var _sorted_indices : PackedInt32Array
+var _total_regular : int
+var _total_lkstyle : int
+var _total_gc : int
+func _init ( sz : int , rank : int , tier : String , level_num : int , pools : Dictionary , pace_group : int ) -> void :
+super . _init ( sz , rank , tier , level_num , pools )
+_pace_group = pace_group
+_capture_pool_sizes ( pools )
+_rebuild_sort ( )
+func pos ( ) -> Dictionary :
+var base : Dictionary = super . pos ( )
+if _sorted_indices . is_empty ( ) :
+return base
+var base_idx : int = int ( base . get ( "idx" , 0 ) )
+if base_idx < 0 or base_idx >= _sorted_indices . size ( ) :
+return base
+var mapped_global : int = _sorted_indices [ base_idx ]
+base [ "idx" ] = mapped_global
+base [ "_pace_group" ] = _pace_group
+base [ "_pace_score" ] = _score_for_mapped_global ( mapped_global )
+return base
+func rebind_pools ( pools : Dictionary ) -> void :
+super . rebind_pools ( pools )
+_capture_pool_sizes ( pools )
+_rebuild_sort ( )
+func _capture_pool_sizes ( pools : Dictionary ) -> void :
+_total_regular = ( pools . get ( "regular" , [ ] ) as Array ) . size ( )
+_total_lkstyle = ( pools . get ( "lkstyle" , [ ] ) as Array ) . size ( )
+_total_gc = ( pools . get ( "gc" , [ ] ) as Array ) . size ( )
+func _rebuild_sort ( ) -> void :
+_sorted_indices = BankSorter . get_sorted_indices_for_combined (
+_sz , _rank , _tier , _total_regular , _total_lkstyle , _total_gc , _pace_group )
+func _score_for_mapped_global ( g : int ) -> float :
+var source : String
+var local_idx : int
+if g < _total_regular :
+source = "regular" ; local_idx = g
+elif g < _total_regular + _total_lkstyle :
+source = "lkstyle" ; local_idx = g - _total_regular
+else :
+source = "gc" ; local_idx = g - _total_regular - _total_lkstyle
+var pace_entry : Dictionary = BankData . get_pace_entry ( source , _sz , _rank , local_idx )
+return BankSorter . pick_score ( pace_entry , _pace_group )

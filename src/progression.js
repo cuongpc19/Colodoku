@@ -1,132 +1,318 @@
-// Tuyến chơi: màn số mấy thì lấy puzzle nào, và ghi nhớ tiến trình người chơi.
+// Tuyến chơi: màn số mấy thì cỡ nào, khó bao nhiêu, lấy bàn nào — và ghi nhớ
+// tiến trình người chơi.
 //
-// Meowdoku giấu cấu hình tuyến chơi trong GDScript đã biên dịch nên không đọc ra
-// được. Bảng dưới đây là tuyến do mình dựng, nhưng bám đúng hai thứ đọc được từ
-// dữ liệu của họ: thang độ khó r = cấp kỹ thuật cao nhất (1-5), và nhịp
-// "dễ - dễ - khó - dễ" chứ không tăng tuyến tính.
+// Bộ máy này chép lại đúng cách Meowdoku chọn màn (đọc từ GDScript đã giải mã,
+// xem data/reference/meowdoku-gdscript/): cỡ lưới cố định theo số màn; bậc khó
+// là một "chiến lược" tự lên xuống theo thắng sạch / thua; từ bậc 3 mỗi màn rút
+// ngẫu nhiên trong [2, bậc]; cứ 10 màn một màn khó; một số màn là màn đặc biệt
+// vẽ hình; màn 1-10 tặng sẵn một con. Điểm khác duy nhất là chủ ý của mình:
+// trước màn 50 lưới nhỏ hơn họ một cỡ cho dễ vào, từ màn 50 y hệt.
 
 import { SCRIPTED } from "./levels.js";
 import { T } from "./strings.js";
+import { unpackRegions, packRegions } from "./puzzle.js";
 
-// Tên 5 bậc nằm ở bảng chữ (`T.ratings`), dịch từ bản địa hoá của Meowdoku.
+// ------------------------------------------------------------- cỡ lưới
 
-// Mỗi chặng: bank nào, bậc khó nào, kéo dài bao nhiêu màn.
-const CURRICULUM = [
-  { slug: "classic-4x4", size: 4, rating: 1, levels: 5 },
-  { slug: "classic-5x5", size: 5, rating: 1, levels: 5 },
-  { slug: "classic-5x5", size: 5, rating: 2, levels: 5 },
-  { slug: "classic-6x6", size: 6, rating: 1, levels: 10 },
-  { slug: "classic-6x6", size: 6, rating: 2, levels: 10 },
-  { slug: "classic-6x6", size: 6, rating: 3, levels: 10 },
-  { slug: "classic-7x7", size: 7, rating: 2, levels: 15 },
-  { slug: "classic-7x7", size: 7, rating: 3, levels: 15 },
-  { slug: "classic-7x7", size: 7, rating: 4, levels: 15 },
-  { slug: "classic-8x8", size: 8, rating: 3, levels: 20 },
-  { slug: "classic-8x8", size: 8, rating: 4, levels: 20 },
-  { slug: "classic-8x8", size: 8, rating: 5, levels: 15 },
-  { slug: "classic-9x9", size: 9, rating: 3, levels: 20 },
-  { slug: "classic-9x9", size: 9, rating: 4, levels: 25 },
-  { slug: "classic-9x9", size: 9, rating: 5, levels: 20 },
-  { slug: "classic-10x10", size: 10, rating: 4, levels: 25 },
-  { slug: "classic-10x10", size: 10, rating: 5, levels: 20 },
-  { slug: "gc-11x11", size: 11, rating: 3, levels: 20 },
-  { slug: "gc-11x11", size: 11, rating: 4, levels: 25 },
-  { slug: "gc-11x11", size: 11, rating: 5, levels: 20 },
-  { slug: "classic-12x12", size: 12, rating: 4, levels: 20 },
-  { slug: "classic-12x12", size: 12, rating: 5, levels: 20 },
-];
+// Meowdoku: 10 màn đầu cố định, từ màn 11 lặp chu kỳ 10.
+const THEIR_FIRST = [4, 5, 6, 6, 8, 6, 7, 8, 9, 7];
+const THEIR_CYCLE = [8, 10, 10, 9, 10, 10, 9, 10, 10, 10];
+// Mình: cùng nhịp nhưng nhỏ hơn một cỡ, riêng 5 màn đầu còn nhỏ hơn nữa.
+const OUR_FIRST = [4, 4, 5, 5, 6, 6, 6, 7, 8, 6];
+const OUR_CYCLE = [7, 9, 9, 8, 9, 9, 8, 9, 9, 9];
 
-export const TOTAL_LEVELS = CURRICULUM.reduce((n, stage) => n + stage.levels, 0);
+/** Từ màn này trở đi khó y hệt Meowdoku. */
+export const AS_HARD_FROM = 50;
+
+export function sizeFor(n) {
+  if (n < 1) return 0;
+  const first = n >= AS_HARD_FROM ? THEIR_FIRST : OUR_FIRST;
+  const cycle = n >= AS_HARD_FROM ? THEIR_CYCLE : OUR_CYCLE;
+  return n <= 10 ? first[n - 1] : cycle[(n - 11) % 10];
+}
+
+/** Màn khó định kỳ: bậc 5. Meowdoku bắt đầu từ màn 30, mình từ màn 50. */
+export const isHardLevel = (n) => n >= AS_HARD_FROM && n % 10 === 0;
+
+// Màn đặc biệt vẽ hình — đúng số màn Meowdoku đặt, hình thì mình tự vẽ
+// (tools/build_specials.mjs). Màn 200/250/314 của họ là bàn kiểu LinkedIn, không có hình.
+export const SPECIAL_LEVELS = {
+  10: "1", 20: "2", 30: "30", 40: "window", 50: "50", 55: "wave", 60: "60", 62: "bar",
+  70: "70", 75: "pi", 80: "IQ", 90: "90", 100: "100", 123: "123", 456: "456",
+};
 
 // Game không đánh ✕ hộ ở màn nào — bản ghi màn hình cho thấy Meowdoku bắt tự
-// loại ô ngay từ màn 1, vì đó chính là thao tác chính của trò này. Người chơi
-// vẫn có thể tự bật "Auto ✕" trong màn; hằng số này giữ lại để đổi ý được nhanh.
+// loại ô ngay từ màn 1, vì đó chính là thao tác chính của trò này.
 export const AUTO_MARK_UNTIL = 0;
+export const autoMarksFor = (level) => level <= AUTO_MARK_UNTIL;
 
-export function autoMarksFor(level) {
-  return level <= AUTO_MARK_UNTIL;
+// ------------------------------------------------------------ chiến lược
+
+const randInt = (lo, hi) => lo + Math.floor(Math.random() * (hi - lo + 1));
+
+/** Trần bậc theo số màn — Meowdoku cũng chốt 4 cho tuyến thường, bậc 5 chỉ ở màn khó. */
+const strategyCap = (n) => (n >= 51 ? 4 : n >= 21 ? 3 : 2);
+
+/**
+ * Định cỡ và bậc cho màn n theo trạng thái chiến lược hiện tại. Có rút ngẫu
+ * nhiên, nên kết quả được ghi vào tiến trình để chơi lại vẫn ra đúng màn đó.
+ */
+export function planLevel(progress, n) {
+  const size = sizeFor(n);
+  if (isHardLevel(n)) return { level: n, size, rank: 5, strategy: 5, hard: true };
+
+  let strategy = n <= 5 ? 1 : n >= 51 ? Math.max(progress.strategy || 1, 2) : progress.strategy || 1;
+  strategy = Math.min(strategy, strategyCap(n));
+  const rank = strategy >= 3 ? randInt(2, strategy) : strategy;
+  return { level: n, size, rank, strategy, hard: false };
 }
 
 /**
- * Màn thứ n (đánh số từ 1) thuộc chặng nào và lấy puzzle thứ mấy trong bank.
- * Cứ mỗi 7 màn chèn một màn dễ hơn một bậc làm nhịp nghỉ.
+ * Kết màn thắng — chép nguyên máy trạng thái của Meowdoku:
+ *   - từ màn 6 mới tính; thắng sạch (không trợ giúp, không thua, không chơi
+ *     lại) đủ 2 lần (từ màn 51: 1 lần) thì lên một bậc, tới trần thì thôi;
+ *   - thua đủ 1 lần (màn <21) hay 2 lần (≥21) thì xuống một bậc, mỗi màn tối đa
+ *     một lần; từ màn 101 không xuống dưới bậc 2;
+ *   - từ màn 21, hai màn liền phải chơi lại ở cùng bậc cũng xuống một bậc.
  */
-export function levelSpec(n) {
-  // Vài màn đầu được chép nguyên từ bản gốc, kể cả cỡ lưới, nên chúng không đi
-  // theo bảng CURRICULUM.
-  const scripted = SCRIPTED[n - 1];
-  if (scripted)
-    return {
-      level: n, slug: null, size: scripted.size, rating: scripted.record.r, breather: false,
-      label: `R${scripted.record.r} ${T.ratings[scripted.record.r]}`, stage: -1, offset: 0, scripted: true,
-    };
+export function onLevelWon(progress, n) {
+  const next = { ...progress };
+  next.cleared = Math.max(next.cleared || 0, n);
+  if (n >= 6) {
+    const max = strategyCap(n);
+    const min = n >= 101 ? 2 : 1;
+    const winThreshold = n >= 51 ? 1 : 2;
+    const failThreshold = n >= 21 ? 2 : 1;
+    let demoted = false;
 
-  let remaining = n - 1;
-  let stageIndex = 0;
-  for (; stageIndex < CURRICULUM.length; stageIndex++) {
-    if (remaining < CURRICULUM[stageIndex].levels) break;
-    remaining -= CURRICULUM[stageIndex].levels;
+    if (!next.dirty) {
+      next.cleanWins = (next.cleanWins || 0) + 1;
+      if (next.cleanWins >= winThreshold && next.strategy < max) {
+        next.strategy++;
+        next.cleanWins = 0;
+      }
+    } else next.cleanWins = 0;
+
+    if ((next.fails || 0) >= failThreshold && next.strategy > min) {
+      next.strategy--;
+      next.fails = 0;
+      demoted = true;
+    }
+
+    if (n >= 21) {
+      if (next.retried) {
+        if (next.strategy === next.retryStrategy) {
+          next.retryLevels = (next.retryLevels || 0) + 1;
+          if (next.retryLevels >= 2 && next.strategy > min && !demoted) {
+            next.strategy--;
+            next.retryLevels = 0;
+            next.retryStrategy = 0;
+          }
+        } else {
+          next.retryLevels = 1;
+          next.retryStrategy = next.strategy;
+        }
+      } else {
+        next.retryLevels = 0;
+        next.retryStrategy = 0;
+      }
+    }
   }
-  if (stageIndex >= CURRICULUM.length) return null;
-
-  const stage = CURRICULUM[stageIndex];
-  const breather = n % 7 === 0 && stage.rating > 1;
-  const rating = breather ? stage.rating - 1 : stage.rating;
-
-  return {
-    level: n,
-    slug: stage.slug,
-    size: stage.size,
-    rating,
-    breather,
-    label: `R${rating} ${T.ratings[rating]}`,
-    stage: stageIndex,
-    offset: remaining,
-  };
+  next.dirty = false;
+  next.retried = false;
+  next.current = null;
+  saveProgress(next);
+  return next;
 }
 
-const bankCache = new Map();
+/** Hết mạng: màn này không còn sạch, và tính là một lần thua (từ màn 6). */
+export function onLevelFailed(progress, n) {
+  const next = { ...progress, dirty: true, retried: true };
+  if (n >= 6) {
+    next.cleanWins = 0;
+    next.fails = (next.fails || 0) + 1;
+  }
+  saveProgress(next);
+  return next;
+}
 
-async function loadBank(slug) {
-  if (!bankCache.has(slug))
-    bankCache.set(slug, fetch(`data/${slug}.json`).then((r) => {
-      if (!r.ok) throw new Error(`không tải được bank ${slug}`);
+/** Dùng trợ giúp hay chơi lại giữa chừng: màn này hết sạch. */
+export function markDirty(progress) {
+  if (progress.dirty) return progress;
+  const next = { ...progress, dirty: true };
+  saveProgress(next);
+  return next;
+}
+
+// ------------------------------------------------------------- kho bàn
+
+let poolsPromise = null;
+let specialsPromise = null;
+
+function fetchJson(path, fallback) {
+  return fetch(path)
+    .then((r) => {
+      if (!r.ok) throw new Error(`không tải được ${path} (HTTP ${r.status})`);
       return r.json();
-    }));
-  return bankCache.get(slug);
+    })
+    .catch((error) => {
+      console.error(error);
+      return fallback;
+    });
 }
 
-/** Bản ghi puzzle cho màn n. Chọn theo chỉ số cố định để chơi lại vẫn ra đúng màn đó. */
-export async function levelRecord(n) {
-  const spec = levelSpec(n);
-  if (!spec) return null;
-  const scripted = SCRIPTED[n - 1];
-  if (scripted) return { spec, record: scripted.record, size: scripted.size, given: scripted.given || [] };
+/** Kho bàn theo "cỡxbậc" (tools/build_pools.mjs). Bản một file nhúng sẵn vào global. */
+function loadPools() {
+  if (globalThis.__COLODOKU_POOLS) return Promise.resolve(globalThis.__COLODOKU_POOLS);
+  if (!poolsPromise) poolsPromise = fetchJson("data/pools.json", null).then((p) => { if (!p) poolsPromise = null; return p; });
+  return poolsPromise;
+}
 
-  // Bản dựng một file (tools/build_single.mjs) nhúng sẵn bản ghi từng màn vào
-  // đây, nên không phải tải data/*.json qua mạng.
-  const embedded = globalThis.__COLODOKU_LEVELS;
-  if (embedded) {
-    const entry = embedded[n - 1];
-    return entry && { spec, record: entry.record, size: entry.size, given: [] };
+function loadSpecials() {
+  if (globalThis.__COLODOKU_SPECIALS) return Promise.resolve(globalThis.__COLODOKU_SPECIALS);
+  if (!specialsPromise) specialsPromise = fetchJson("data/specials.json", {});
+  return specialsPromise;
+}
+
+/** Số vùng chỉ có một ô. */
+export function singleRegions(m) {
+  const counts = {};
+  for (const ch of m) counts[ch] = (counts[ch] || 0) + 1;
+  return Object.values(counts).filter((n) => n === 1).length;
+}
+
+/** Meowdoku: tối đa 2 vùng 1 ô, từ màn 21 tối đa 1 — để không quá lộ. */
+export const singleLimit = (n) => (n >= 21 ? 1 : 2);
+
+/**
+ * Xoay/lật một bản ghi: t = 0..7, t/4 là lật (1 ngang, 2 dọc), t%4 là số lần
+ * xoay 90°. Đúng thứ tự phép biến đổi của Meowdoku, nên hết kho thì bàn cũ
+ * quay lại dưới dạng khác.
+ */
+export function transformRecord(record, size, t) {
+  let rm = unpackRegions(record.m, size);
+  let sol = [...record.s];
+  const mirror = Math.floor(t / 4);
+  const rot = t % 4;
+  if (mirror === 1) {
+    rm = rm.map((row) => [...row].reverse());
+    sol = sol.map((c) => size - 1 - c);
+  } else if (mirror === 2) {
+    rm = [...rm].reverse();
+    sol = [...sol].reverse();
+  }
+  for (let i = 0; i < rot; i++) {
+    const next = Array.from({ length: size }, (_, r2) => Array.from({ length: size }, (_, c2) => rm[size - 1 - c2][r2]));
+    const nextSol = new Array(size);
+    for (let r2 = 0; r2 < size; r2++) nextSol[sol[r2]] = size - 1 - r2;
+    rm = next;
+    sol = nextSol;
+  }
+  return { ...record, m: packRegions(rm), s: sol };
+}
+
+/**
+ * Con tặng sẵn ở màn 1-10, đúng luật Meowdoku: màn 1-6 tặng con nằm trong vùng
+ * nhiều ô (để người chơi tự tìm vùng 1 ô), màn 7-10 tặng đúng con ở vùng 1 ô.
+ */
+export function prefillFor(n, record, size) {
+  if (n < 1 || n > 10) return [];
+  const area = {};
+  for (const ch of record.m) area[ch] = (area[ch] || 0) + 1;
+  const wantSingle = n >= 7;
+  for (let r = 0; r < size; r++) {
+    const c = record.s[r];
+    const cells = area[record.m[r * size + c]];
+    if (wantSingle ? cells === 1 : cells > 1) return [[r, c]];
+  }
+  return [[0, record.s[0]]];
+}
+
+/** Bậc gần nhất có trong kho cho cỡ này: ưu tiên thấp hơn, rồi mới cao hơn. */
+function nearestRank(pools, size, rank) {
+  for (const r of [rank, rank - 1, rank - 2, rank - 3, rank + 1, rank + 2, rank + 3, rank + 4])
+    if (r >= 1 && r <= 5 && pools[`${size}x${r}`]?.length) return r;
+  return null;
+}
+
+/**
+ * Rút bàn kế tiếp trong kho "cỡxbậc": đi tuần tự từ con trỏ, bỏ qua bàn có quá
+ * nhiều vùng 1 ô (nếu quét hết kho mà không có thì lấy đại). Hết kho thì quay
+ * về đầu với phép xoay/lật kế tiếp.
+ */
+function drawFromPool(pool, cursor, limit) {
+  const total = pool.length;
+  let picked = cursor.idx % total;
+  for (let k = 0; k < total; k++) {
+    const i = (cursor.idx + k) % total;
+    if (singleRegions(pool[i].m) <= limit) { picked = i; break; }
+  }
+  let idx = picked + 1, transform = cursor.transform || 0;
+  if (idx >= total) { idx = 0; transform = (transform + 1) % 8; }
+  return { index: picked, transform: cursor.transform || 0, next: { idx, transform } };
+}
+
+/**
+ * Bàn cho màn n. Lần đầu vào màn thì định cỡ/bậc, rút bàn và ghi lại; chơi lại
+ * màn đó thì trả đúng bàn cũ. Trả về cả tiến trình đã cập nhật.
+ */
+export async function levelRecord(n, progress) {
+  const scripted = SCRIPTED[n - 1];
+  if (scripted) {
+    const spec = { level: n, size: scripted.size, rank: scripted.record.r, hard: false, special: null };
+    return { spec: withLabel(spec), record: scripted.record, size: scripted.size, given: scripted.given || [], progress };
   }
 
-  const bank = await loadBank(spec.slug);
-  // Bậc nhịp nghỉ có thể trống ở vài bank nhỏ — lùi về bậc gốc của chặng.
-  const list = bank.tiers[spec.rating] || bank.tiers[String(spec.rating + 1)];
-  if (!list || !list.length) return null;
-  return { spec, record: list[spec.offset % list.length], size: bank.size, given: [] };
+  let current = progress.current && progress.current.level === n ? progress.current : null;
+  let next = progress;
+
+  if (!current) {
+    const plan = planLevel(progress, n);
+    const specials = await loadSpecials();
+    const special = SPECIAL_LEVELS[n] && specials?.[n] ? specials[n] : null;
+    if (special) current = { ...plan, size: special.size, rank: special.record.r, special: n };
+    else {
+      const pools = await loadPools();
+      if (!pools) return null;
+      const rank = nearestRank(pools, plan.size, plan.rank);
+      if (!rank) return null;
+      const key = `${plan.size}x${rank}`;
+      const cursors = { ...(progress.cursors || {}) };
+      const draw = drawFromPool(pools[key], cursors[key] || { idx: 0, transform: 0 }, singleLimit(n));
+      cursors[key] = draw.next;
+      current = { ...plan, rank, key, index: draw.index, transform: draw.transform, special: null };
+      next = { ...next, cursors };
+    }
+    next = { ...next, current };
+    saveProgress(next);
+  }
+
+  let record, size = current.size;
+  if (current.special) {
+    const specials = await loadSpecials();
+    record = specials?.[current.special]?.record;
+  } else {
+    const pools = await loadPools();
+    const entry = pools?.[current.key]?.[current.index];
+    record = entry && transformRecord(entry, size, current.transform);
+  }
+  if (!record) return null;
+
+  const spec = withLabel({ level: n, size, rank: current.rank, hard: current.hard, special: current.special ? SPECIAL_LEVELS[n] : null });
+  return { spec, record, size, given: prefillFor(n, record, size), progress: next };
 }
+
+const withLabel = (spec) => ({ ...spec, label: `R${spec.rank} ${T.ratings[spec.rank]}` });
 
 // ------------------------------------------------------------- tiến trình
 
-const STORE_KEY = "colodoku.progress.v1";
+const PROGRESS_KEY = "colodoku.progress.v2";
 
 // Ví tiền: thắng một màn được COIN_REWARD, mỗi lượt bấm trợ giúp trừ đi
 // COIN_COST tương ứng. Cả ba con số để chung một chỗ vì chúng cân bằng lẫn
-// nhau — 100 đồng một màn tức là 5 lần Gợi ý hoặc 2 lần rưỡi Chỉ chỗ.
+// nhau — một màn thắng đúng bằng một lần Chỉ chỗ, hoặc hai lần Gợi ý.
 export const COIN_REWARD = 100;
-export const COIN_COST = { reveal: 20, hint: 10 };
+export const COIN_COST = { reveal: 100, hint: 50 };
 
 // Vốn mở màn: ngần này lượt miễn phí cho mỗi nút, tiêu hết mới phải trả xu.
 // Đây là kho dùng chung cả game chứ không phải hạn mức mỗi màn.
@@ -135,11 +321,14 @@ export const FREE_USES = 10;
 const BLANK = {
   cleared: 0, tutorialDone: false, stars: {}, streak: 0, lastPlayed: null, best: 0, coins: 0,
   free: { reveal: FREE_USES, hint: FREE_USES },
+  // máy chiến lược
+  strategy: 1, cleanWins: 0, fails: 0, retryLevels: 0, retryStrategy: 0,
+  dirty: false, retried: false, current: null, cursors: {},
 };
 
 export function loadProgress() {
   try {
-    return { ...BLANK, ...JSON.parse(localStorage.getItem(STORE_KEY) || "{}") };
+    return { ...BLANK, ...JSON.parse(localStorage.getItem(PROGRESS_KEY) || "{}") };
   } catch {
     return { ...BLANK };
   }
@@ -147,7 +336,7 @@ export function loadProgress() {
 
 export function saveProgress(progress) {
   try {
-    localStorage.setItem(STORE_KEY, JSON.stringify(progress));
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
   } catch {
     /* chế độ riêng tư chặn localStorage — chơi vẫn được, chỉ là không nhớ. */
   }
@@ -156,16 +345,16 @@ export function saveProgress(progress) {
 /** Xoá sạch tiến trình — chơi lại từ hướng dẫn như người mới. */
 export function clearProgress() {
   try {
-    localStorage.removeItem(STORE_KEY);
+    localStorage.removeItem(PROGRESS_KEY);
   } catch {
     /* không xoá được thì thôi, bản sao trong bộ nhớ đã bị thay rồi */
   }
-  return { ...BLANK };
+  return { ...BLANK, free: { ...BLANK.free }, cursors: {} };
 }
 
-/** Màn đang mở khoá: màn kế tiếp sau màn cao nhất đã qua. */
+/** Màn đang mở khoá: màn kế tiếp sau màn cao nhất đã qua. Tuyến chơi không có màn cuối. */
 export function currentLevel(progress) {
-  return Math.min(progress.cleared + 1, TOTAL_LEVELS);
+  return (progress.cleared || 0) + 1;
 }
 
 export function markCleared(progress, n, stars) {

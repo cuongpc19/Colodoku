@@ -1,0 +1,14 @@
+class_name LevelSelectionStrategy
+extends RefCounted
+func get_strategy_id ( ) -> StringName :
+return &""
+func get_strategy_version ( ) -> int :
+return 1
+func select ( _request : LevelSelectRequest ) -> Dictionary :
+return { }
+func on_delivery ( _entry : Dictionary ) -> void :
+pass
+func on_level_won_settlement ( _ctx : LevelSettlementContext ) -> void :
+pass
+func is_hard_level ( level_num : int ) -> bool :
+return level_num >= 21 and level_num % 10 == 0

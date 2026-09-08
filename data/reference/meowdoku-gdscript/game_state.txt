@@ -1,0 +1,2057 @@
+extends Node
+signal all_data_reset
+const SAVE_DIR : = "user://save_store/"
+const SAVE_PATH_A : = "user://save_store/save_a.cfg"
+const SAVE_PATH_B : = "user://save_store/save_b.cfg"
+const SAVE_FLAG : = "user://save_store/flag.txt"
+const SAVE_PATH_OLD : = "user://save.cfg"
+const SAVE_PATH_ENDGAME : = "user://save_store/endgame.cfg"
+const SAVE_PASSWORD : = "qd_x9K3mPv7RtN2sLwH8jFcZyA5eBkM1n"
+var _player_store : SaveStore
+var _endgame_store : SaveStore
+var _endgame_dirty : bool = false
+var _endgame_coalesce_timer : Timer
+signal tool_count_changed ( kind : String , count : int )
+signal level_settled ( won : bool )
+var _current_level : int = 1
+var _last_hard_level : int = 0
+var _tutorial_done : bool = false
+var _has_shown_rate_us : bool = false
+var _has_used_revive_free : bool = false
+var _warn_life_shown : bool = false
+var _life_plus_first_done : bool = false
+var _countdown_shown_levels : Dictionary = { }
+var _current_strategy : int = 1
+var _consecutive_clean_wins : int = 0
+var _last_level_clean_win : bool = false
+var _consecutive_fails : int = 0
+var _consecutive_retry_levels : int = 0
+var _retry_tracking_strategy : int = 0
+var _bank_progress : Dictionary = { }
+var _main_bank_progress : Dictionary = { }
+var _lkmod_progress : Dictionary = { }
+var _sp_tt_category_cursor : int = 1
+var _sp_tt_last_replaced_level : int = 0
+var _sp_tt_progress : Dictionary = { }
+var _lk_mod_g2_last_replaced_level : int = 0
+var _daily_index : int = 0
+var _daily_completed_date : String = ""
+var _max_daily_date : String = ""
+var _daily_first_easy_date : String = ""
+var _daily_elapsed_sec : int = 0
+var _daily_beat_percent : float = 0
+var _daily_best_beat_percent : float = 0
+var _daily_started_date : String = ""
+var _game_total_stats : Dictionary = { }
+var _main_game_total_stats : Dictionary = { }
+var _daily_game_total_stats : Dictionary = { }
+var _main_game_round_stats : Dictionary = { }
+var _daily_game_round_stats : Dictionary = { }
+var _main_game_id : String = ""
+var _daily_game_id : String = ""
+var _tool_locate : int = 5
+var _tool_hint : int = 5
+var _tool_mouse : int = 2
+var _tool_draft : int = 5
+var _tool_undo : int = 3
+var _last_splash_date : String = ""
+var _apply_locale : String = ""
+var _is_first_session : bool = true
+var _last_first_level_date : String = ""
+var _music_on : bool = true
+var _music_user_modified : bool = false
+var _sound_on : bool = true
+var _vibration_on : bool = true
+var _people_on : bool = true
+var _has_used_tool : bool = false
+var _prop_highlight_shown : bool = false
+var _prop_highlight_hint_date : String = ""
+var _push_ask_count : int = 0
+var _push_guide_last_date : String = ""
+var _push_guide_shown_count : int = 0
+var _push_guide_popup_count : int = 0
+var _recent_win_counts_by_day : Dictionary = { }
+var _has_shown_att_guide : bool = false
+var _interstitial_unlocked : bool = false
+var _banner_unlocked : bool = false
+var _has_shown_draft_onboarding : bool = false
+var _auto_mark_tutorial_done : bool = false
+var _rule_info_bar_collapsed : bool = false
+var _pattern_mode_on : bool = false
+var _pattern_entry_dot_dismissed : bool = false
+var _pattern_switch_dot_dismissed : bool = false
+var _music_entry_dot_dismissed : bool = false
+var _grt_level_d90_reported : Array = [ ]
+var _grt_reported_events : Array = [ ]
+var _first_open_time_ms : int = 0
+var _today_date : String = ""
+var _session_count : int = 0
+var _today_session_count : int = 0
+var _last_day_session_count : int = 0
+var _active_days : int = 0
+var _last_login_date : String = ""
+var _login_gap_days : int = 0
+var _today_played_count : int = 0
+var _today_active_sec : int = 0
+var _total_active_sec : int = 0
+var _pending_rewards : Array = [ ]
+var _reward_history_ts : Array = [ ]
+var _restored_today_count : int = 0
+var _in_flight_awards : Array = [ ]
+var _daily_auto_mark_enabled : bool = false
+var _daily_auto_mark_free_consumed : bool = false
+var _saved_game_auto_mark : int = -1
+var _saved_ab_groups : Dictionary = { }
+var _saved_peek_ab_groups : Dictionary = { }
+var _retry_puzzle_level : int = 0
+var _retry_puzzle_params : Dictionary = { }
+var _pre_cat_fail_lv : int = 0
+var _pre_cat_fail_count : int = 0
+var _pre_cat_revived_this_level : bool = false
+var _pre_cat_pending_hard : bool = false
+var _pre_cat_pending_struggle : bool = false
+var _pre_cat_pending_demote : bool = false
+var _pre_cat_lock_lv : int = 0
+var _pre_cat_lock_pre_type : String = "0"
+var _pre_cat_lock_pos : Vector2i = Vector2i ( -1 , -1 )
+var _recent_puzzles : Array = [ ]
+const RECENT_PUZZLES_LIMIT : = 100
+var _endgame_snapshot : Dictionary = { }
+const ENDGAME_SNAPSHOT_VERSION : int = 2
+var _golden_fish_streak_count : int = 0
+var _golden_fish_pending : bool = false
+var _golden_fish_tutorial_shown : bool = false
+var _onefish_progress : Dictionary = { }
+var _golden_fish_insert_delivered : int = 0
+var _chain_last_replaced_level : int = 0
+var _chain_g3_streak : int = 0
+var _debug_mode : bool = false
+var _current_level_dirty : bool = false
+var _current_level_retried : bool = false
+var _demoted_this_level : bool = false
+var _dda_tool_or_revive_used : bool = false
+var _dda_revive_used : bool = false
+var _dda_pending_demote : bool = false
+var _is_daily_first_easy_level : bool = false
+var _nl2_pending_restore : bool = false
+var _nl2_restore_strategy : int = 0
+var _nl2_pending_demote : bool = false
+var _nl2_pending_demote_reason : String = ""
+var _nl2_debug_last_transition : String = ""
+var _nl2_dbg_trigger : String = ""
+var _nl2_dbg_ideal : int = 0
+var _nl2_dbg_floor_hit : bool = false
+var _nl2_dbg_floor_value : int = 0
+var _nl2_dbg_restored : bool = false
+var _chain_g2_pending : bool = false
+var _is_gamble_user : int = -1
+var _early_l1_l20_bits : Array = [ ]
+var _recent_hard_invalid_bits : Array = [ ]
+var _11503_r3_played_count : int = 0
+var _11503_r4_played_count : int = 0
+var coords_visible : bool = false
+var _first_session_runtime : bool = true
+var _session_played_count : int = 0
+var _has_won_since_cold_start : bool = false
+var _daily_first_easy_available : bool = false
+var _daily_first_easy_evaluated : bool = false
+var _direct_open_evaluated_this_cold_start : bool = false
+var _session_consecutive_wins : int = 0
+var _session_reward_view_count : int = 0
+var _session_interstitial_count : int = 0
+var _start_toast_pct : Dictionary = { }
+var _start_toast_iq_idx : Dictionary = { }
+var _start_toast_variant_idx : Dictionary = { }
+var _start_toast_variant_pct : Dictionary = { }
+var _toast_hold_text_sig : int = -999
+var _toast_shown_keys : PackedStringArray = PackedStringArray ( )
+var _fail_text_revive_x : Dictionary = { }
+var _last_win_beat_percent : float = -1
+var _help_last_open_time : int = 0
+var _install_version : String = ""
+var _game_version_pre : String = ""
+const VERSION_1_14_0 : String = "1.14.0"
+func _ready ( ) -> void :
+_player_store = SaveStore . new ( SAVE_PASSWORD , SAVE_DIR , true , SAVE_PATH_A , SAVE_PATH_B , SAVE_FLAG , SAVE_PATH_OLD )
+_endgame_store = SaveStore . new ( SAVE_PASSWORD , SAVE_DIR , false , SAVE_PATH_ENDGAME )
+_endgame_coalesce_timer = Timer . new ( )
+_endgame_coalesce_timer . one_shot = true
+_endgame_coalesce_timer . wait_time = 0.5
+_endgame_coalesce_timer . timeout . connect ( _on_endgame_coalesce_timeout )
+add_child ( _endgame_coalesce_timer )
+_migrate_legacy_save ( )
+_load_data ( )
+_first_session_runtime = _is_first_session
+VibrateManager . set_enabled ( _vibration_on )
+DataSyncRegistry . register ( self )
+func get_current_level ( ) -> int :
+return _current_level
+func set_current_level ( value : int ) -> void :
+_current_level = value
+_save_data ( )
+func get_last_hard_level ( ) -> int :
+return _last_hard_level
+func mark_hard_level ( level_num : int ) -> void :
+if _last_hard_level == level_num :
+return
+_last_hard_level = level_num
+_save_data ( )
+func is_tutorial_done ( ) -> bool :
+return _tutorial_done
+func set_tutorial_done ( value : bool ) -> void :
+_tutorial_done = value
+_save_data ( )
+func has_shown_rate_us ( ) -> bool :
+return _has_shown_rate_us
+func has_countdown_shown_for_level ( level : int ) -> bool :
+if level <= 0 :
+return false
+return _countdown_shown_levels . get ( level , false )
+func mark_countdown_shown_for_level ( level : int ) -> void :
+if level <= 0 :
+return
+if _countdown_shown_levels . get ( level , false ) :
+return
+_countdown_shown_levels [ level ] = true
+_save_data ( )
+func has_won_since_cold_start ( ) -> bool :
+return _has_won_since_cold_start
+func try_consume_direct_open_gate ( ) -> bool :
+if _direct_open_evaluated_this_cold_start :
+return false
+_direct_open_evaluated_this_cold_start = true
+return true
+func is_daily_first_easy_available ( ) -> bool :
+return _daily_first_easy_available
+func evaluate_daily_first_easy ( ) -> void :
+if _daily_first_easy_evaluated :
+return
+_daily_first_easy_evaluated = true
+var today : String = _today_str ( )
+if _daily_first_easy_date >= today :
+_daily_first_easy_available = false
+print ( "[DailyFirstEasy] 今日已消耗过,不可降档" )
+return
+var snapshot : Dictionary = _endgame_snapshot
+if not snapshot . is_empty ( ) :
+var snap_level : int = int ( snapshot . get ( "level" , 0 ) )
+var lives_left : int = int ( snapshot . get ( "lives" , 0 ) )
+if snap_level == _current_level and lives_left > 0 :
+var prefill_count : int = ( snapshot . get ( "prefill_positions" , [ ] ) as Array ) . size ( )
+var user_cats : int = ( snapshot . get ( "placed_cats" , [ ] ) as Array ) . size ( ) - prefill_count
+var user_marks : int = ( snapshot . get ( "marks" , [ ] ) as Array ) . size ( )
+var user_errors : int = ( snapshot . get ( "errors" , [ ] ) as Array ) . size ( )
+if user_cats > 0 or user_marks > 0 or user_errors > 0 :
+_daily_first_easy_date = today
+_daily_first_easy_available = false
+_save_data ( )
+print ( "[DailyFirstEasy] 有操作残局,机会作废 (level=%d cats=%d marks=%d errors=%d lives=%d)" % [ snap_level , user_cats , user_marks , user_errors , lives_left ] )
+return
+_daily_first_easy_available = true
+print ( "[DailyFirstEasy] 冷启动评估: 可降档" )
+func consume_daily_first_easy ( ) -> void :
+_daily_first_easy_date = _today_str ( )
+_daily_first_easy_available = false
+_save_data ( )
+func consume_daily_first_easy_and_mark ( ) -> void :
+consume_daily_first_easy ( )
+_is_daily_first_easy_level = true
+func advance_daily_first_easy_date ( ) -> void :
+var today : String = _today_str ( )
+if _daily_first_easy_date >= today :
+return
+_daily_first_easy_date = today
+_daily_first_easy_available = false
+_save_data ( )
+print ( "[DailyFirstEasy] 局内跨天+开始新对局, 推进日期消耗机会" )
+func cheat_reset_daily_first_easy ( ) -> void :
+_daily_first_easy_date = ""
+_save_data ( )
+func get_session_consecutive_wins ( ) -> int :
+return _session_consecutive_wins
+func get_session_reward_view_count ( ) -> int :
+return _session_reward_view_count
+func increment_session_reward_view_count ( ) -> void :
+_session_reward_view_count += 1
+func reset_session_reward_view_count ( ) -> void :
+_session_reward_view_count = 0
+func set_session_reward_view_count ( value : int ) -> void :
+_session_reward_view_count = max ( 0 , value )
+func get_session_interstitial_count ( ) -> int :
+return _session_interstitial_count
+func increment_session_interstitial_count ( ) -> void :
+_session_interstitial_count += 1
+func set_session_interstitial_count ( value : int ) -> void :
+_session_interstitial_count = max ( 0 , value )
+func mark_rate_us_shown ( ) -> void :
+if _has_shown_rate_us :
+return
+_has_shown_rate_us = true
+_save_data ( )
+func reset_rate_us_shown ( ) -> void :
+if not _has_shown_rate_us :
+return
+_has_shown_rate_us = false
+_save_data ( )
+func has_shown_warn_life ( ) -> bool :
+return _warn_life_shown
+func mark_warn_life_shown ( ) -> void :
+if _warn_life_shown :
+return
+_warn_life_shown = true
+_save_data ( )
+func has_shown_att_guide ( ) -> bool :
+return _has_shown_att_guide
+func mark_att_guide_shown ( ) -> void :
+if _has_shown_att_guide :
+return
+_has_shown_att_guide = true
+_save_data ( )
+func is_interstitial_unlocked ( ) -> bool :
+return _interstitial_unlocked
+func mark_interstitial_unlocked ( ) -> void :
+if _interstitial_unlocked :
+return
+_interstitial_unlocked = true
+_save_data ( )
+func is_banner_unlocked ( ) -> bool :
+return _banner_unlocked
+func mark_banner_unlocked ( ) -> void :
+if _banner_unlocked :
+return
+_banner_unlocked = true
+_save_data ( )
+func is_pattern_mode_on ( ) -> bool :
+return _pattern_mode_on
+func set_pattern_mode_on ( value : bool ) -> void :
+print ( "[PATTERN_DBG] set_pattern_mode_on value=%s (before=%s)" % [ value , _pattern_mode_on ] )
+_pattern_mode_on = value
+_save_data ( )
+print ( "[PATTERN_DBG] after save, is_pattern_mode_on=%s" % _pattern_mode_on )
+func is_pattern_entry_dot_dismissed ( ) -> bool :
+return _pattern_entry_dot_dismissed
+func mark_pattern_entry_dot_dismissed ( ) -> void :
+if _pattern_entry_dot_dismissed :
+return
+_pattern_entry_dot_dismissed = true
+_save_data ( )
+func is_music_entry_dot_dismissed ( ) -> bool :
+return _music_entry_dot_dismissed
+func mark_music_entry_dot_dismissed ( ) -> void :
+if _music_entry_dot_dismissed :
+return
+_music_entry_dot_dismissed = true
+_save_data ( )
+func is_pattern_switch_dot_dismissed ( ) -> bool :
+return _pattern_switch_dot_dismissed
+func mark_pattern_switch_dot_dismissed ( ) -> void :
+if _pattern_switch_dot_dismissed :
+return
+_pattern_switch_dot_dismissed = true
+_save_data ( )
+func is_music_user_modified ( ) -> bool :
+return _music_user_modified
+func get_saved_ab_group ( key : String ) -> int :
+return int ( _saved_ab_groups . get ( key , -1 ) )
+func set_saved_ab_group ( key : String , v : int ) -> void :
+if int ( _saved_ab_groups . get ( key , -1 ) ) == v :
+return
+_saved_ab_groups [ key ] = v
+_save_data ( )
+func get_saved_peek_ab_group ( key : String ) -> Variant :
+return _saved_peek_ab_groups . get ( key , const?35 )
+func set_saved_peek_ab_group ( key : String , v : Variant ) -> void :
+if _saved_peek_ab_groups . get ( key , const?35 ) == v :
+return
+_saved_peek_ab_groups [ key ] = v
+_save_data ( )
+func has_grt_level_d90_reported ( level : int ) -> bool :
+return _grt_level_d90_reported . has ( level )
+func mark_grt_level_d90_reported ( level : int ) -> void :
+if _grt_level_d90_reported . has ( level ) :
+return
+_grt_level_d90_reported . append ( level )
+_save_data ( )
+func has_grt_event_reported ( event_name : String ) -> bool :
+return _grt_reported_events . has ( event_name )
+func mark_grt_event_reported ( event_name : String ) -> void :
+if _grt_reported_events . has ( event_name ) :
+return
+_grt_reported_events . append ( event_name )
+_save_data ( )
+func get_first_open_time_ms ( ) -> int :
+return _first_open_time_ms
+func ensure_first_open_time ( sdk_value_ms : int ) -> void :
+if _first_open_time_ms > 0 :
+return
+if sdk_value_ms > 0 :
+_first_open_time_ms = sdk_value_ms
+else :
+_first_open_time_ms = int ( Time . get_unix_time_from_system ( ) * 1000 )
+_save_data ( )
+func get_current_strategy ( ) -> int :
+return _current_strategy
+func set_current_strategy ( value : int ) -> void :
+_current_strategy = value
+_save_data ( )
+func get_chain_last_replaced_level ( ) -> int :
+return _chain_last_replaced_level
+func set_chain_last_replaced_level ( value : int ) -> void :
+_chain_last_replaced_level = value
+_save_data ( )
+func get_chain_g3_streak ( ) -> int :
+return _chain_g3_streak
+func set_chain_g3_streak ( value : int ) -> void :
+_chain_g3_streak = value
+_save_data ( )
+func get_daily_completed_date ( ) -> String :
+return _daily_completed_date
+func get_daily_started_date ( ) -> String :
+return _daily_started_date
+func set_daily_started_date ( date : String ) -> void :
+_daily_started_date = date
+_save_data ( )
+func inc_game_total_stat ( game_type : String , key : String , delta : int = 1 ) -> void :
+var d : Dictionary = _get_total_stats_dict ( game_type )
+d [ key ] = int ( d . get ( key , 0 ) ) + delta
+_request_save_endgame ( )
+func get_game_total_stat ( game_type : String , key : String ) -> int :
+return int ( _get_total_stats_dict ( game_type ) . get ( key , 0 ) )
+func get_persisted_game_id ( game_type : String ) -> String :
+if game_type == "daily" :
+return _daily_game_id
+return _main_game_id
+func set_persisted_game_id ( game_type : String , value : String ) -> void :
+if game_type == "daily" :
+_daily_game_id = value
+else :
+_main_game_id = value
+_save_endgame ( )
+func reset_game_total_stats ( game_type : String ) -> void :
+var d : Dictionary = _get_total_stats_dict ( game_type )
+if d . is_empty ( ) :
+return
+d . clear ( )
+_save_endgame ( )
+func get_game_round_stats ( game_type : String ) -> Dictionary :
+if game_type == "daily" :
+return _daily_game_round_stats . duplicate ( )
+return _main_game_round_stats . duplicate ( )
+func persist_game_round_stats ( game_type : String , stats : Dictionary ) -> void :
+if game_type == "daily" :
+_daily_game_round_stats = stats . duplicate ( )
+else :
+_main_game_round_stats = stats . duplicate ( )
+_request_save_endgame ( )
+func reset_game_round_stats ( game_type : String ) -> void :
+var d : Dictionary = _get_round_stats_dict ( game_type )
+if d . is_empty ( ) :
+return
+d . clear ( )
+_save_endgame ( )
+func _get_round_stats_dict ( game_type : String ) -> Dictionary :
+if game_type == "daily" :
+return _daily_game_round_stats
+return _main_game_round_stats
+func _get_total_stats_dict ( game_type : String ) -> Dictionary :
+if game_type == "daily" :
+return _daily_game_total_stats
+return _main_game_total_stats
+func get_max_daily_date ( ) -> String :
+return _max_daily_date
+func advance_max_daily_date ( date : String ) -> void :
+if date > _max_daily_date :
+_max_daily_date = date
+_save_data ( )
+func get_daily_elapsed_sec ( ) -> int :
+return _daily_elapsed_sec
+func get_daily_beat_percent ( ) -> float :
+return _daily_beat_percent
+func get_daily_best_beat_percent ( ) -> float :
+return _daily_best_beat_percent
+func mark_daily_completed ( date : String , elapsed_sec : int , beat_percent : float ) -> void :
+_daily_completed_date = date
+_daily_elapsed_sec = elapsed_sec
+_daily_beat_percent = beat_percent
+if beat_percent > _daily_best_beat_percent :
+_daily_best_beat_percent = beat_percent
+_has_won_since_cold_start = true
+_save_data ( )
+func clear_daily_completion ( ) -> void :
+_daily_completed_date = ""
+_daily_elapsed_sec = 0
+_daily_beat_percent = 0
+_daily_best_beat_percent = 0
+_save_data ( )
+func _roll_day_if_needed ( ) -> void :
+var today : String = _today_str ( )
+if _today_date == today :
+return
+_last_day_session_count = _today_session_count
+_today_session_count = 0
+_today_played_count = 0
+_today_active_sec = 0
+_restored_today_count = 0
+_daily_auto_mark_enabled = false
+_pending_rewards . clear ( )
+_active_days += 1
+var cutoff_unix : int = Time . get_unix_time_from_datetime_string ( today + "T00:00:00" ) - 2 * 86400
+for key : String in _recent_win_counts_by_day . keys ( ) . duplicate ( ) :
+if Time . get_unix_time_from_datetime_string ( key + "T00:00:00" ) < cutoff_unix :
+_recent_win_counts_by_day . erase ( key )
+_today_date = today
+func on_session_started ( ) -> void :
+_roll_day_if_needed ( )
+_session_count += 1
+_today_session_count += 1
+_session_played_count = 0
+_session_consecutive_wins = 0
+_session_reward_view_count = 0
+_session_interstitial_count = 0
+_save_data ( )
+func get_session_count ( ) -> int :
+return _session_count
+func get_active_days ( ) -> int :
+_roll_day_if_needed ( )
+return _active_days
+func record_cold_start_login ( ) -> void :
+var today : String = _today_str ( )
+if _last_login_date == "" :
+_login_gap_days = 0
+else :
+_login_gap_days = max ( 0 , _date_str_to_jdn ( today ) - _date_str_to_jdn ( _last_login_date ) )
+_last_login_date = today
+_save_data ( )
+func get_login_gap_days ( ) -> int :
+return _login_gap_days
+static func _date_str_to_jdn ( date_str : String ) -> int :
+var p : PackedStringArray = date_str . split ( "-" )
+if p . size ( ) != 3 :
+return 0
+var y : int = int ( p [ 0 ] )
+var m : int = int ( p [ 1 ] )
+var d : int = int ( p [ 2 ] )
+var a : int = int ( ( 14 - m ) / 12 )
+var yy : int = y + 4800 - a
+var mm : int = m + 12 * a - 3
+return d + int ( ( 153 * mm + 2 ) / 5 ) + 365 * yy + int ( yy / 4 ) - int ( yy / 100 ) + int ( yy / 400 ) - 32045
+func get_session_played_count ( ) -> int :
+return _session_played_count
+func get_today_played_count ( ) -> int :
+_roll_day_if_needed ( )
+return _today_played_count
+func on_game_finished ( ) -> void :
+_roll_day_if_needed ( )
+_session_played_count += 1
+_today_played_count += 1
+_save_data ( )
+func get_today_active_sec ( ) -> int :
+_roll_day_if_needed ( )
+return _today_active_sec
+func add_today_active_sec ( delta_sec : int ) -> void :
+if delta_sec <= 0 :
+return
+_roll_day_if_needed ( )
+_today_active_sec += delta_sec
+_total_active_sec += delta_sec
+_save_data ( )
+func get_total_active_sec ( ) -> int :
+return _total_active_sec
+const _REWARD_HISTORY_RETAIN_SEC : int = 7 * 24 * 3600
+const _RESTORE_MIN_NORMAL_REWARDS_3D : int = 3
+const _RESTORE_NORMAL_LOOKBACK_SEC : int = 3 * 24 * 3600
+const _RESTORE_DAILY_MAX : int = 3
+func has_pending_rewards ( ) -> bool :
+return not _pending_rewards . is_empty ( )
+func get_pending_rewards ( ) -> Array :
+return _pending_rewards
+func add_pending_reward ( reward : Dictionary ) -> void :
+_pending_rewards . append ( reward )
+_save_data ( )
+func pop_all_pending_rewards ( ) -> Array :
+var out : Array = _pending_rewards . duplicate ( )
+_pending_rewards . clear ( )
+_save_data ( )
+return out
+func record_normal_reward ( ts : int ) -> void :
+_reward_history_ts . append ( ts )
+var cutoff : int = ts - _REWARD_HISTORY_RETAIN_SEC
+var fresh : Array = [ ]
+for t in _reward_history_ts :
+if int ( t ) >= cutoff :
+fresh . append ( int ( t ) )
+_reward_history_ts = fresh
+_save_data ( )
+func _count_recent_normal_rewards ( now_ts : int ) -> int :
+var cutoff : int = now_ts - _RESTORE_NORMAL_LOOKBACK_SEC
+var hits : int = 0
+for t in _reward_history_ts :
+if int ( t ) >= cutoff :
+hits += 1
+return hits
+func get_restore_remaining_today ( now_ts : int ) -> int :
+_roll_day_if_needed ( )
+var recent : int = _count_recent_normal_rewards ( now_ts )
+if recent < _RESTORE_MIN_NORMAL_REWARDS_3D :
+return 0
+return max ( 0 , _RESTORE_DAILY_MAX - _restored_today_count )
+func get_restored_today_count ( ) -> int :
+_roll_day_if_needed ( )
+return _restored_today_count
+func add_restored_today_count ( n : int ) -> void :
+_roll_day_if_needed ( )
+_restored_today_count += n
+_save_data ( )
+func remove_pending_rewards ( entries : Array ) -> void :
+for e in entries :
+_pending_rewards . erase ( e )
+_save_data ( )
+func get_today_session_count ( ) -> int :
+_roll_day_if_needed ( )
+return _today_session_count
+func get_last_day_session_count ( ) -> int :
+_roll_day_if_needed ( )
+return _last_day_session_count
+func get_tool_count ( kind : String ) -> int :
+match kind :
+"locate" : return _tool_locate
+"hint" : return _tool_hint
+"mouse" : return _tool_mouse
+"draft" : return _tool_draft
+_ : return 0
+func has_used_tool ( ) -> bool :
+return _has_used_tool
+func has_prop_highlight_shown ( ) -> bool :
+return _prop_highlight_shown
+func mark_prop_highlight_shown ( ) -> void :
+if _prop_highlight_shown :
+return
+_prop_highlight_shown = true
+_save_data ( )
+func has_prop_highlight_hinted_today ( ) -> bool :
+return _prop_highlight_hint_date == _today_str ( )
+func mark_prop_highlight_hinted_today ( ) -> void :
+var today : String = _today_str ( )
+if _prop_highlight_hint_date == today :
+return
+_prop_highlight_hint_date = today
+_save_data ( )
+func get_push_ask_count ( ) -> int :
+return _push_ask_count
+func inc_push_ask_count ( ) -> void :
+_push_ask_count += 1
+_save_data ( )
+func mark_push_guide_triggered ( ) -> void :
+_push_guide_last_date = _today_str ( )
+_push_guide_shown_count += 1
+print ( "[Push][验收] mark_push_guide_triggered: last_date=%s shown_count=%d" % [ _push_guide_last_date , _push_guide_shown_count ] )
+_save_data ( )
+func get_push_guide_shown_count ( ) -> int :
+return _push_guide_shown_count
+func mark_push_guide_popup_shown ( ) -> void :
+_push_guide_popup_count += 1
+print ( "[Push][验收] mark_push_guide_popup_shown: popup_count=%d" % _push_guide_popup_count )
+_save_data ( )
+func get_push_guide_popup_count ( ) -> int :
+return _push_guide_popup_count
+func is_push_guide_cooldown_elapsed ( ) -> bool :
+if _push_guide_last_date . is_empty ( ) :
+return true
+var last_unix : int = Time . get_unix_time_from_datetime_string ( _push_guide_last_date + "T00:00:00" )
+var today_unix : int = Time . get_unix_time_from_datetime_string ( _today_str ( ) + "T00:00:00" )
+return today_unix - last_unix >= 5 * 86400
+func get_recent_3day_win_count ( ) -> int :
+_roll_day_if_needed ( )
+var total : int = 0
+for count : int in _recent_win_counts_by_day . values ( ) :
+total += count
+return total
+func set_tool_count ( kind : String , count : int ) -> void :
+var prev : int = get_tool_count ( kind )
+if not _write_tool_field ( kind , count ) :
+return
+if kind != ToolKind . DRAFT and kind != ToolKind . MOUSE and count < prev and not _has_used_tool :
+_has_used_tool = true
+_save_data ( )
+tool_count_changed . emit ( kind , count )
+func _write_tool_field ( kind : String , count : int ) -> bool :
+match kind :
+ToolKind . LOCATE : _tool_locate = count
+ToolKind . HINT : _tool_hint = count
+ToolKind . MOUSE : _tool_mouse = count
+ToolKind . DRAFT : _tool_draft = count
+_ : return false
+return true
+func exchange_tool_all ( from_kind : String , to_kind : String ) -> int :
+if from_kind == to_kind :
+return 0
+if not ToolKind . is_valid ( from_kind ) or not ToolKind . is_valid ( to_kind ) :
+push_error ( "GameState.exchange_tool_all: 非法道具 kind, from=%s to=%s" % [ from_kind , to_kind ] )
+return 0
+var moved : int = get_tool_count ( from_kind )
+if moved <= 0 :
+return 0
+var to_total : int = get_tool_count ( to_kind ) + moved
+_write_tool_field ( from_kind , 0 )
+_write_tool_field ( to_kind , to_total )
+_save_data ( )
+tool_count_changed . emit ( from_kind , 0 )
+tool_count_changed . emit ( to_kind , to_total )
+return moved
+func get_in_flight_awards ( ) -> Array :
+return _in_flight_awards . duplicate ( )
+func add_in_flight_award ( entry : Dictionary ) -> void :
+_in_flight_awards . append ( entry )
+_save_data ( )
+func remove_in_flight_award ( uid : int ) -> void :
+for i in range ( _in_flight_awards . size ( ) - 1 , -1 , -1 ) :
+if int ( _in_flight_awards [ i ] . get ( "uid" , -1 ) ) == uid :
+_in_flight_awards . remove_at ( i )
+_save_data ( )
+return
+func find_in_flight_award ( uid : int ) -> Dictionary :
+for entry : Dictionary in _in_flight_awards :
+if int ( entry . get ( "uid" , -1 ) ) == uid :
+return entry
+return { }
+func get_last_splash_date ( ) -> String :
+return _last_splash_date
+func set_last_splash_date ( value : String ) -> void :
+_last_splash_date = value
+_save_data ( )
+func get_apply_locale ( ) -> String :
+return _apply_locale
+func set_apply_locale ( value : String ) -> void :
+_apply_locale = value
+_save_data ( )
+func is_first_session ( ) -> bool :
+return _first_session_runtime
+func mark_first_session_done ( ) -> void :
+if not _first_session_runtime :
+return
+_first_session_runtime = false
+func consume_first_session_persist ( ) -> void :
+if not _is_first_session :
+return
+_is_first_session = false
+_save_data ( )
+func is_today_first_level ( ) -> bool :
+return _last_first_level_date != _today_str ( )
+func consume_today_first_level ( ) -> void :
+var today : String = _today_str ( )
+if _last_first_level_date == today :
+return
+_last_first_level_date = today
+_save_data ( )
+func is_music_on ( ) -> bool :
+return _music_on
+func set_music_on ( value : bool ) -> void :
+var changed : bool = _music_on != value
+_music_on = value
+_music_user_modified = true
+_save_data ( )
+if changed :
+_emit_switch_toggle ( "music" , value , "" )
+func apply_music_switch ( default_on : bool ) -> void :
+if _music_user_modified :
+return
+if _music_on == default_on :
+return
+_music_on = default_on
+_save_data ( )
+_emit_switch_toggle ( "music" , default_on , "ab_default" )
+func is_sound_on ( ) -> bool :
+return _sound_on
+func set_sound_on ( value : bool ) -> void :
+var changed : bool = _sound_on != value
+_sound_on = value
+_save_data ( )
+if changed :
+_emit_switch_toggle ( "sound" , value , "" )
+func is_vibration_on ( ) -> bool :
+return _vibration_on
+func set_vibration_on ( value : bool ) -> void :
+_vibration_on = value
+VibrateManager . set_enabled ( value )
+_save_data ( )
+func is_people_on ( ) -> bool :
+return _people_on
+func set_people_on ( value : bool ) -> void :
+var changed : bool = _people_on != value
+_people_on = value
+_save_data ( )
+if changed :
+_emit_switch_toggle ( "people" , value , "" )
+func _emit_switch_toggle ( switch_name : String , on : bool , src : String ) -> void :
+if not is_instance_valid ( EventBus ) :
+return
+var payload : Dictionary = { "name" : switch_name , "on" : on }
+if src != "" :
+payload [ "src" ] = src
+EventBus . emit_event ( EventName . SETTING_TOGGLE , payload )
+func get_golden_fish_streak_count ( ) -> int :
+return _golden_fish_streak_count
+func get_golden_fish_pending ( ) -> bool :
+return _golden_fish_pending
+func has_golden_fish_tutorial_shown ( ) -> bool :
+return _golden_fish_tutorial_shown
+func mark_golden_fish_tutorial_shown ( ) -> void :
+if _golden_fish_tutorial_shown :
+return
+_golden_fish_tutorial_shown = true
+_save_data ( )
+func get_onefish_index ( sz : int , rank : int ) -> int :
+return int ( _onefish_progress . get ( "%d_%d" % [ sz , rank ] , 0 ) )
+func get_golden_fish_insert_delivered ( ) -> int :
+return _golden_fish_insert_delivered
+func cheat_force_golden_fish_pending ( ) -> void :
+_golden_fish_pending = true
+_golden_fish_streak_count = 0
+clear_endgame_snapshot ( )
+_retry_puzzle_level = 0
+_retry_puzzle_params = { }
+_save_data ( )
+func cheat_reset_golden_fish_career ( ) -> void :
+_golden_fish_streak_count = 0
+_golden_fish_pending = false
+_golden_fish_tutorial_shown = false
+_golden_fish_insert_delivered = 0
+_onefish_progress = { }
+clear_golden_fish_endgame_snapshot ( )
+_save_data ( )
+func commit_onefish_delivery ( sz : int , rank : int , persist : bool = true ) -> void :
+var key : = "%d_%d" % [ sz , rank ]
+_onefish_progress [ key ] = int ( _onefish_progress . get ( key , 0 ) ) + 1
+_golden_fish_insert_delivered += 1
+if persist :
+_save_data ( )
+func advance_golden_fish_streak ( group : int , level : int ) -> void :
+_advance_golden_fish_streak_mut ( group , level )
+_save_data ( )
+func _advance_golden_fish_streak_mut ( group : int , level : int ) -> void :
+if not GoldenFishGate . insert_counting_enabled ( level , group ) :
+_golden_fish_streak_count = 0
+_golden_fish_pending = false
+return
+var spawn : bool = GoldenFishGate . should_spawn_pending ( _golden_fish_streak_count , group )
+_golden_fish_streak_count = GoldenFishGate . next_streak_count ( _golden_fish_streak_count , group )
+if spawn :
+_golden_fish_pending = true
+func on_golden_fish_settled ( ) -> void :
+_golden_fish_pending = false
+_golden_fish_streak_count = 0
+_save_data ( )
+func on_golden_fish_skipped ( level : int , group : int ) -> void :
+if GoldenFishGate . skip_advances_level ( group ) :
+_current_level = level + 1
+_golden_fish_pending = false
+_golden_fish_streak_count = 0
+if not get_retry_puzzle ( level ) . is_empty ( ) :
+clear_retry_puzzle ( )
+else :
+_save_data ( )
+clear_golden_fish_endgame_snapshot ( )
+func clear_golden_fish_state ( ) -> void :
+clear_golden_fish_endgame_snapshot ( )
+var retry_cleared : bool = _clear_onefish_retry_puzzle ( )
+if _golden_fish_streak_count == 0 and not _golden_fish_pending :
+if retry_cleared :
+_save_data ( )
+return
+_golden_fish_streak_count = 0
+_golden_fish_pending = false
+_save_data ( )
+func _clear_onefish_retry_puzzle ( ) -> bool :
+if _retry_puzzle_params . is_empty ( ) :
+return false
+if str ( _retry_puzzle_params . get ( "bank_source" , "" ) ) != GoldenFishGate . INSERT_BANK_SOURCE :
+return false
+print ( "[GoldenFish] 切组清插入关锁题 lv=%d" % _retry_puzzle_level )
+_retry_puzzle_level = 0
+_retry_puzzle_params = { }
+return true
+func clear_golden_fish_endgame_snapshot ( ) -> bool :
+if _endgame_snapshot . is_empty ( ) :
+return false
+var kind : int = int ( _endgame_snapshot . get ( "kind" , LevelKind . default_kind ( ) ) )
+if not LevelKind . is_golden_fish ( kind ) :
+return false
+clear_endgame_snapshot ( )
+return true
+func is_debug_mode ( ) -> bool :
+return _debug_mode or not OS . has_feature ( "rel" )
+func set_debug_mode ( value : bool ) -> void :
+_debug_mode = value
+func is_current_level_dirty ( ) -> bool :
+return _current_level_dirty
+func mark_current_level_dirty ( ) -> void :
+_current_level_dirty = true
+func clear_current_level_dirty ( ) -> void :
+_current_level_dirty = false
+func mark_dda_tool_or_revive_used ( ) -> void :
+_dda_tool_or_revive_used = true
+func mark_dda_revive_used ( ) -> void :
+_dda_revive_used = true
+func mark_daily_first_easy_level ( ) -> void :
+_is_daily_first_easy_level = true
+func is_current_level_daily_first_easy ( ) -> bool :
+return _is_daily_first_easy_level
+func get_nl2_debug_last_transition ( ) -> String :
+return _nl2_debug_last_transition
+func get_nl2_debug_trigger ( ) -> String :
+return _nl2_dbg_trigger
+func get_nl2_debug_ideal ( ) -> int :
+return _nl2_dbg_ideal
+func get_nl2_debug_floor_hit ( ) -> bool :
+return _nl2_dbg_floor_hit
+func get_nl2_debug_floor_value ( ) -> int :
+return _nl2_dbg_floor_value
+func is_nl2_debug_restored ( ) -> bool :
+return _nl2_dbg_restored
+func set_chain_g2_pending ( value : bool ) -> void :
+_chain_g2_pending = value
+func consume_chain_g2_pending ( ) -> bool :
+var pending : bool = _chain_g2_pending
+_chain_g2_pending = false
+return pending
+func get_gamble_user_tag ( ) -> int :
+return _is_gamble_user
+func is_gamble_user_tagged ( ) -> bool :
+return _is_gamble_user != -1
+func is_gamble_user_reasoning ( ) -> bool :
+return _is_gamble_user == 0
+func is_gamble_user_gamble ( ) -> bool :
+return _is_gamble_user == 1
+func _set_gamble_user_tag ( value : int ) -> void :
+if value != -1 and value != 0 and value != 1 :
+push_warning ( "[gamble_user] invalid tag value=%d, ignore" % value )
+return
+_is_gamble_user = value
+UniKitManager . add_local_tag ( "is_gamble_user" , str ( value ) )
+_save_data ( )
+func cheat_set_gamble_user ( value : int ) -> void :
+_set_gamble_user_tag ( value )
+func _pipeline_gamble_user_on_level_won ( level_num : int , this_session_rank : int ) -> void :
+if ABTestManager . normal_level . is_golden_fish_enabled ( )
+or ABTestManager . normal_level . is_server_rec_v2_active ( ) :
+return
+var invalid_sign_total : int = get_game_total_stat ( "normal" , "invalid_sign_total" )
+var old_tag : int = _is_gamble_user
+var pushed_l1_l20 : bool = false
+var l1_l20_before_push : int = _early_l1_l20_bits . size ( )
+if level_num >= 1 and level_num <= 20 :
+pushed_l1_l20 = true
+_early_l1_l20_bits . push_back ( this_session_rank != 2 or invalid_sign_total > 0 )
+while _early_l1_l20_bits . size ( ) > 20 :
+_early_l1_l20_bits . pop_front ( )
+var pushed_hard : bool = false
+var hard_before_push : Array = _recent_hard_invalid_bits . duplicate ( )
+if level_num >= 21 and level_num % 10 == 0 :
+pushed_hard = true
+_recent_hard_invalid_bits . push_back ( invalid_sign_total > 0 )
+while _recent_hard_invalid_bits . size ( ) > 5 :
+_recent_hard_invalid_bits . pop_front ( )
+var l1_l20_post_push : int = _early_l1_l20_bits . size ( )
+var hard_post_push : Array = _recent_hard_invalid_bits . duplicate ( )
+var trigger : String = "none"
+var skipped_reason : String = ""
+var buffer_cleared : bool = false
+var is_trigger : bool = ( level_num == 20 ) or ( level_num >= 70 and ( level_num - 20 ) % 50 == 0 )
+if is_trigger :
+var new_tag : int = _is_gamble_user
+var buf : Array
+var cap : int
+if level_num == 20 :
+trigger = "L20"
+buf = _early_l1_l20_bits
+cap = 20
+else :
+trigger = "hard_milestone"
+buf = _recent_hard_invalid_bits
+cap = 5
+if buf . size ( ) < cap :
+skipped_reason = "buffer_not_full(size=%d/%d)" % [ buf . size ( ) , cap ]
+elif _pipeline_all_true ( buf ) :
+new_tag = 1
+else :
+new_tag = 0
+if skipped_reason . is_empty ( ) :
+buf . clear ( )
+buffer_cleared = true
+if new_tag != _is_gamble_user :
+_is_gamble_user = new_tag
+UniKitManager . add_local_tag ( "is_gamble_user" , str ( new_tag ) )
+var l1_l20_diff : String = ""
+if pushed_l1_l20 :
+var cleared_suffix : String = " → CLEARED" if buffer_cleared and level_num == 20 else ""
+l1_l20_diff = " | l1_l20: size=%d→%d%s" % [ l1_l20_before_push , l1_l20_post_push , cleared_suffix ]
+var hard_bits_diff : String = ""
+if pushed_hard :
+var cleared_suffix : String = " → CLEARED" if buffer_cleared and level_num != 20 else ""
+hard_bits_diff = " | hard_bits: %s → %s%s" % [ str ( hard_before_push ) , str ( hard_post_push ) , cleared_suffix ]
+var skip_tag : String = ""
+if not skipped_reason . is_empty ( ) :
+skip_tag = " | SKIPPED: %s" % skipped_reason
+print ( "[LEVEL.diff_difficulty] pipeline lv=%d rank=%d invalid_sign_total=%d%s%s | tag_trigger=%s%s tag=%d→%d" % [
+level_num , this_session_rank , invalid_sign_total ,
+l1_l20_diff ,
+hard_bits_diff ,
+trigger , skip_tag ,
+old_tag , _is_gamble_user ,
+] )
+static func _pipeline_all_true ( arr : Array ) -> bool :
+for b in arr :
+if not b :
+return false
+return true
+func inc_11503_r3_played_count ( ) -> void :
+_11503_r3_played_count += 1
+_save_data ( )
+func inc_11503_r4_played_count ( ) -> void :
+_11503_r4_played_count += 1
+_save_data ( )
+func compute_11503_r3_probs ( ) -> Vector2 :
+var adj : int = _11503_r3_played_count / 2
+var r2 : float = clampf ( 50 - 5 * adj , 30 , 50 )
+return Vector2 ( r2 , 100 - r2 )
+func compute_11503_r4_probs ( ) -> Vector3 :
+var adj : int = _11503_r4_played_count / 2
+var r2 : float = clampf ( 24 - 1.125 * adj , 15 , 24 )
+var r3 : float = clampf ( 56 - 1.375 * adj , 45 , 56 )
+var r4 : float = clampf ( 20 + 2.5 * adj , 20 , 40 )
+return Vector3 ( r2 , r3 , r4 )
+func compute_11503_r3_weights ( ) -> PackedInt32Array :
+var adj : int = _11503_r3_played_count / 2
+var w_r2 : int = clampi ( 400 - 40 * adj , 240 , 400 )
+var w_r3 : int = 800 - w_r2
+return PackedInt32Array ( [ w_r2 , w_r3 ] )
+func compute_11503_r4_weights ( ) -> PackedInt32Array :
+var adj : int = _11503_r4_played_count / 2
+var w_r2 : int = clampi ( 192 - 9 * adj , 120 , 192 )
+var w_r3 : int = clampi ( 448 - 11 * adj , 360 , 448 )
+var w_r4 : int = clampi ( 160 + 20 * adj , 160 , 320 )
+return PackedInt32Array ( [ w_r2 , w_r3 , w_r4 ] )
+func gamble_debug_snapshot ( ) -> Dictionary :
+return {
+"is_gamble_user" : _is_gamble_user ,
+"early_l1_l20_bits" : _early_l1_l20_bits . duplicate ( ) ,
+"recent_hard_invalid_bits" : _recent_hard_invalid_bits . duplicate ( ) ,
+"diff_diff_r3_played_count" : _11503_r3_played_count ,
+"diff_diff_r4_played_count" : _11503_r4_played_count ,
+"r3_probs" : compute_11503_r3_probs ( ) ,
+"r4_probs" : compute_11503_r4_probs ( ) ,
+"current_strategy" : _current_strategy ,
+}
+func is_current_level_retried ( ) -> bool :
+return _current_level_retried
+func set_retry_puzzle ( level : int , params : Dictionary ) -> void :
+_retry_puzzle_level = level
+_retry_puzzle_params = params
+_save_data ( )
+func get_retry_puzzle ( level : int ) -> Dictionary :
+if _retry_puzzle_level == level and not _retry_puzzle_params . is_empty ( ) :
+return _retry_puzzle_params
+return { }
+func clear_retry_puzzle ( ) -> void :
+_retry_puzzle_level = 0
+_retry_puzzle_params = { }
+_save_data ( )
+func get_pre_cat_fail_count ( lv : int ) -> int :
+return _pre_cat_fail_count if _pre_cat_fail_lv == lv else 0
+func mark_pre_cat_revived ( ) -> void :
+if _pre_cat_revived_this_level :
+return
+_pre_cat_revived_this_level = true
+_save_data ( )
+func consume_pre_cat_pending ( ) -> Dictionary :
+var out : Dictionary = {
+"hard" : _pre_cat_pending_hard ,
+"struggle" : _pre_cat_pending_struggle ,
+"demote" : _pre_cat_pending_demote ,
+}
+if _pre_cat_pending_hard or _pre_cat_pending_struggle or _pre_cat_pending_demote :
+_pre_cat_pending_hard = false
+_pre_cat_pending_struggle = false
+_pre_cat_pending_demote = false
+_save_data ( )
+return out
+func get_pre_cat_lock ( lv : int ) -> Dictionary :
+if lv > 0 and _pre_cat_lock_lv == lv :
+return { "locked" : true , "pre_type" : _pre_cat_lock_pre_type , "position" : _pre_cat_lock_pos }
+return { "locked" : false , "pre_type" : "0" , "position" : Vector2i ( -1 , -1 ) }
+func set_pre_cat_lock ( lv : int , pre_type : String , position : Vector2i ) -> void :
+_pre_cat_lock_lv = lv
+_pre_cat_lock_pre_type = pre_type
+_pre_cat_lock_pos = position
+_save_data ( )
+func get_start_toast_pct ( level : int , kind : String ) -> float :
+var bucket : Dictionary = _start_toast_pct . get ( level , { } )
+return float ( bucket . get ( kind , -1 ) )
+func set_start_toast_pct ( level : int , kind : String , pct : float ) -> void :
+var bucket : Dictionary = _start_toast_pct . get ( level , { } )
+bucket [ kind ] = pct
+_start_toast_pct [ level ] = bucket
+func clear_start_toast_pct ( level : int = -1 ) -> void :
+if level < 0 :
+_start_toast_pct . clear ( )
+else :
+_start_toast_pct . erase ( level )
+func get_start_toast_iq_idx ( level : int ) -> int :
+return int ( _start_toast_iq_idx . get ( level , 0 ) )
+func set_start_toast_iq_idx ( level : int , idx : int ) -> void :
+_start_toast_iq_idx [ level ] = idx
+func clear_start_toast_iq_idx ( level : int = -1 ) -> void :
+if level < 0 :
+_start_toast_iq_idx . clear ( )
+else :
+_start_toast_iq_idx . erase ( level )
+func get_start_toast_variant_idx ( level : int , group : int , kind_h : String ) -> int :
+var bucket : Dictionary = _start_toast_variant_idx . get ( level , { } )
+var k : String = "%d_%s" % [ group , kind_h ]
+return int ( bucket . get ( k , -1 ) )
+func set_start_toast_variant_idx ( level : int , group : int , kind_h : String , idx : int ) -> void :
+var bucket : Dictionary = _start_toast_variant_idx . get ( level , { } )
+var k : String = "%d_%s" % [ group , kind_h ]
+bucket [ k ] = idx
+_start_toast_variant_idx [ level ] = bucket
+func get_start_toast_variant_pct ( level : int , group : int , kind_h : String , idx : int ) -> float :
+var bucket : Dictionary = _start_toast_variant_pct . get ( level , { } )
+var k : String = "%d_%s_%d" % [ group , kind_h , idx ]
+return float ( bucket . get ( k , -1 ) )
+func set_start_toast_variant_pct ( level : int , group : int , kind_h : String , idx : int , pct : float ) -> void :
+var bucket : Dictionary = _start_toast_variant_pct . get ( level , { } )
+var k : String = "%d_%s_%d" % [ group , kind_h , idx ]
+bucket [ k ] = pct
+_start_toast_variant_pct [ level ] = bucket
+func clear_start_toast_variant_state ( level : int = -1 ) -> void :
+if level < 0 :
+_start_toast_variant_idx . clear ( )
+_start_toast_variant_pct . clear ( )
+else :
+_start_toast_variant_idx . erase ( level )
+_start_toast_variant_pct . erase ( level )
+func get_toast_hold_text_sig ( ) -> int :
+return _toast_hold_text_sig
+func set_toast_hold_text_sig ( v : int ) -> void :
+_toast_hold_text_sig = v
+_save_data ( )
+func get_toast_shown_keys ( ) -> PackedStringArray :
+return _toast_shown_keys
+func add_toast_shown_key ( key : String ) -> void :
+if key . is_empty ( ) or _toast_shown_keys . has ( key ) :
+return
+_toast_shown_keys . append ( key )
+_save_data ( )
+func clear_toast_shown_keys ( ) -> void :
+_toast_shown_keys = PackedStringArray ( )
+_save_data ( )
+func get_fail_text_revive_x ( level : int ) -> float :
+return float ( _fail_text_revive_x . get ( level , -1 ) )
+func set_fail_text_revive_x ( level : int , x : float ) -> void :
+_fail_text_revive_x [ level ] = x
+func clear_fail_text_revive_x ( level : int = -1 ) -> void :
+if level < 0 :
+_fail_text_revive_x . clear ( )
+else :
+_fail_text_revive_x . erase ( level )
+func get_last_win_beat_percent ( ) -> float :
+return _last_win_beat_percent
+func set_last_win_beat_percent ( pct : float ) -> void :
+_last_win_beat_percent = pct
+_save_data ( )
+func get_help_last_open_time ( ) -> int :
+return _help_last_open_time
+func set_help_last_open_time ( value : int ) -> void :
+_help_last_open_time = value
+_save_data ( )
+func get_install_version ( ) -> String :
+return _install_version
+func ensure_install_version ( version : String ) -> void :
+if not _install_version . is_empty ( ) :
+return
+if version . is_empty ( ) :
+return
+_install_version = version
+_save_data ( )
+func resolve_version_upgrade ( cur : String ) -> void :
+if cur . is_empty ( ) :
+push_warning ( "GameState.resolve_version_upgrade: cur 版本号为空，跳过升级检测" )
+return
+var pre_before_bump : String = _game_version_pre
+if ( pre_before_bump . is_empty ( ) or _compare_version_str ( pre_before_bump , VERSION_1_14_0 ) < 0 )
+and _compare_version_str ( cur , VERSION_1_14_0 ) >= 0 :
+_music_user_modified = false
+if _compare_version_str ( cur , _game_version_pre ) > 0 :
+_game_version_pre = cur
+_save_data ( )
+func get_game_version_pre ( ) -> String :
+return _game_version_pre
+static func _compare_version_str ( a : String , b : String ) -> int :
+var pa : PackedStringArray = a . split ( "." )
+var pb : PackedStringArray = b . split ( "." )
+var n : int = maxi ( pa . size ( ) , pb . size ( ) )
+for i in range ( n ) :
+var va : int = pa [ i ] . to_int ( ) if i < pa . size ( ) else 0
+var vb : int = pb [ i ] . to_int ( ) if i < pb . size ( ) else 0
+if va > vb :
+return 1
+if va < vb :
+return -1
+return 0
+func get_consecutive_clean_wins ( ) -> int :
+return _consecutive_clean_wins
+func was_last_level_clean_win ( ) -> bool :
+return _last_level_clean_win
+func get_bank_index ( sz : int , rank : int , tier : String = "" ) -> int :
+var key : = "%d_%d%s" % [ sz , rank , ( "_H" if tier == "H" else "" ) ]
+return _bank_progress . get ( key , 0 )
+func advance_bank_index ( sz : int , rank : int , tier : String = "" , persist : bool = true ) -> void :
+var key : = "%d_%d%s" % [ sz , rank , ( "_H" if tier == "H" else "" ) ]
+_bank_progress [ key ] = _bank_progress . get ( key , 0 ) + 1
+if persist :
+_save_data ( )
+func get_main_progress ( sz : int , rank : int , tier : String = "" ) -> Dictionary :
+var key : = "%d_%d%s" % [ sz , rank , ( "_H" if tier == "H" else "" ) ]
+if not _main_bank_progress . has ( key ) :
+_main_bank_progress [ key ] = { "lk_mod" : 0 , "regular" : 0 , "lkstyle" : 0 , "transform" : 0 }
+return _main_bank_progress [ key ]
+func set_main_progress ( sz : int , rank : int , tier : String , progress : Dictionary , persist : bool = true ) -> void :
+var key : = "%d_%d%s" % [ sz , rank , ( "_H" if tier == "H" else "" ) ]
+_main_bank_progress [ key ] = progress
+if persist :
+_save_data ( )
+func get_lkmod_progress ( sz : int , rank : int ) -> Dictionary :
+var key : = "%d_%d" % [ sz , rank ]
+if not _lkmod_progress . has ( key ) :
+_lkmod_progress [ key ] = { "idx" : 0 }
+return _lkmod_progress [ key ]
+func set_lkmod_progress ( sz : int , rank : int , progress : Dictionary , persist : bool = true ) -> void :
+var key : = "%d_%d" % [ sz , rank ]
+_lkmod_progress [ key ] = progress
+if persist :
+_save_data ( )
+func get_bank_progress_snapshot ( ) -> Dictionary :
+return _bank_progress . duplicate ( true )
+func get_main_bank_progress_snapshot ( ) -> Dictionary :
+return _main_bank_progress . duplicate ( true )
+func get_lkmod_progress_snapshot ( ) -> Dictionary :
+return _lkmod_progress . duplicate ( true )
+func get_level_selection_progress_snapshot ( ) -> Dictionary :
+return {
+"bank_progress" : _bank_progress . duplicate ( true ) ,
+"main_bank_progress" : _main_bank_progress . duplicate ( true ) ,
+"lkmod_progress" : _lkmod_progress . duplicate ( true ) ,
+}
+func restore_level_selection_progress ( snapshot : Dictionary ) -> void :
+_bank_progress = ( snapshot . get ( "bank_progress" , { } ) as Dictionary ) . duplicate ( true )
+_main_bank_progress = ( snapshot . get ( "main_bank_progress" , { } ) as Dictionary ) . duplicate ( true )
+_lkmod_progress = ( snapshot . get ( "lkmod_progress" , { } ) as Dictionary ) . duplicate ( true )
+func get_sp_tt_category_cursor ( ) -> int :
+return _sp_tt_category_cursor
+func get_sp_tt_last_replaced_level ( ) -> int :
+return _sp_tt_last_replaced_level
+func get_sp_tt_progress ( category : int , sz : int , rank : int ) -> Dictionary :
+var key : = "%d_%d_%d" % [ category , sz , rank ]
+if not _sp_tt_progress . has ( key ) :
+_sp_tt_progress [ key ] = { "idx" : 0 , "t_pos" : 0 }
+return _sp_tt_progress [ key ]
+func commit_sp_tt_delivery ( level_num : int , category : int , sz : int , rank : int ,
+progress : Dictionary , next_cursor : int ) -> void :
+_sp_tt_progress [ "%d_%d_%d" % [ category , sz , rank ] ] = progress
+_sp_tt_category_cursor = next_cursor
+_sp_tt_last_replaced_level = level_num
+_save_data ( )
+func get_lk_mod_g2_last_replaced_level ( ) -> int :
+return _lk_mod_g2_last_replaced_level
+func commit_lk_mod_g2_delivery ( level_num : int , sz : int , rank : int , new_idx : int ) -> void :
+_lkmod_progress [ "%d_%d" % [ sz , rank ] ] = { "idx" : new_idx }
+_lk_mod_g2_last_replaced_level = level_num
+_save_data ( )
+func get_recent_puzzles ( ) -> Array :
+return _recent_puzzles . duplicate ( true )
+func get_recent_puzzle_count ( ) -> int :
+return _recent_puzzles . size ( )
+func get_recent_iso_signatures ( limit : int ) -> Array :
+var result : Array = [ ]
+var start : int = maxi ( 0 , _recent_puzzles . size ( ) - limit )
+for i : int in range ( start , _recent_puzzles . size ( ) ) :
+var sig : Array = _recent_puzzles [ i ] . get ( "iso_sig" , [ ] )
+if not sig . is_empty ( ) :
+result . append ( sig )
+return result
+func find_recent_puzzle ( puzzle_id : String ) -> Dictionary :
+for i : int in range ( _recent_puzzles . size ( ) - 1 , -1 , -1 ) :
+var entry : Dictionary = _recent_puzzles [ i ]
+if entry . get ( "puzzle_id" , "" ) == puzzle_id :
+return entry . duplicate ( true )
+return { }
+func finalize_selected_puzzle (
+level_num : int ,
+puzzle_record : Dictionary ,
+retry_params : Dictionary
+) -> void :
+var record : Dictionary = puzzle_record . duplicate ( true )
+record [ "level" ] = level_num
+record [ "ts" ] = int ( Time . get_unix_time_from_system ( ) )
+record [ "bank_progress" ] = _bank_progress . duplicate ( true )
+record [ "main_bank_progress" ] = _main_bank_progress . duplicate ( true )
+record [ "lkmod_progress" ] = _lkmod_progress . duplicate ( true )
+record [ "sp_tt_progress" ] = _sp_tt_progress . duplicate ( true )
+_recent_puzzles . append ( record )
+while _recent_puzzles . size ( ) > RECENT_PUZZLES_LIMIT :
+_recent_puzzles . pop_front ( )
+_retry_puzzle_level = level_num
+_retry_puzzle_params = retry_params . duplicate ( true )
+_save_data ( )
+func get_endgame_snapshot ( ) -> Dictionary :
+return _endgame_snapshot
+func set_endgame_snapshot ( snapshot : Dictionary ) -> void :
+if not snapshot . is_empty ( ) :
+snapshot [ "app_version" ] = UniKitManager . get_version_name ( )
+_endgame_snapshot = snapshot
+_save_endgame ( )
+print ( "[Endgame] saved\n%s" % JSON . stringify ( snapshot ) )
+func clear_endgame_snapshot ( ) -> void :
+if _endgame_snapshot . is_empty ( ) :
+return
+_endgame_snapshot = { }
+_save_endgame ( )
+print ( "[Endgame] cleared" )
+func _is_endgame_store_empty ( ) -> bool :
+return _endgame_snapshot . is_empty ( )
+and _main_game_total_stats . is_empty ( ) and _daily_game_total_stats . is_empty ( )
+and _main_game_round_stats . is_empty ( ) and _daily_game_round_stats . is_empty ( )
+and _main_game_id . is_empty ( ) and _daily_game_id . is_empty ( )
+func _save_endgame ( ) -> void :
+_endgame_dirty = false
+if _endgame_coalesce_timer != const?35 :
+_endgame_coalesce_timer . stop ( )
+if _is_endgame_store_empty ( ) :
+_endgame_store . remove ( )
+return
+var cfg : = ConfigFile . new ( )
+cfg . set_value ( "snapshot" , "data" , _endgame_snapshot )
+cfg . set_value ( "stats" , "main_total" , _main_game_total_stats )
+cfg . set_value ( "stats" , "daily_total" , _daily_game_total_stats )
+cfg . set_value ( "stats" , "main_round" , _main_game_round_stats )
+cfg . set_value ( "stats" , "daily_round" , _daily_game_round_stats )
+cfg . set_value ( "stats" , "main_id" , _main_game_id )
+cfg . set_value ( "stats" , "daily_id" , _daily_game_id )
+_endgame_store . save_config ( cfg )
+func _request_save_endgame ( ) -> void :
+_endgame_dirty = true
+if _endgame_coalesce_timer != const?35 and _endgame_coalesce_timer . is_stopped ( ) :
+_endgame_coalesce_timer . start ( )
+func _on_endgame_coalesce_timeout ( ) -> void :
+if _endgame_dirty :
+_save_endgame ( )
+func _resolve_endgame_store ( ) -> void :
+var ecfg : = _endgame_store . load_config ( )
+if ecfg != const?35 :
+_endgame_snapshot = ecfg . get_value ( "snapshot" , "data" , { } )
+_main_game_total_stats = ecfg . get_value ( "stats" , "main_total" , { } )
+_daily_game_total_stats = ecfg . get_value ( "stats" , "daily_total" , { } )
+_main_game_round_stats = ecfg . get_value ( "stats" , "main_round" , { } )
+_daily_game_round_stats = ecfg . get_value ( "stats" , "daily_round" , { } )
+_main_game_id = ecfg . get_value ( "stats" , "main_id" , "" )
+_daily_game_id = ecfg . get_value ( "stats" , "daily_id" , "" )
+elif not _is_endgame_store_empty ( ) :
+_save_endgame ( )
+func _notification ( what : int ) -> void :
+if what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_WM_CLOSE_REQUEST :
+if _endgame_dirty :
+_save_endgame ( )
+func on_level_won ( level_num : int , kind : int = LevelKind . MAIN ,
+this_session_rank : int = 0 ) -> void :
+_apply_level_won ( level_num , kind , this_session_rank )
+level_settled . emit ( true )
+func _apply_level_won ( level_num : int , kind : int = LevelKind . MAIN ,
+this_session_rank : int = 0 ) -> void :
+var is_golden : bool = LevelKind . is_golden_fish ( kind )
+if LevelKind . occupies_level_number ( kind ) :
+_pipeline_gamble_user_on_level_won ( level_num , this_session_rank )
+if LevelKind . occupies_level_number ( kind ) :
+var next_level : int = level_num + 1
+if next_level > _current_level :
+_current_level = next_level
+var _pre_cat_strat_before : int = _current_strategy
+_pre_cat_pending_struggle = ( not is_golden ) and (
+( _pre_cat_fail_lv == level_num and _pre_cat_fail_count >= 2 )
+or _pre_cat_revived_this_level )
+print ( "[pre_cat] on_level_won lv=%d fail_count=%d revived=%s -> next struggle=%s" % [
+level_num , _pre_cat_fail_count , str ( _pre_cat_revived_this_level ) , str ( _pre_cat_pending_struggle ) ] )
+if LevelKind . occupies_level_number ( kind ) :
+_pre_cat_fail_count = 0
+_pre_cat_fail_lv = 0
+_pre_cat_revived_this_level = false
+_pre_cat_lock_lv = 0
+_pre_cat_lock_pre_type = "0"
+_pre_cat_lock_pos = Vector2i ( -1 , -1 )
+_pre_cat_pending_hard = ( not is_golden ) and LevelSelector . is_hard_level ( level_num )
+if not is_golden and level_num >= _strategy_engagement_min_level ( ) :
+var max_strategy : int
+if level_num >= 201 : max_strategy = 6
+elif level_num >= 101 : max_strategy = 5
+elif level_num >= 51 : max_strategy = 4
+elif level_num >= 21 : max_strategy = 3
+elif level_num >= 6 and ABTestManager . normal_level . is_mid_strategy_aggressive_active ( ) : max_strategy = 3
+else : max_strategy = 2
+var win_threshold : int = 1 if level_num >= 51 else 2
+var min_strategy : int = 2 if level_num >= 101 else 1
+var clean_win : bool = not _current_level_dirty
+if clean_win :
+_consecutive_clean_wins += 1
+if _consecutive_clean_wins >= win_threshold and _current_strategy < max_strategy :
+_current_strategy += 1
+_consecutive_clean_wins = 0
+else :
+_consecutive_clean_wins = 0
+var fail_threshold : int = 2 if level_num >= 21 else 1
+if _consecutive_fails >= fail_threshold and _current_strategy > min_strategy and not _demoted_this_level :
+_current_strategy -= 1
+_demoted_this_level = true
+_consecutive_fails = 0
+if level_num >= 21 :
+if _current_level_retried :
+if _current_strategy == _retry_tracking_strategy :
+_consecutive_retry_levels += 1
+var min_strategy_retry : int = 2 if level_num >= 101 else 1
+if _consecutive_retry_levels >= 2 and _current_strategy > min_strategy_retry and not _demoted_this_level :
+_current_strategy -= 1
+_consecutive_retry_levels = 0
+_retry_tracking_strategy = 0
+else :
+_consecutive_retry_levels = 1
+_retry_tracking_strategy = _current_strategy
+else :
+_consecutive_retry_levels = 0
+_retry_tracking_strategy = 0
+_dda_apply_demote_on_won ( level_num , min_strategy )
+_dispatch_normal_level_settlement ( level_num , min_strategy , _pre_cat_strat_before )
+if _current_strategy > _pre_cat_strat_before :
+_nl2_debug_last_transition = "promote_or_restore"
+elif _current_strategy < _pre_cat_strat_before :
+_nl2_debug_last_transition = "demote"
+else :
+_nl2_debug_last_transition = "maintain"
+_last_level_clean_win = not _current_level_dirty
+_current_level_retried = false
+_current_level_dirty = false
+_dda_tool_or_revive_used = false
+_dda_revive_used = false
+_is_daily_first_easy_level = false
+_demoted_this_level = false
+_retry_puzzle_level = 0
+_retry_puzzle_params = { }
+_start_toast_pct . erase ( level_num )
+_start_toast_iq_idx . erase ( level_num )
+clear_start_toast_variant_state ( level_num )
+_has_won_since_cold_start = true
+_session_consecutive_wins += 1
+_inc_today_win_count ( )
+Tracker . try_track_grt_level_pass ( level_num )
+Tracker . try_track_grt_level_window ( level_num )
+if _current_strategy < _pre_cat_strat_before :
+_pre_cat_pending_demote = true
+if not is_golden :
+_advance_golden_fish_streak_mut (
+ABTestManager . normal_level . golden_fish_group ( ) , level_num )
+_save_data ( )
+func _strategy_engagement_min_level ( ) -> int :
+return 2 if ABTestManager . normal_level . is_early_strategy_upgrade_active ( ) else 6
+func on_level_failed ( level_num : int , kind : int = LevelKind . MAIN ) -> void :
+_apply_level_failed ( level_num , kind )
+level_settled . emit ( false )
+func _apply_level_failed ( level_num : int , kind : int = LevelKind . MAIN ) -> void :
+var is_golden : bool = LevelKind . is_golden_fish ( kind )
+_current_level_retried = true
+_current_level_dirty = true
+_last_level_clean_win = false
+_session_consecutive_wins = 0
+if not is_golden :
+if level_num != _pre_cat_fail_lv :
+_pre_cat_fail_lv = level_num
+_pre_cat_fail_count = 0
+_pre_cat_revived_this_level = false
+_pre_cat_fail_count += 1
+print ( "[pre_cat] on_level_failed lv=%d -> fail_count=%d" % [ level_num , _pre_cat_fail_count ] )
+if not is_golden :
+if level_num >= _strategy_engagement_min_level ( ) :
+_consecutive_clean_wins = 0
+_consecutive_fails += 1
+if ABTestManager . dda_rank . is_any_action_demote ( ) :
+_dda_tool_or_revive_used = true
+_save_data ( )
+func _dda_apply_demote_on_won ( level_num : int , min_strategy : int ) -> void :
+if not ( ABTestManager . dda_rank . is_retry_once_demote ( )
+or ABTestManager . dda_rank . is_tool_revive_demote ( )
+or ABTestManager . dda_rank . is_any_action_demote ( ) ) :
+return
+if _is_daily_first_easy_level :
+return
+var triggered : bool = false
+if ABTestManager . dda_rank . is_retry_once_demote ( ) :
+triggered = _current_level_retried or _dda_revive_used
+elif ABTestManager . dda_rank . is_tool_revive_demote ( ) :
+triggered = _dda_tool_or_revive_used
+else :
+triggered = _dda_tool_or_revive_used
+var next_level : int = level_num + 1
+var next_is_hard : bool = LevelSelector . is_hard_level ( next_level )
+var next_is_skip : bool = next_is_hard or LevelData . is_special_level ( next_level )
+if _dda_pending_demote and not _demoted_this_level :
+_current_strategy = max ( min_strategy , _current_strategy - 1 )
+_dda_pending_demote = false
+_demoted_this_level = true
+if triggered and not _demoted_this_level :
+if next_is_skip :
+_dda_pending_demote = true
+else :
+_current_strategy = max ( min_strategy , _current_strategy - 1 )
+_demoted_this_level = true
+func _dispatch_normal_level_settlement ( level_num : int , min_strategy : int , strategy_before_all : int ) -> void :
+var ctx : = LevelSettlementContext . new ( )
+ctx . level_num = level_num
+ctx . min_strategy = min_strategy
+ctx . strategy_before_all = strategy_before_all
+ctx . retried = _current_level_retried
+ctx . revive_used = _dda_revive_used
+ctx . tool_or_revive_used = _dda_tool_or_revive_used
+ctx . is_daily_first_easy_level = _is_daily_first_easy_level
+ctx . strategy = _current_strategy
+ctx . demoted_this_level = _demoted_this_level
+ctx . pending_restore = _nl2_pending_restore
+ctx . restore_strategy = _nl2_restore_strategy
+ctx . pending_demote = _nl2_pending_demote
+ctx . pending_demote_reason = _nl2_pending_demote_reason
+ctx . dbg_ideal = _current_strategy
+LevelSelector . apply_won_settlement ( ctx )
+_current_strategy = ctx . strategy
+_demoted_this_level = ctx . demoted_this_level
+_nl2_pending_restore = ctx . pending_restore
+_nl2_restore_strategy = ctx . restore_strategy
+_nl2_pending_demote = ctx . pending_demote
+_nl2_pending_demote_reason = ctx . pending_demote_reason
+_nl2_dbg_trigger = ctx . dbg_trigger
+_nl2_dbg_ideal = ctx . dbg_ideal
+_nl2_dbg_floor_hit = ctx . dbg_floor_hit
+_nl2_dbg_floor_value = ctx . dbg_floor_value
+_nl2_dbg_restored = ctx . dbg_restored
+func cheat_jump_to_level ( level : int ) -> void :
+level = max ( 1 , level )
+var max_strategy : int
+var r1_cap_upper : int = 1 if ABTestManager . normal_level . is_early_strategy_upgrade_active ( ) else 5
+if level <= r1_cap_upper :
+max_strategy = 1
+elif level <= 20 :
+max_strategy = 3 if ABTestManager . normal_level . is_mid_strategy_aggressive_active ( ) else 2
+elif level <= 50 :
+max_strategy = 3
+elif level <= 100 :
+max_strategy = 4
+elif level <= 200 :
+max_strategy = 5
+else :
+max_strategy = 6
+var min_strategy : int
+if level <= 5 : min_strategy = 1
+elif level <= 50 : min_strategy = 1
+else : min_strategy = 2
+_current_strategy = clampi ( _current_strategy , min_strategy , max_strategy )
+_current_level = level
+_tutorial_done = true
+_consecutive_clean_wins = 0
+_consecutive_fails = 0
+_consecutive_retry_levels = 0
+_retry_tracking_strategy = 0
+_current_level_retried = false
+_current_level_dirty = false
+_pre_cat_fail_lv = 0
+_pre_cat_fail_count = 0
+_pre_cat_revived_this_level = false
+_pre_cat_pending_hard = false
+_pre_cat_pending_struggle = false
+_pre_cat_pending_demote = false
+_pre_cat_lock_lv = 0
+_pre_cat_lock_pre_type = "0"
+_pre_cat_lock_pos = Vector2i ( -1 , -1 )
+_dda_tool_or_revive_used = false
+_dda_revive_used = false
+_is_daily_first_easy_level = false
+_dda_pending_demote = false
+_nl2_pending_restore = false
+_nl2_restore_strategy = 0
+_nl2_pending_demote = false
+_nl2_pending_demote_reason = ""
+_retry_puzzle_level = 0
+_retry_puzzle_params = { }
+_start_toast_pct . clear ( )
+_start_toast_iq_idx . clear ( )
+clear_start_toast_variant_state ( )
+_save_data ( )
+func cloud_save_id ( ) -> String :
+return "core"
+func is_cloud_ahead ( cloud_data : Dictionary ) -> bool :
+return int ( cloud_data . get ( "current_level" , 0 ) ) > _current_level
+const CLOUD_TOOL_KINDS : Array [ String ] = [ "locate" , "hint" , "draft" , "mouse" ]
+func export_cloud_data ( ) -> Dictionary :
+var data : Dictionary = {
+"current_level" : _current_level ,
+"current_strategy" : _current_strategy ,
+}
+for kind : String in CLOUD_TOOL_KINDS :
+data [ "tool_" + kind ] = get_tool_count ( kind )
+return data
+func merge_cloud_data ( cloud_data : Dictionary , ctx : MergeContext = const?35 ) -> void :
+if cloud_data . is_empty ( ) :
+return
+if ctx == const?35 or not ctx . use_cloud :
+return
+_current_level = int ( cloud_data . get ( "current_level" , _current_level ) )
+_current_strategy = int ( cloud_data . get ( "current_strategy" , _current_strategy ) )
+if _current_level > 1 and not _tutorial_done :
+_tutorial_done = true
+var changed_tools : Array [ String ] = [ ]
+for kind : String in CLOUD_TOOL_KINDS :
+var remote_key : String = "tool_" + kind
+if not cloud_data . has ( remote_key ) :
+continue
+var merged_count : int = int ( cloud_data [ remote_key ] )
+if merged_count == get_tool_count ( kind ) :
+continue
+if _write_tool_field ( kind , merged_count ) :
+changed_tools . append ( kind )
+_save_data ( )
+for kind : String in changed_tools :
+tool_count_changed . emit ( kind , get_tool_count ( kind ) )
+func _save_data ( ) -> void :
+var cfg : = ConfigFile . new ( )
+cfg . set_value ( "progress" , "current_level" , _current_level )
+cfg . set_value ( "progress" , "last_hard_level" , _last_hard_level )
+cfg . set_value ( "progress" , "tutorial_done" , _tutorial_done )
+cfg . set_value ( "progress" , "current_strategy" , _current_strategy )
+cfg . set_value ( "progress" , "consecutive_clean_wins" , _consecutive_clean_wins )
+cfg . set_value ( "progress" , "last_level_clean_win" , _last_level_clean_win )
+cfg . set_value ( "progress" , "consecutive_fails" , _consecutive_fails )
+cfg . set_value ( "progress" , "consecutive_retry_levels" , _consecutive_retry_levels )
+cfg . set_value ( "progress" , "retry_tracking_strategy" , _retry_tracking_strategy )
+cfg . set_value ( "progress" , "bank_progress" , _bank_progress )
+cfg . set_value ( "progress" , "main_bank_progress" , _main_bank_progress )
+cfg . set_value ( "progress" , "lkmod_progress" , _lkmod_progress )
+cfg . set_value ( "progress" , "sp_tt_category_cursor" , _sp_tt_category_cursor )
+cfg . set_value ( "progress" , "sp_tt_last_replaced_level" , _sp_tt_last_replaced_level )
+cfg . set_value ( "progress" , "sp_tt_progress" , _sp_tt_progress )
+cfg . set_value ( "progress" , "lk_mod_g2_last_replaced_level" , _lk_mod_g2_last_replaced_level )
+cfg . set_value ( "progress" , "has_shown_rate_us" , _has_shown_rate_us )
+cfg . set_value ( "progress" , "has_used_revive_free" , _has_used_revive_free )
+cfg . set_value ( "progress" , "warn_life_shown" , _warn_life_shown )
+cfg . set_value ( "progress" , "life_plus_first_done" , _life_plus_first_done )
+cfg . set_value ( "progress" , "countdown_shown_levels" , _countdown_shown_levels )
+cfg . set_value ( "progress" , "daily_index" , _daily_index )
+cfg . set_value ( "progress" , "daily_completed_date" , _daily_completed_date )
+cfg . set_value ( "progress" , "max_daily_date" , _max_daily_date )
+cfg . set_value ( "progress" , "daily_elapsed_sec" , _daily_elapsed_sec )
+cfg . set_value ( "progress" , "daily_beat_percent" , _daily_beat_percent )
+cfg . set_value ( "progress" , "daily_best_beat_percent" , _daily_best_beat_percent )
+cfg . set_value ( "progress" , "daily_started_date" , _daily_started_date )
+cfg . set_value ( "progress" , "daily_first_easy_date" , _daily_first_easy_date )
+cfg . set_value ( "progress" , "game_total_stats" , _game_total_stats )
+cfg . set_value ( "progress" , "main_game_total_stats" , { } )
+cfg . set_value ( "progress" , "daily_game_total_stats" , { } )
+cfg . set_value ( "progress" , "main_game_round_stats" , { } )
+cfg . set_value ( "progress" , "daily_game_round_stats" , { } )
+cfg . set_value ( "progress" , "main_game_id" , "" )
+cfg . set_value ( "progress" , "daily_game_id" , "" )
+cfg . set_value ( "progress" , "tool_locate" , _tool_locate )
+cfg . set_value ( "progress" , "tool_hint" , _tool_hint )
+cfg . set_value ( "progress" , "tool_mouse" , _tool_mouse )
+cfg . set_value ( "progress" , "tool_draft" , _tool_draft )
+cfg . set_value ( "progress" , "tool_undo" , _tool_undo )
+cfg . set_value ( "progress" , "last_splash_date" , _last_splash_date )
+cfg . set_value ( "progress" , "apply_locale" , _apply_locale )
+cfg . set_value ( "progress" , "is_first_session" , _is_first_session )
+cfg . set_value ( "progress" , "last_first_level_date" , _last_first_level_date )
+cfg . set_value ( "progress" , "music_on" , _music_on )
+cfg . set_value ( "progress" , "music_user_modified" , _music_user_modified )
+cfg . set_value ( "progress" , "sound_on" , _sound_on )
+cfg . set_value ( "progress" , "vibration_on" , _vibration_on )
+cfg . set_value ( "progress" , "people_on" , _people_on )
+cfg . set_value ( "progress" , "has_used_tool" , _has_used_tool )
+cfg . set_value ( "progress" , "prop_highlight_shown" , _prop_highlight_shown )
+cfg . set_value ( "progress" , "prop_highlight_hint_date" , _prop_highlight_hint_date )
+cfg . set_value ( "progress" , "push_ask_count" , _push_ask_count )
+cfg . set_value ( "progress" , "push_guide_last_date" , _push_guide_last_date )
+cfg . set_value ( "progress" , "push_guide_shown_count" , _push_guide_shown_count )
+cfg . set_value ( "progress" , "push_guide_popup_count" , _push_guide_popup_count )
+cfg . set_value ( "progress" , "recent_win_counts_by_day" , _recent_win_counts_by_day )
+cfg . set_value ( "progress" , "retry_puzzle_level" , _retry_puzzle_level )
+cfg . set_value ( "progress" , "retry_puzzle_params" , _retry_puzzle_params )
+cfg . set_value ( "progress" , "pre_cat_fail_lv" , _pre_cat_fail_lv )
+cfg . set_value ( "progress" , "pre_cat_fail_count" , _pre_cat_fail_count )
+cfg . set_value ( "progress" , "pre_cat_revived_this_level" , _pre_cat_revived_this_level )
+cfg . set_value ( "progress" , "pre_cat_pending_hard" , _pre_cat_pending_hard )
+cfg . set_value ( "progress" , "pre_cat_pending_struggle" , _pre_cat_pending_struggle )
+cfg . set_value ( "progress" , "pre_cat_pending_demote" , _pre_cat_pending_demote )
+cfg . set_value ( "progress" , "pre_cat_lock_lv" , _pre_cat_lock_lv )
+cfg . set_value ( "progress" , "pre_cat_lock_pre_type" , _pre_cat_lock_pre_type )
+cfg . set_value ( "progress" , "pre_cat_lock_pos" , _pre_cat_lock_pos )
+cfg . set_value ( "progress" , "has_shown_att_guide" , _has_shown_att_guide )
+cfg . set_value ( "progress" , "interstitial_unlocked" , _interstitial_unlocked )
+cfg . set_value ( "progress" , "banner_unlocked" , _banner_unlocked )
+cfg . set_value ( "progress" , "has_shown_draft_onboarding" , _has_shown_draft_onboarding )
+cfg . set_value ( "progress" , "auto_mark_tutorial_done" , _auto_mark_tutorial_done )
+cfg . set_value ( "progress" , "rule_info_bar_collapsed" , _rule_info_bar_collapsed )
+cfg . set_value ( "progress" , "pattern_mode_on" , _pattern_mode_on )
+print ( "[PATTERN_DBG] _save_data writing pattern_mode_on=%s" % _pattern_mode_on )
+cfg . set_value ( "progress" , "pattern_entry_dot_dismissed" , _pattern_entry_dot_dismissed )
+cfg . set_value ( "progress" , "pattern_switch_dot_dismissed" , _pattern_switch_dot_dismissed )
+cfg . set_value ( "progress" , "music_entry_dot_dismissed" , _music_entry_dot_dismissed )
+cfg . set_value ( "progress" , "grt_level_d90_reported" , _grt_level_d90_reported )
+cfg . set_value ( "progress" , "grt_reported_events" , _grt_reported_events )
+cfg . set_value ( "progress" , "first_open_time_ms" , _first_open_time_ms )
+cfg . set_value ( "progress" , "recent_puzzles" , _recent_puzzles )
+cfg . set_value ( "progress" , "endgame_snapshot" , { } )
+cfg . set_value ( "progress" , "chain_last_replaced_level" , _chain_last_replaced_level )
+cfg . set_value ( "progress" , "chain_g3_streak" , _chain_g3_streak )
+cfg . set_value ( "progress" , "session_count" , _session_count )
+cfg . set_value ( "progress" , "today_session_count" , _today_session_count )
+cfg . set_value ( "progress" , "last_day_session_count" , _last_day_session_count )
+cfg . set_value ( "progress" , "active_days" , _active_days )
+cfg . set_value ( "progress" , "last_login_date" , _last_login_date )
+cfg . set_value ( "progress" , "today_played_count" , _today_played_count )
+cfg . set_value ( "progress" , "today_active_sec" , _today_active_sec )
+cfg . set_value ( "progress" , "total_active_sec" , _total_active_sec )
+cfg . set_value ( "progress" , "today_date" , _today_date )
+cfg . set_value ( "progress" , "pending_rewards" , _pending_rewards )
+cfg . set_value ( "progress" , "in_flight_awards" , _in_flight_awards )
+cfg . set_value ( "progress" , "reward_history_ts" , _reward_history_ts )
+cfg . set_value ( "progress" , "restored_today_count" , _restored_today_count )
+cfg . set_value ( "progress" , "daily_auto_mark_enabled" , _daily_auto_mark_enabled )
+cfg . set_value ( "progress" , "daily_auto_mark_free_consumed" , _daily_auto_mark_free_consumed )
+cfg . set_value ( "progress" , "saved_game_auto_mark" , _saved_game_auto_mark )
+cfg . set_value ( "progress" , "saved_ab_groups" , _saved_ab_groups )
+cfg . set_value ( "progress" , "saved_peek_ab_groups" , _saved_peek_ab_groups )
+cfg . set_value ( "progress" , "last_win_beat_percent" , _last_win_beat_percent )
+cfg . set_value ( "progress" , "help_last_open_time" , _help_last_open_time )
+cfg . set_value ( "progress" , "install_version" , _install_version )
+cfg . set_value ( "progress" , "game_version_pre" , _game_version_pre )
+cfg . set_value ( "progress" , "toast_hold_text_sig" , _toast_hold_text_sig )
+cfg . set_value ( "progress" , "toast_shown_keys" , _toast_shown_keys )
+cfg . set_value ( "progress" , "golden_fish_streak_count" , _golden_fish_streak_count )
+cfg . set_value ( "progress" , "golden_fish_pending" , _golden_fish_pending )
+cfg . set_value ( "progress" , "golden_fish_tutorial_shown" , _golden_fish_tutorial_shown )
+cfg . set_value ( "progress" , "onefish_progress" , _onefish_progress )
+cfg . set_value ( "progress" , "golden_fish_insert_delivered" , _golden_fish_insert_delivered )
+cfg . set_value ( "progress" , "is_gamble_user" , _is_gamble_user )
+cfg . set_value ( "progress" , "early_l1_l20_bits" , _early_l1_l20_bits )
+cfg . set_value ( "progress" , "recent_hard_invalid_bits" , _recent_hard_invalid_bits )
+cfg . set_value ( "progress" , "diff_diff_r3_played_count" , _11503_r3_played_count )
+cfg . set_value ( "progress" , "diff_diff_r4_played_count" , _11503_r4_played_count )
+_player_store . save_config ( cfg )
+func _load_data ( ) -> void :
+var cfg : = _player_store . load_config ( )
+if cfg == const?35 :
+_resolve_endgame_store ( )
+return
+_current_level = cfg . get_value ( "progress" , "current_level" , 1 )
+_last_hard_level = cfg . get_value ( "progress" , "last_hard_level" , 0 )
+_tutorial_done = cfg . get_value ( "progress" , "tutorial_done" , false )
+_current_strategy = cfg . get_value ( "progress" , "current_strategy" , 1 )
+_consecutive_clean_wins = cfg . get_value ( "progress" , "consecutive_clean_wins" , 0 )
+_last_level_clean_win = cfg . get_value ( "progress" , "last_level_clean_win" , false )
+_consecutive_fails = cfg . get_value ( "progress" , "consecutive_fails" , 0 )
+_consecutive_retry_levels = cfg . get_value ( "progress" , "consecutive_retry_levels" , 0 )
+_retry_tracking_strategy = cfg . get_value ( "progress" , "retry_tracking_strategy" , 0 )
+_bank_progress = cfg . get_value ( "progress" , "bank_progress" , { } )
+_main_bank_progress = cfg . get_value ( "progress" , "main_bank_progress" , { } )
+_lkmod_progress = cfg . get_value ( "progress" , "lkmod_progress" , { } )
+_sp_tt_category_cursor = cfg . get_value ( "progress" , "sp_tt_category_cursor" , 1 )
+_sp_tt_last_replaced_level = cfg . get_value ( "progress" , "sp_tt_last_replaced_level" , 0 )
+_sp_tt_progress = cfg . get_value ( "progress" , "sp_tt_progress" , { } )
+_lk_mod_g2_last_replaced_level = cfg . get_value ( "progress" , "lk_mod_g2_last_replaced_level" , 0 )
+_has_shown_rate_us = cfg . get_value ( "progress" , "has_shown_rate_us" , false )
+_has_used_revive_free = cfg . get_value ( "progress" , "has_used_revive_free" , false )
+_warn_life_shown = cfg . get_value ( "progress" , "warn_life_shown" , false )
+_life_plus_first_done = cfg . get_value ( "progress" , "life_plus_first_done" , false )
+_countdown_shown_levels = cfg . get_value ( "progress" , "countdown_shown_levels" , { } )
+_daily_index = cfg . get_value ( "progress" , "daily_index" , 0 )
+_daily_completed_date = cfg . get_value ( "progress" , "daily_completed_date" , "" )
+_max_daily_date = cfg . get_value ( "progress" , "max_daily_date" , "" )
+_daily_elapsed_sec = cfg . get_value ( "progress" , "daily_elapsed_sec" , 0 )
+_daily_beat_percent = cfg . get_value ( "progress" , "daily_beat_percent" , 0 )
+_daily_best_beat_percent = cfg . get_value ( "progress" , "daily_best_beat_percent" , 0 )
+_daily_started_date = cfg . get_value ( "progress" , "daily_started_date" , "" )
+_daily_first_easy_date = cfg . get_value ( "progress" , "daily_first_easy_date" , "" )
+_game_total_stats = cfg . get_value ( "progress" , "game_total_stats" , { } )
+_main_game_total_stats = cfg . get_value ( "progress" , "main_game_total_stats" , { } )
+_daily_game_total_stats = cfg . get_value ( "progress" , "daily_game_total_stats" , { } )
+_main_game_round_stats = cfg . get_value ( "progress" , "main_game_round_stats" , { } )
+_daily_game_round_stats = cfg . get_value ( "progress" , "daily_game_round_stats" , { } )
+_main_game_id = cfg . get_value ( "progress" , "main_game_id" , "" )
+_daily_game_id = cfg . get_value ( "progress" , "daily_game_id" , "" )
+_tool_locate = cfg . get_value ( "progress" , "tool_locate" , 5 )
+_tool_hint = cfg . get_value ( "progress" , "tool_hint" , 5 )
+_tool_mouse = cfg . get_value ( "progress" , "tool_mouse" , _tool_mouse )
+_tool_draft = cfg . get_value ( "progress" , "tool_draft" , 5 )
+_tool_undo = cfg . get_value ( "progress" , "tool_undo" , 3 )
+_last_splash_date = cfg . get_value ( "progress" , "last_splash_date" , "" )
+_apply_locale = cfg . get_value ( "progress" , "apply_locale" , "" )
+_is_first_session = cfg . get_value ( "progress" , "is_first_session" , true )
+_last_first_level_date = cfg . get_value ( "progress" , "last_first_level_date" , "" )
+_music_on = cfg . get_value ( "progress" , "music_on" , true )
+_music_user_modified = cfg . get_value ( "progress" , "music_user_modified" , false )
+_sound_on = cfg . get_value ( "progress" , "sound_on" , true )
+_vibration_on = cfg . get_value ( "progress" , "vibration_on" , true )
+_people_on = cfg . get_value ( "progress" , "people_on" , true )
+_has_used_tool = cfg . get_value ( "progress" , "has_used_tool" , false )
+_prop_highlight_shown = cfg . get_value ( "progress" , "prop_highlight_shown" , false )
+_prop_highlight_hint_date = cfg . get_value ( "progress" , "prop_highlight_hint_date" , "" )
+_push_ask_count = cfg . get_value ( "progress" , "push_ask_count" , 0 )
+_push_guide_last_date = cfg . get_value ( "progress" , "push_guide_last_date" , "" )
+_push_guide_shown_count = cfg . get_value ( "progress" , "push_guide_shown_count" , 0 )
+_push_guide_popup_count = cfg . get_value ( "progress" , "push_guide_popup_count" , 0 )
+_recent_win_counts_by_day = cfg . get_value ( "progress" , "recent_win_counts_by_day" , { } )
+_retry_puzzle_level = cfg . get_value ( "progress" , "retry_puzzle_level" , 0 )
+_retry_puzzle_params = cfg . get_value ( "progress" , "retry_puzzle_params" , { } )
+_pre_cat_fail_lv = cfg . get_value ( "progress" , "pre_cat_fail_lv" , 0 )
+_pre_cat_fail_count = cfg . get_value ( "progress" , "pre_cat_fail_count" , 0 )
+_pre_cat_revived_this_level = cfg . get_value ( "progress" , "pre_cat_revived_this_level" , false )
+_pre_cat_pending_hard = cfg . get_value ( "progress" , "pre_cat_pending_hard" , false )
+_pre_cat_pending_struggle = cfg . get_value ( "progress" , "pre_cat_pending_struggle" , false )
+_pre_cat_pending_demote = cfg . get_value ( "progress" , "pre_cat_pending_demote" , false )
+_pre_cat_lock_lv = cfg . get_value ( "progress" , "pre_cat_lock_lv" , 0 )
+_pre_cat_lock_pre_type = cfg . get_value ( "progress" , "pre_cat_lock_pre_type" , "0" )
+_pre_cat_lock_pos = cfg . get_value ( "progress" , "pre_cat_lock_pos" , Vector2i ( -1 , -1 ) )
+_has_shown_att_guide = cfg . get_value ( "progress" , "has_shown_att_guide" , false )
+_interstitial_unlocked = cfg . get_value ( "progress" , "interstitial_unlocked" , false )
+_banner_unlocked = cfg . get_value ( "progress" , "banner_unlocked" , false )
+_has_shown_draft_onboarding = cfg . get_value ( "progress" , "has_shown_draft_onboarding" , false )
+_auto_mark_tutorial_done = cfg . get_value ( "progress" , "auto_mark_tutorial_done" , false )
+_rule_info_bar_collapsed = cfg . get_value ( "progress" , "rule_info_bar_collapsed" , false )
+_pattern_mode_on = cfg . get_value ( "progress" , "pattern_mode_on" , false )
+print ( "[PATTERN_DBG] _load_data read pattern_mode_on=%s" % _pattern_mode_on )
+_pattern_entry_dot_dismissed = cfg . get_value ( "progress" , "pattern_entry_dot_dismissed" , false )
+_pattern_switch_dot_dismissed = cfg . get_value ( "progress" , "pattern_switch_dot_dismissed" , false )
+_music_entry_dot_dismissed = cfg . get_value ( "progress" , "music_entry_dot_dismissed" , false )
+_grt_level_d90_reported = cfg . get_value ( "progress" , "grt_level_d90_reported" , [ ] )
+_grt_reported_events = cfg . get_value ( "progress" , "grt_reported_events" , [ ] )
+_first_open_time_ms = cfg . get_value ( "progress" , "first_open_time_ms" , 0 )
+_recent_puzzles = cfg . get_value ( "progress" , "recent_puzzles" , [ ] )
+_endgame_snapshot = cfg . get_value ( "progress" , "endgame_snapshot" , { } )
+_chain_last_replaced_level = cfg . get_value ( "progress" , "chain_last_replaced_level" , 0 )
+_chain_g3_streak = cfg . get_value ( "progress" , "chain_g3_streak" , 0 )
+_session_count = cfg . get_value ( "progress" , "session_count" , 0 )
+_today_session_count = cfg . get_value ( "progress" , "today_session_count" , 0 )
+_last_day_session_count = cfg . get_value ( "progress" , "last_day_session_count" , 0 )
+_active_days = cfg . get_value ( "progress" , "active_days" , 0 )
+_last_login_date = cfg . get_value ( "progress" , "last_login_date" , "" )
+_today_played_count = cfg . get_value ( "progress" , "today_played_count" , 0 )
+_today_active_sec = cfg . get_value ( "progress" , "today_active_sec" , 0 )
+_total_active_sec = cfg . get_value ( "progress" , "total_active_sec" , 0 )
+_today_date = cfg . get_value ( "progress" , "today_date" , "" )
+_pending_rewards = cfg . get_value ( "progress" , "pending_rewards" , [ ] )
+_in_flight_awards = cfg . get_value ( "progress" , "in_flight_awards" , [ ] )
+_reward_history_ts = cfg . get_value ( "progress" , "reward_history_ts" , [ ] )
+_restored_today_count = cfg . get_value ( "progress" , "restored_today_count" , 0 )
+_daily_auto_mark_enabled = cfg . get_value ( "progress" , "daily_auto_mark_enabled" , false )
+_daily_auto_mark_free_consumed = cfg . get_value ( "progress" , "daily_auto_mark_free_consumed" , false )
+_saved_game_auto_mark = cfg . get_value ( "progress" , "saved_game_auto_mark" , -1 )
+_saved_ab_groups = cfg . get_value ( "progress" , "saved_ab_groups" , { } )
+_saved_peek_ab_groups = cfg . get_value ( "progress" , "saved_peek_ab_groups" , { } )
+_last_win_beat_percent = cfg . get_value ( "progress" , "last_win_beat_percent" , -1 )
+_help_last_open_time = cfg . get_value ( "progress" , "help_last_open_time" , 0 )
+_install_version = cfg . get_value ( "progress" , "install_version" , "" )
+_game_version_pre = cfg . get_value ( "progress" , "game_version_pre" , "" )
+_toast_hold_text_sig = cfg . get_value ( "progress" , "toast_hold_text_sig" , -999 )
+_toast_shown_keys = cfg . get_value ( "progress" , "toast_shown_keys" , PackedStringArray ( ) )
+_golden_fish_streak_count = cfg . get_value ( "progress" , "golden_fish_streak_count" , 0 )
+_golden_fish_pending = cfg . get_value ( "progress" , "golden_fish_pending" , false )
+_golden_fish_tutorial_shown = cfg . get_value ( "progress" , "golden_fish_tutorial_shown" , false )
+_onefish_progress = cfg . get_value ( "progress" , "onefish_progress" , { } )
+_golden_fish_insert_delivered = cfg . get_value ( "progress" , "golden_fish_insert_delivered" , 0 )
+_is_gamble_user = cfg . get_value ( "progress" , "is_gamble_user" , -1 )
+_early_l1_l20_bits = cfg . get_value ( "progress" , "early_l1_l20_bits" , [ ] )
+_recent_hard_invalid_bits = cfg . get_value ( "progress" , "recent_hard_invalid_bits" , [ ] )
+_11503_r3_played_count = cfg . get_value ( "progress" , "diff_diff_r3_played_count" , 0 )
+_11503_r4_played_count = cfg . get_value ( "progress" , "diff_diff_r4_played_count" , 0 )
+_resolve_endgame_store ( )
+func _migrate_legacy_save ( ) -> void :
+if FileAccess . file_exists ( SAVE_FLAG ) :
+return
+if not FileAccess . file_exists ( SAVE_PATH_OLD ) :
+return
+var cfg : = ConfigFile . new ( )
+if cfg . load_encrypted_pass ( SAVE_PATH_OLD , SAVE_PASSWORD ) != OK :
+return
+if _player_store . save_config ( cfg ) :
+print ( "[GameState] 旧存档迁移完成" )
+else :
+push_error ( "[GameState] 旧存档迁移失败" )
+func _today_str ( ) -> String :
+var dt : Dictionary = Time . get_date_dict_from_system ( )
+return "%d-%02d-%02d" % [ dt . year , dt . month , dt . day ]
+func _inc_today_win_count ( ) -> void :
+var today : String = _today_str ( )
+_recent_win_counts_by_day [ today ] = _recent_win_counts_by_day . get ( today , 0 ) + 1
+const _DELETE_PRESERVE_FIELDS : Array [ String ] = [
+"_has_shown_att_guide" ,
+"_push_ask_count" ,
+"_push_guide_last_date" ,
+"_push_guide_shown_count" ,
+"_push_guide_popup_count" ,
+"_grt_reported_events" ,
+"_grt_level_d90_reported" ,
+"_saved_ab_groups" ,
+"_install_version" ,
+"_first_open_time_ms" ,
+"_restored_today_count" ,
+"_reward_history_ts" ,
+"_today_date" ,
+]
+func reset_for_account_delete ( ) -> void :
+var kept : Dictionary = { }
+for f : String in _DELETE_PRESERVE_FIELDS :
+var v : Variant = get ( f )
+kept [ f ] = v . duplicate ( true ) if ( v is Dictionary or v is Array ) else v
+reset_all ( )
+for f : String in kept . keys ( ) :
+set ( f , kept [ f ] )
+_save_data ( )
+print ( "[GameState] 删号清理完成:业务字段已清,保留 %d 个 SDK/风控标记" % kept . size ( ) )
+func reset_all ( ) -> void :
+_current_level = 1
+_last_hard_level = 0
+_tutorial_done = false
+_has_shown_rate_us = false
+_has_used_revive_free = false
+_warn_life_shown = false
+_life_plus_first_done = false
+_countdown_shown_levels = { }
+_current_strategy = 1
+_consecutive_clean_wins = 0
+_last_level_clean_win = false
+_consecutive_fails = 0
+_consecutive_retry_levels = 0
+_retry_tracking_strategy = 0
+_current_level_dirty = false
+_current_level_retried = false
+_nl2_pending_restore = false
+_nl2_restore_strategy = 0
+_nl2_pending_demote = false
+_nl2_pending_demote_reason = ""
+_chain_last_replaced_level = 0
+_chain_g3_streak = 0
+_chain_g2_pending = false
+_retry_puzzle_level = 0
+_retry_puzzle_params = { }
+_pre_cat_fail_lv = 0
+_pre_cat_fail_count = 0
+_pre_cat_revived_this_level = false
+_pre_cat_pending_hard = false
+_pre_cat_pending_struggle = false
+_pre_cat_pending_demote = false
+_pre_cat_lock_lv = 0
+_pre_cat_lock_pre_type = "0"
+_pre_cat_lock_pos = Vector2i ( -1 , -1 )
+_bank_progress = { }
+_main_bank_progress = { }
+_lkmod_progress = { }
+_sp_tt_category_cursor = 1
+_sp_tt_last_replaced_level = 0
+_sp_tt_progress = { }
+_lk_mod_g2_last_replaced_level = 0
+_daily_index = 0
+_daily_completed_date = ""
+_max_daily_date = ""
+_daily_elapsed_sec = 0
+_daily_beat_percent = 0
+_daily_best_beat_percent = 0
+_daily_started_date = ""
+_daily_first_easy_date = ""
+_game_total_stats = { }
+_main_game_total_stats = { }
+_daily_game_total_stats = { }
+_main_game_round_stats = { }
+_daily_game_round_stats = { }
+_main_game_id = ""
+_daily_game_id = ""
+_tool_locate = 5
+_tool_hint = 5
+_tool_mouse = 2
+_tool_draft = 5
+_tool_undo = 3
+_last_splash_date = ""
+_apply_locale = ""
+_is_first_session = true
+_first_session_runtime = true
+_last_first_level_date = ""
+_music_on = true
+_music_user_modified = false
+_sound_on = true
+_vibration_on = true
+VibrateManager . set_enabled ( _vibration_on )
+_people_on = true
+_has_used_tool = false
+_prop_highlight_shown = false
+_prop_highlight_hint_date = ""
+_push_ask_count = 0
+_push_guide_last_date = ""
+_push_guide_shown_count = 0
+_push_guide_popup_count = 0
+_recent_win_counts_by_day = { }
+_has_shown_att_guide = false
+_interstitial_unlocked = false
+_banner_unlocked = false
+_has_shown_draft_onboarding = false
+_auto_mark_tutorial_done = false
+_pattern_mode_on = false
+_pattern_entry_dot_dismissed = false
+_pattern_switch_dot_dismissed = false
+_music_entry_dot_dismissed = false
+_grt_level_d90_reported = [ ]
+_grt_reported_events = [ ]
+_first_open_time_ms = 0
+_recent_puzzles = [ ]
+_endgame_snapshot = { }
+_session_count = 0
+_today_session_count = 0
+_last_day_session_count = 0
+_active_days = 0
+_last_login_date = ""
+_today_played_count = 0
+_today_active_sec = 0
+_total_active_sec = 0
+_today_date = ""
+_pending_rewards = [ ]
+_in_flight_awards = [ ]
+_reward_history_ts = [ ]
+_restored_today_count = 0
+_daily_auto_mark_enabled = false
+_daily_auto_mark_free_consumed = false
+_saved_game_auto_mark = -1
+_saved_ab_groups = { }
+_saved_peek_ab_groups = { }
+_last_win_beat_percent = -1
+_help_last_open_time = 0
+_install_version = ""
+_game_version_pre = ""
+_toast_hold_text_sig = -999
+_toast_shown_keys = PackedStringArray ( )
+_start_toast_pct = { }
+_start_toast_iq_idx = { }
+_start_toast_variant_idx = { }
+_start_toast_variant_pct = { }
+_golden_fish_streak_count = 0
+_golden_fish_pending = false
+_golden_fish_tutorial_shown = false
+_onefish_progress = { }
+_golden_fish_insert_delivered = 0
+_is_gamble_user = -1
+_early_l1_l20_bits = [ ]
+_recent_hard_invalid_bits = [ ]
+_11503_r3_played_count = 0
+_11503_r4_played_count = 0
+UniKitManager . remove_local_tag ( "is_gamble_user" )
+_save_data ( )
+_save_endgame ( )
+all_data_reset . emit ( )

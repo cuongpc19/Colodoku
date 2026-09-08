@@ -1,0 +1,84 @@
+class_name LevelSelectionStrategyResolver
+extends RefCounted
+const CONTROL_ID : StringName = &"normal_level_0"
+var _cache : Dictionary = { }
+const _VALUE_TO_ID : Dictionary = {
+0 : &"normal_level_0" ,
+11301 : &"normal_level_11301" ,
+11302 : &"normal_level_11302" ,
+11303 : &"normal_level_11303" ,
+11304 : &"normal_level_11304" ,
+11305 : &"normal_level_11305" ,
+11306 : &"normal_level_11306" ,
+11307 : &"normal_level_11307" ,
+11308 : &"normal_level_11308" ,
+11309 : &"normal_level_11309" ,
+11310 : &"normal_level_11310" ,
+11311 : &"normal_level_11311" ,
+11401 : &"normal_level_11401" ,
+11501 : &"normal_level_11501" ,
+11502 : &"normal_level_11502" ,
+11503 : &"normal_level_11503" ,
+11504 : &"normal_level_11504" ,
+11505 : &"normal_level_11505" ,
+11506 : &"normal_level_11506" ,
+11507 : &"normal_level_11507" ,
+11508 : &"normal_level_11508" ,
+11509 : &"normal_level_11509" ,
+11510 : &"normal_level_11510" ,
+11511 : &"normal_level_11511" ,
+11512 : &"normal_level_11512" ,
+11513 : &"normal_level_11513" ,
+11514 : &"normal_level_11514" ,
+11515 : &"normal_level_11515" ,
+}
+func resolve_by_value ( normal_level_value : int ) -> LevelSelectionStrategy :
+var strategy_id : StringName = _VALUE_TO_ID . get ( normal_level_value , StringName ( ) )
+if strategy_id . is_empty ( ) :
+var msg : String = "LevelSelectionStrategyResolver: unknown normal_level=%d, fallback=%s" % [ normal_level_value , CONTROL_ID ]
+if OS . has_feature ( "rel" ) or OS . has_feature ( "pre" ) :
+push_error ( msg )
+else :
+push_warning ( msg )
+strategy_id = CONTROL_ID
+return _get_or_create ( strategy_id )
+func resolve_by_id ( strategy_id : StringName ) -> LevelSelectionStrategy :
+if not _VALUE_TO_ID . values ( ) . has ( strategy_id ) :
+push_error ( "LevelSelectionStrategyResolver: unknown strategy_id=%s, fallback=%s" % [ strategy_id , CONTROL_ID ] )
+return _get_or_create ( CONTROL_ID )
+return _get_or_create ( strategy_id )
+func _get_or_create ( strategy_id : StringName ) -> LevelSelectionStrategy :
+if not _cache . has ( strategy_id ) :
+_cache [ strategy_id ] = _create ( strategy_id )
+return _cache [ strategy_id ] as LevelSelectionStrategy
+static func _create ( strategy_id : StringName ) -> LevelSelectionStrategy :
+match strategy_id :
+&"normal_level_0" : return NLControlStrategy . new ( )
+&"normal_level_11301" : return NL11301Strategy . new ( )
+&"normal_level_11302" : return NL11302Strategy . new ( )
+&"normal_level_11303" : return NL11303Strategy . new ( )
+&"normal_level_11304" : return NL11304Strategy . new ( )
+&"normal_level_11305" : return NL11305Strategy . new ( )
+&"normal_level_11306" : return NL11306Strategy . new ( )
+&"normal_level_11307" : return NL11307Strategy . new ( )
+&"normal_level_11308" : return NL11308Strategy . new ( )
+&"normal_level_11309" : return NL11309Strategy . new ( )
+&"normal_level_11310" : return NL11310Strategy . new ( )
+&"normal_level_11311" : return NL11311Strategy . new ( )
+&"normal_level_11401" : return NL11401Strategy . new ( )
+&"normal_level_11501" : return NL11501Strategy . new ( )
+&"normal_level_11502" : return NL11502Strategy . new ( )
+&"normal_level_11503" : return NL11503Strategy . new ( )
+&"normal_level_11504" : return NL11504Strategy . new ( )
+&"normal_level_11505" : return NL11505Strategy . new ( )
+&"normal_level_11506" : return NL11506Strategy . new ( )
+&"normal_level_11507" : return NL11507Strategy . new ( )
+&"normal_level_11508" : return NL11508Strategy . new ( )
+&"normal_level_11509" : return NL11509Strategy . new ( )
+&"normal_level_11510" : return NL11510Strategy . new ( )
+&"normal_level_11511" : return NL11511Strategy . new ( )
+&"normal_level_11512" : return NL11512Strategy . new ( )
+&"normal_level_11513" : return NL11513Strategy . new ( )
+&"normal_level_11514" : return NL11514Strategy . new ( )
+&"normal_level_11515" : return NL11515Strategy . new ( )
+_ : return NLControlStrategy . new ( )

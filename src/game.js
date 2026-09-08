@@ -6,7 +6,7 @@ import { nextDeduction, stateFromBoard } from "./solver.js";
 import { Tutorial, tutorialPuzzle } from "./tutorial.js";
 import { T, explain, applyStatic, LANGUAGES, getLocale, setLocale } from "./strings.js";
 import {
-  TOTAL_LEVELS, levelSpec, levelRecord, autoMarksFor,
+  levelRecord, autoMarksFor, onLevelWon, onLevelFailed, markDirty,
   loadProgress, markCleared, clearProgress, currentLevel, starsFor,
   touchStreak, streakDoneToday, addCoins, spendCoins, useFree,
   COIN_REWARD, COIN_COST,
@@ -35,12 +35,12 @@ const SCORE_BASE = 576;
 const SCORE_STEP = 96;
 
 const $ = (id) => document.getElementById(id);
-const screens = { home: $("screen-home"), map: $("screen-map"), play: $("screen-play") };
+const screens = { home: $("screen-home"), play: $("screen-play") };
 
 const ui = {
-  homeProgress: $("home-progress"), mapGrid: $("map-grid"),
+  homeProgress: $("home-progress"),
   streakCount: $("streak-count"), streakTick: $("streak-tick"),
-  kicker: $("play-kicker"), title: $("play-title"), score: $("play-score"),
+  kicker: $("play-kicker"), title: $("play-title"), best: $("play-best"),
   chips: $("chips"), count: $("play-count"), lives: $("play-lives"),
   status: $("play-status"), hintText: $("hint-text"),
   coachTop: $("coach-top"), coachTitle: $("coach-title"), coachText: $("coach-text"),
@@ -92,39 +92,18 @@ const view = new BoardView($("board"), {
 function show(name) {
   for (const [key, node] of Object.entries(screens)) node.hidden = key !== name;
   if (name === "home") refreshHome();
-  if (name === "map") refreshMap();
 }
 
 function refreshHome() {
   const done = state.progress.cleared;
-  ui.homeProgress.textContent = done
-    ? T.progressSome(done, TOTAL_LEVELS, currentLevel(state.progress))
-    : T.progressNone(TOTAL_LEVELS);
+  // Dòng này không đếm gì cả — không tổng số màn, không số màn đã qua. Người
+  // chơi đã biết mình tới đâu qua nút Tiếp tục ngay bên dưới.
+  ui.homeProgress.textContent = T.levelsWaiting;
   $("btn-play").textContent = done ? T.playOn(currentLevel(state.progress)) : T.play;
   refreshCoins();
   ui.streakCount.textContent = state.progress.streak || 0;
   ui.streakTick.hidden = !streakDoneToday(state.progress);
 }
-
-function refreshMap() {
-  const unlocked = currentLevel(state.progress);
-  const cells = [];
-  for (let n = 1; n <= TOTAL_LEVELS; n++) {
-    const spec = levelSpec(n);
-    const stars = state.progress.stars[n] || 0;
-    const locked = n > unlocked;
-    cells.push(`<button class="map-cell${locked ? " locked" : ""}${n === unlocked ? " current" : ""}"
-        ${locked ? "disabled" : ""} data-level="${n}" title="${spec.size}×${spec.size} · ${spec.label}">
-        <b>${n}</b><span class="stars">${stars ? "★".repeat(stars) : ""}</span>
-      </button>`);
-  }
-  ui.mapGrid.innerHTML = cells.join("");
-}
-
-ui.mapGrid.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-level]");
-  if (button) startLevel(Number(button.dataset.level));
-});
 
 for (const button of document.querySelectorAll("[data-goto]"))
   button.addEventListener("click", () => show(button.dataset.goto));
@@ -161,11 +140,12 @@ function mountPlay({ puzzle, kicker, title, autoMark, given = [], note = "" }) {
 }
 
 async function startLevel(n) {
-  const loaded = await levelRecord(n);
+  const loaded = await levelRecord(n, state.progress);
   if (!loaded) {
     ui.status.textContent = T.loadFailed;
     return;
   }
+  state.progress = loaded.progress;
   state.level = n;
   state.spec = loaded.spec;
   state.tutorial = null;
@@ -206,7 +186,9 @@ function startTutorial() {
 function refreshHud() {
   const board = state.board;
   ui.count.textContent = T.counter(board.cats().length, board.size);
-  ui.score.textContent = state.score;
+  // Ô bên phải HUD là kỷ lục chuỗi ngày chơi, không phải điểm màn này —
+  // điểm vẫn tính và vẫn hiện ở hộp thoại thắng.
+  ui.best.textContent = state.progress.best || 0;
   ui.lives.innerHTML = Array.from(
     { length: LIVES },
     (_, i) => `<i class="life${i < state.lives ? "" : " gone"}"></i>`,
@@ -233,7 +215,9 @@ const canUse = (kind) => freeLeft(kind) > 0 || canAfford(COIN_COST[kind]);
  */
 function refreshBooster(button, badge, kind) {
   const free = freeLeft(kind);
-  badge.textContent = free || COIN_COST[kind];
+  // Còn lượt free thì chỉ là con số; hết rồi thì kèm đồng xu cho khỏi đọc nhầm
+  // "20" thành "còn 20 lượt".
+  badge.innerHTML = free ? String(free) : `<i class="coin"></i>${COIN_COST[kind]}`;
   badge.classList.toggle("price", free === 0);
   button.disabled = Boolean(state.offer);
   // Không đủ tiền thì làm mờ nhưng vẫn bấm được, để còn báo được lý do.
@@ -454,6 +438,7 @@ function offerHint() {
     return false;
   }
   state.hintsUsed++;
+  if (!state.tutorial) state.progress = markDirty(state.progress);
   offerMove(
     move,
     move.text || `${move.action === "place" ? T.hintPlace : T.hintExclude} — ${explain(move.reason)}`,
@@ -489,6 +474,7 @@ ui.reveal.addEventListener("click", () => {
   }
   if (!spend("reveal")) return;
   state.hintsUsed++;
+  state.progress = markDirty(state.progress);
   offerMove({ action: "place", cells: [[row, state.puzzle.solution[row]]] }, T.hintReveal);
 });
 
@@ -513,15 +499,16 @@ function finishLevel() {
   view.locked = true;
   const stars = starsFor(state.hintsUsed);
   state.progress = addCoins(
-    touchStreak(markCleared(state.progress, state.level, stars)),
+    touchStreak(onLevelWon(markCleared(state.progress, state.level, stars), state.level)),
     COIN_REWARD,
   );
   refreshCoins();
 
   ui.winTitle.textContent = T.cleared;
-  ui.winNote.textContent = `${T.score} ${state.score} · ` +
-    (state.hintsUsed === 0 ? T.clearedClean : T.clearedHints(state.hintsUsed));
-  ui.next.textContent = state.level >= TOTAL_LEVELS ? T.home : T.nextLevel;
+  // Không có dòng tổng kết ở màn thắng. Vẫn phải xoá, vì hộp thoại này dùng
+  // chung với màn hết mạng — nó có để lại chữ ở đó.
+  ui.winNote.textContent = "";
+  ui.next.textContent = T.nextLevel;
   ui.replay.hidden = false;
   ui.win.hidden = false;
   celebrate(COIN_REWARD);
@@ -555,10 +542,6 @@ function celebrate(coins) {
   }).join("");
 }
 
-/**
- * Đặt con kiến reo mừng vào hộp thoại. Gán lại innerHTML mỗi lần để animation
- * chạy từ đầu — thắng màn thứ hai mà kiến đứng im thì mất nửa cái hay.
- */
 function cheer() {
   showArt("ant-happy");
 }
@@ -580,6 +563,7 @@ function stopCelebration() {
 
 function gameOver() {
   view.locked = true;
+  state.progress = onLevelFailed(state.progress, state.level);
   closeOffer();
   stopCelebration();
   // Hết mạng: kiến bối rối, không phải kiến reo mừng.
@@ -597,7 +581,6 @@ ui.next.addEventListener("click", () => {
   stopCelebration();
   if (state.tutorial) return startLevel(1);
   if (state.lives <= 0) return startLevel(state.level); // Try again
-  if (state.level >= TOTAL_LEVELS) return show("home");
   startLevel(state.level + 1);
 });
 
@@ -606,6 +589,37 @@ ui.replay.addEventListener("click", () => {
   stopCelebration();
   startLevel(state.level);
 });
+
+// ------------------------------------------- chốt chặn phóng to khi bấm đúp
+//
+// `touch-action: manipulation` trong CSS lo được phần lớn, nhưng Safari trên
+// iOS vẫn lọt ở những cú chạm không ai gọi preventDefault. Chốt cuối, đặt ở
+// mức cả trang: hai cú chạm liên tiếp vừa nhanh vừa gần nhau thì huỷ hành vi
+// mặc định của cú thứ hai.
+//
+// Bắt buộc phải xét **khoảng cách**, không chỉ thời gian: chạm nhanh vào hai
+// nút khác nhau là thao tác hợp lệ, huỷ mất thì nút thứ hai coi như hỏng.
+// Bàn cờ không ảnh hưởng — nó chạy bằng pointerdown, không cần click.
+const TAP_GUARD_MS = 400;
+const TAP_GUARD_PX = 48;
+let lastTapAt = 0;
+let lastTapX = 0;
+let lastTapY = 0;
+
+document.addEventListener(
+  "touchend",
+  (event) => {
+    const touch = event.changedTouches[0];
+    if (!touch) return;
+    const now = performance.now();
+    const near = Math.hypot(touch.clientX - lastTapX, touch.clientY - lastTapY) < TAP_GUARD_PX;
+    if (near && now - lastTapAt < TAP_GUARD_MS) event.preventDefault();
+    lastTapAt = now;
+    lastTapX = touch.clientX;
+    lastTapY = touch.clientY;
+  },
+  { passive: false }, // không có dòng này thì preventDefault bị bỏ qua
+);
 
 // ------------------------------------------------------------------ cài đặt
 
@@ -626,6 +640,8 @@ $("btn-close-settings").addEventListener("click", () => (ui.settings.hidden = tr
 
 ui.restart.addEventListener("click", () => {
   ui.settings.hidden = true;
+  // Chơi lại giữa chừng thì màn này không còn tính là thắng sạch.
+  state.progress = markDirty(state.progress);
   startLevel(state.level);
 });
 
@@ -648,7 +664,6 @@ function relocalize() {
   applyStatic();
   refreshSettings();
   refreshHome();
-  refreshMap();
   if (screens.play.hidden) return;
 
   // Thẻ gợi ý đang mở còn giữ câu tiếng cũ — đóng lại cho gọn, lượt gợi ý vẫn đã trừ.

@@ -1,0 +1,125 @@
+class_name PuzzleDeduplicator
+extends RefCounted
+static func inspect ( entry : Dictionary , level_num : int ) -> Dictionary :
+var size : int = int ( entry . get ( "_delivery_size" , entry . get ( "size" , 0 ) ) )
+var regions : Array = entry . get ( "regionMap" , [ ] )
+var puzzle_id : String = resolve_puzzle_id ( entry , size , regions )
+var previous : Dictionary = GameState . find_recent_puzzle ( puzzle_id )
+var duplicate : bool = not previous . is_empty ( ) and int ( previous . get ( "level" , -1 ) ) != level_num
+return { "puzzle_id" : puzzle_id , "duplicate" : duplicate , "previous" : previous }
+static func resolve_puzzle_id ( entry : Dictionary , sz : int , region_map : Array ) -> String :
+var hash16 : String = str ( entry . get ( "_pid_h" , "" ) )
+var suffixes : Array = entry . get ( "_pid_s" , [ ] )
+if hash16 . is_empty ( ) or suffixes . size ( ) != LevelData . TRANSFORM_COUNT :
+return LevelData . compute_puzzle_id ( sz , region_map )
+var t : int = _effective_transform ( entry )
+if t < 0 or t >= LevelData . TRANSFORM_COUNT :
+push_error ( "PID_TABLE_BAD_TRANSFORM t=%d sz=%d src=%s" % [ t , sz , _source_of ( entry ) ] )
+return LevelData . compute_puzzle_id ( sz , region_map )
+var composed : String = LevelData . compose_puzzle_id ( sz , hash16 , int ( suffixes [ t ] ) )
+if not OS . has_feature ( "rel" ) :
+var expect : String = LevelData . compute_puzzle_id ( sz , region_map )
+if expect != composed :
+push_error ( "PID_TABLE_STALE expect=%s table=%s sz=%d t=%d src=%s —— 题库变了但没重跑预计算"
+% [ expect , composed , sz , t , _source_of ( entry ) ] )
+return expect
+return composed
+static func _effective_transform ( entry : Dictionary ) -> int :
+if _source_of ( entry ) == "lk_mod" :
+return 0
+return int ( entry . get ( "_bank_transform" , 0 ) )
+static func _source_of ( entry : Dictionary ) -> String :
+return str ( entry . get ( "_bank_source_main" , entry . get ( "_bank_source" , "" ) ) )
+static func log_duplicate ( previous : Dictionary , entry : Dictionary , level_num : int , puzzle_id : String ) -> void :
+var size : int = int ( entry . get ( "_delivery_size" , entry . get ( "size" , 0 ) ) )
+var rank : int = int ( entry . get ( "_delivery_rank" , 1 ) )
+var bk : String = "%d_%d" % [ size , rank ]
+var tier_key : String = entry . get ( "_bank_tier" , "" )
+var src : String = entry . get ( "_bank_source_main" , entry . get ( "_bank_source" , "" ) )
+var src_main : String = entry . get ( "_bank_source_main" , "" )
+var raw_from : = func ( snap : Dictionary ) -> Dictionary :
+return {
+"lkmod" : snap . get ( "lkmod_progress" , { } ) . get ( bk , { } ) ,
+"main" : snap . get ( "main_bank_progress" , { } ) . get ( bk , { } ) ,
+"bank" : snap . get ( "bank_progress" , { } ) . get ( bk , const?29 ) ,
+}
+var prev_c : Dictionary = {
+"lv" : previous . get ( "level" , -1 ) ,
+"v" : previous . get ( "v" , "?" ) ,
+"bk" : bk ,
+"src" : previous . get ( "src" , "?" ) ,
+}
+prev_c . merge ( raw_from . call ( previous ) )
+var curr_c : Dictionary = {
+"lv" : level_num ,
+"v" : UniKitManager . get_version_name ( ) ,
+"bk" : bk ,
+"src" : src ,
+"idx" : entry . get ( "_bank_idx" , 0 ) ,
+"lkmod" : GameState . get_lkmod_progress ( size , rank ) ,
+"main" : GameState . get_main_progress ( size , rank , tier_key ) ,
+"bank" : GameState . get_bank_progress_snapshot ( ) . get ( bk , const?29 ) ,
+}
+var is_main : bool = src_main in [ "regular" , "lkstyle" , "gc" ]
+var has_hist : bool
+if src_main == "lk_mod" :
+has_hist = not ( prev_c . get ( "lkmod" , { } ) as Dictionary ) . is_empty ( )
+elif is_main :
+has_hist = not ( prev_c . get ( "main" , { } ) as Dictionary ) . is_empty ( )
+else :
+has_hist = prev_c . get ( "bank" ) != const?29
+if not has_hist :
+LogUtil . error ( "DUPLICATE_PUZZLE pid=%s | PREV=%s | CURR=%s" % [
+puzzle_id ,
+JSON . stringify ( prev_c ) ,
+JSON . stringify ( curr_c ) ,
+] )
+return
+var hb : Array = [ ] ; var hlk : Array = [ ] ; var hmi : Array = [ ] ; var hslk : Array = [ ]
+var prev_track = const?29
+for he in GameState . get_recent_puzzles ( ) :
+var he_lk : Dictionary = he . get ( "lkmod_progress" , { } ) . get ( bk , { } )
+var he_mp : Dictionary = he . get ( "main_bank_progress" , { } ) . get ( bk , { } )
+var he_b = he . get ( "bank_progress" , { } ) . get ( bk , const?29 )
+var track
+if src_main == "lk_mod" :
+track = he_lk . get ( "idx" , const?29 )
+elif is_main :
+track = he_mp . get ( "idx" , const?29 )
+else :
+track = he_b
+if track == const?29 or track == prev_track :
+continue
+prev_track = track
+hb . append ( he_b if he_b != const?29 else -1 )
+hlk . append ( he_lk . get ( "idx" , -1 ) )
+hmi . append ( he_mp . get ( "idx" , -1 ) )
+hslk . append ( he_mp . get ( "since_lk" , -1 ) )
+var compress : = func ( arr : Array ) -> String :
+if arr . is_empty ( ) : return ""
+var parts : PackedStringArray = [ ]
+var i : int = 0
+while i < arr . size ( ) :
+var j : int = i + 1
+while j < arr . size ( ) and int ( arr [ j ] ) == int ( arr [ j - 1 ] ) + 1 :
+j += 1
+if j - i >= 3 :
+parts . append ( "%d-%d" % [ arr [ i ] , arr [ j - 1 ] ] )
+else :
+for k in range ( i , j ) :
+parts . append ( str ( arr [ k ] ) )
+i = j
+return "," . join ( parts )
+var hist : Dictionary
+if src_main == "lk_mod" :
+hist = { "lk" : compress . call ( hlk ) }
+elif is_main :
+hist = { "mi" : compress . call ( hmi ) , "slk" : compress . call ( hslk ) }
+else :
+hist = { "b" : compress . call ( hb ) }
+LogUtil . error ( "DUPLICATE_PUZZLE pid=%s | PREV=%s | CURR=%s | HIST=%s" % [
+puzzle_id ,
+JSON . stringify ( prev_c ) ,
+JSON . stringify ( curr_c ) ,
+JSON . stringify ( hist ) ,
+] )

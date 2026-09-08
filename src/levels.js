@@ -1,9 +1,9 @@
-// Ba bàn cờ mở đầu, chép đúng từng ô từ bản ghi màn hình Meowdoku 1.15.0
-// (tutorial → Level 1 → Level 2). Chữ số trong `m` là chỉ số màu, trỏ vào
-// PALETTE bên dưới và vào --g0..--g11 trong style.css.
+// Bàn hướng dẫn và năm màn mở đầu — do tools/pick_opening.mjs sinh và chọn. Chữ số trong `m` là chỉ số màu, trỏ vào --g0..--g11 trong
+// style.css; tên màu nằm ở khoá `colors` trong data/i18n/.
 //
-// Bảng màu lấy bằng cách lấy mẫu pixel từ chính khung hình video, nên tên màu
-// trong lời hướng dẫn ("Sky Blue", "Rose") khớp đúng thứ người chơi nhìn thấy.
+// Điều kiện chọn: bàn hướng dẫn phải dạy trọn ba luật và đã được chạy thử qua
+// chính lớp Tutorial; năm màn đầu giải trọn bằng cấp 1 và luôn có một màu chỉ
+// một ô để bắt đầu.
 
 export const PALETTE = [
   { key: "blue", name: "Sky Blue" },
@@ -26,51 +26,92 @@ export const colourName = (region) => PALETTE[region % PALETTE.length].name;
 export const TUTORIAL = {
   size: 4,
   record: {
-    m: "0121" +
-       "0111" +
-       "0031" +
-       "0331",
+    m: "1102" +
+       "1112" +
+       "1112" +
+       "1332",
     s: [2, 0, 3, 1],
     r: 1, st: 4, rk: [4, 0, 0, 0, 0], ch: 0,
   },
 };
 
 /**
- * Các màn được chép nguyên từ video, theo đúng thứ tự chơi. Màn nào có ở đây
- * thì dùng bản này; hết danh sách mới quay về bank của Meowdoku.
+ * Năm màn mở đầu, do tools/pick_opening.mjs chọn từ bộ sinh của mình: lưới nhỏ
+ * hơn Meowdoku (4, 4, 5, 5, 6 thay vì 4, 5, 6, 6, 8), mỗi màn 1-2 màu chỉ có
+ * một ô và vùng nền to để người mới nhìn là hiểu.
  *
- * `given` là con mèo game đặt sẵn khi vào màn — trong video Level 1 mở ra đã là
- * 1/4 và Level 2 là 1/5, người chơi không tự đặt con đầu tiên.
+ * `given` là con game đặt sẵn khi vào màn, theo đúng luật của Meowdoku cho màn
+ * 1-6: con nằm trong vùng nhiều ô, để nước đầu của người chơi là "màu chỉ có
+ * một ô". Từ màn 6 trở đi con tặng sẵn do progression.js tính.
  */
 export const SCRIPTED = [
   {
-    // Level 1 — xanh(0) · hồng đậm(3) · vàng(4) · vàng đậm(5)
+    // Màn 1 — 4×4, 2 vùng 1 ô, nền 69%. Bỏ con tặng thì cấp 1.
     size: 4,
-    given: [[1, 3]],
+    given: [[1,0]],
     record: {
-      m: "0344" +
-         "0445" +
-         "0045" +
-         "0444",
-      s: [1, 3, 0, 2],
-      // Số bước/kỹ thuật đo bằng bộ giải, tính từ thế cờ đã có con mèo `given`.
-      r: 1, st: 3, rk: [3, 0, 0, 0, 0], ch: 0,
+      m: "1101" +
+         "1111" +
+         "1112" +
+         "1322",
+      s: [2,0,3,1],
+      r: 1, st: 4, rk: [4,0,0,0,0], ch: 0,
     },
   },
   {
-    // Level 2 — hồng(6) · hồng đậm(3) · vàng(4) · vàng đậm(5) · tím(7)
-    size: 5,
-    given: [[0, 4]],
+    // Màn 2 — 4×4, 1 vùng 1 ô, nền 63%. Bỏ con tặng thì cấp 1.
+    size: 4,
+    given: [[0,1]],
     record: {
-      m: "66645" +
-         "66345" +
-         "66444" +
-         "64444" +
-         "77777",
-      s: [4, 2, 0, 3, 1],
-      // Không có con mèo đặt sẵn thì màn này cần tới kỹ thuật cấp 4; có nó thì
-      // chỉ còn cấp 1 — đó chính là lý do họ tặng sẵn con đầu tiên.
-      r: 1, st: 4, rk: [4, 0, 0, 0, 0], ch: 0,
+      m: "0031" +
+         "0331" +
+         "2333" +
+         "3333",
+      s: [1,3,0,2],
+      r: 1, st: 4, rk: [4,0,0,0,0], ch: 0,
+    },
+  },
+  {
+    // Màn 3 — 5×5, 2 vùng 1 ô, nền 44%. Bỏ con tặng thì cấp 1.
+    size: 5,
+    given: [[0,0]],
+    record: {
+      m: "01111" +
+         "01111" +
+         "42141" +
+         "44443" +
+         "44444",
+      s: [0,3,1,4,2],
+      r: 1, st: 5, rk: [5,0,0,0,0], ch: 0,
+    },
+  },
+  {
+    // Màn 4 — 5×5, 1 vùng 1 ô, nền 48%. Bỏ con tặng thì cấp 1.
+    size: 5,
+    given: [[1,0]],
+    record: {
+      m: "14044" +
+         "14442" +
+         "33442" +
+         "33344" +
+         "33344",
+      s: [2,0,4,1,3],
+      r: 1, st: 5, rk: [5,0,0,0,0], ch: 0,
+    },
+  },
+  {
+    // Màn 5 — 6×6, 2 vùng 1 ô, nền 47%. Bỏ con tặng thì cấp 1.
+    size: 6,
+    given: [[0,0]],
+    record: {
+      m: "001111" +
+         "000111" +
+         "021113" +
+         "111113" +
+         "114333" +
+         "333355",
+      s: [0,3,1,5,2,4],
+      r: 1, st: 6, rk: [6,0,0,0,0], ch: 0,
     },
   },
 ];

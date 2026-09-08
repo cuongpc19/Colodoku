@@ -21,6 +21,11 @@ export function unpackRegions(packed, size) {
   return grid;
 }
 
+/** Ngược lại: nén lưới vùng thành chuỗi base36 như trong bank. */
+export function packRegions(grid) {
+  return grid.flat().map((v) => DIGITS[v]).join("");
+}
+
 export class Puzzle {
   constructor(record, size) {
     this.size = size;
@@ -30,6 +35,13 @@ export class Puzzle {
     this.steps = record.st; // số bước suy luận tối thiểu
     this.techniques = record.rk; // [r1..r5] số lần dùng từng cấp kỹ thuật
     this.chained = !!record.ch;
+    // Màn đặc biệt vẽ hình gán màu riêng cho từng vùng để nét vẽ nổi lên.
+    this.colours = record.cm || null;
+  }
+
+  /** Chỉ số màu (--g0..--g11) của một vùng. */
+  colourOf(region) {
+    return this.colours ? this.colours[region] : region % 12;
   }
 
   regionAt(r, c) {

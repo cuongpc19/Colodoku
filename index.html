@@ -43,22 +43,15 @@
     </section>
 
     <!-- ------------------------------------------------------ chọn màn -->
-    <section id="screen-map" class="screen map" hidden>
-      <header class="bar">
-        <button class="icon" data-goto="home" data-i18n="back" data-i18n-attr="aria-label">&larr;</button>
-        <h2 data-i18n="levelSelect">Level select</h2>
-        <span></span>
-      </header>
-      <div id="map-grid" class="map-grid"></div>
-    </section>
-
     <!-- ---------------------------------------------------------- chơi -->
     <section id="screen-play" class="screen play" hidden>
       <header class="bar">
         <button class="icon" data-goto="home" data-i18n="back" data-i18n-attr="aria-label">&larr;</button>
         <div class="hud">
           <div><small id="play-kicker">Level</small><strong id="play-title">1</strong></div>
-          <div class="hud-score"><small data-i18n="score">Score</small><strong id="play-score">0</strong></div>
+          <div class="hud-streak">
+            <small data-i18n="bestStreak">Best streak</small><strong id="play-best">0</strong>
+          </div>
         </div>
         <button class="icon gear" data-settings>&#9881;<i class="dot"></i></button>
       </header>

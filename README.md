@@ -26,20 +26,29 @@ Mở http://localhost:8123 — cần chạy qua HTTP vì game dùng ES module v�
 
 Hai trang:
 
-- **`index.html`** — game: hướng dẫn từng bước, rồi chơi lần lượt 360 màn, có lưu tiến trình và chấm sao.
+- **`index.html`** — game: hướng dẫn từng bước, rồi chơi màn nối màn không có hồi kết, độ khó tự điều chỉnh, có lưu tiến trình.
 - **`lab.html`** — công cụ mổ level design: duyệt thẳng 30 bank của Meowdoku, xem bộ giải suy luận từng bước.
 
 ## Tuyến chơi
 
-360 màn, chia 22 chặng, lưới lớn dần 4×4 → 12×12 và độ khó lên dần R1 → R5. Cứ mỗi 7 màn chèn một màn dễ hơn một bậc làm **nhịp nghỉ** — tái hiện nhịp "dễ – dễ – khó – dễ" thay vì tăng tuyến tính.
+Không có danh sách màn cố định. Bộ máy chọn màn trong [`src/progression.js`](src/progression.js) **chép lại đúng cách Meowdoku chọn màn**, đọc từ GDScript đã giải mã (`data/reference/meowdoku-gdscript/`, giải mã bằng [`tools/dump_gdc.mjs`](tools/dump_gdc.mjs) — file `.gdc` là zstd, không phải "không đọc được" như từng nghĩ):
 
-Hai màn đầu lấy nguyên từ video (xem [`src/levels.js`](src/levels.js)), kể cả con mèo game đặt sẵn khi vào màn — bỏ con mèo đó đi thì màn 2 nhảy từ cấp kỹ thuật 1 lên 4, nên nó là một phần của thiết kế chứ không phải quà tặng.
+- **Cỡ lưới cố định theo số màn.** Meowdoku: màn 1–10 là `4 5 6 6 8 6 7 8 9 7`, từ màn 11 lặp chu kỳ `8 10 10 9 10 10 9 10 10 10`. Mình chủ ý dễ hơn trước màn 50: `4 4 5 5 6 6 6 7 8 6` rồi chu kỳ `7 9 9 8 9 9 8 9 9 9` (nhỏ hơn một cỡ); **từ màn 50 y hệt họ**.
+- **Bậc khó là một "chiến lược" tự lên xuống.** Bắt đầu bậc 1; màn 1–5 ép bậc 1. Từ màn 6: thắng *sạch* (không trợ giúp, không thua, không chơi lại) 2 lần liên tiếp thì +1 bậc (từ màn 51: 1 lần); thua 1 lần (màn <21) hay 2 lần (≥21) thì −1; từ màn 21, hai màn liền phải chơi lại ở cùng bậc cũng −1. Trần: màn <21 bậc 2, 21–50 bậc 3, ≥51 bậc 4; sàn từ màn 51 là bậc 2, từ màn 101 không xuống dưới 2.
+- **Bậc ≥3 thì mỗi màn rút ngẫu nhiên trong [2, bậc]** — đây là nhịp "dễ – dễ – khó" thật của họ.
+- **Màn khó định kỳ**: chẵn chục từ màn 50 → bậc 5.
+- **Màn đặc biệt vẽ hình** ở đúng số màn của họ (10, 20, 30, 40, 50, 55, 60, 62, 70, 75, 80, 90, 100, 123, 456); hình do mình vẽ ([`tools/build_specials.mjs`](tools/build_specials.mjs)): chữ số của chính số màn, cửa sổ, sóng, biểu đồ cột, π, IQ.
+- **Con tặng sẵn ở màn 1–10**: màn 1–6 tặng con nằm trong vùng nhiều ô (để người chơi tự tìm vùng 1 ô), màn 7–10 tặng đúng con ở vùng 1 ô.
+- **Lọc khi rút bàn**: tối đa 2 vùng 1 ô (màn <21), tối đa 1 (≥21).
+- **Kho bàn** chia theo cỡ × bậc ([`data/pools.json`](data/pools.json), 26 kho), rút tuần tự; hết kho thì xoay/lật bàn (8 phép) rồi đi lại.
 
-Từ màn 3 trở đi thì lấy từ bank. Cấu hình tuyến chơi thật của Meowdoku nằm trong GDScript đã biên dịch (`.gdc`, header `GDSC` + nén) nên không đọc ra được; bảng trong [`src/progression.js`](src/progression.js) là tuyến do mình dựng, nhưng bám đúng thang 5 bậc và tên bậc (**Nhập Môn · Trung Cấp · Thử Thách · Bậc Thầy · Huyền Thoại**) lấy từ bản địa hoá của họ.
+Bàn trong kho **hoàn toàn tự sinh** ([`tools/generate_levels.mjs`](tools/generate_levels.mjs) → [`tools/build_pools.mjs`](tools/build_pools.mjs)), nhưng chia vùng theo **hồ sơ hình dạng** rút từ 28.755 màn gốc ([`tools/profile_shapes.mjs`](tools/profile_shapes.mjs) → `data/reference/shape-profile.json`): với từng cỡ × bậc, bao nhiêu vùng 1 ô, 2 ô, 3 ô…, vùng nền to cỡ nào, ô đơn hay nằm ở biên không. Hồ sơ chỉ là thống kê, không mang theo bàn nào của họ, nên kho phát hành được.
 
-Sao mỗi màn: 3 sao nếu không dùng gợi ý, 2 sao nếu dùng 1–2 lần, 1 sao nếu nhiều hơn. Tiến trình lưu ở `localStorage`.
+Năm màn đầu chọn tay bằng [`tools/pick_opening.mjs`](tools/pick_opening.mjs): mỗi màn 1–2 màu chỉ có một ô, nền to, giải trọn bằng cấp 1, và sau con tặng sẵn luôn còn một "màu một ô" để bắt đầu.
 
-**Tự đánh ✕** chỉ bật ở hướng dẫn và **màn 1–2**, coi như phần nối tiếp của tutorial. Từ màn 3 trở đi người chơi tự loại ô — đó mới là thao tác chính của trò này, để mãi thì không bao giờ học được cách suy luận. Vào màn 3 có một dòng nhắc, và người chơi vẫn bật lại được bằng ô tick nếu muốn.
+Sao mỗi màn: 3 sao nếu không dùng gợi ý, 2 sao nếu dùng 1–2 lần, 1 sao nếu nhiều hơn. Tiến trình (kể cả chiến lược và con trỏ kho) lưu ở `localStorage`.
+
+Game không đánh ✕ hộ ở màn nào — Meowdoku bắt tự loại ô ngay từ màn 1, vì đó là thao tác chính của trò này.
 
 ## Hướng dẫn
 
@@ -127,14 +136,14 @@ Câu giải thích của bộ giải có nhắc hàng/cột/màu thì viết s�
 
 | Đường dẫn | Nội dung |
 |---|---|
-| `index.html` | Game: trang chủ, chọn màn, màn chơi |
+| `index.html` | Game: trang chủ, màn chơi |
 | `lab.html` | Công cụ phân tích level design |
 | `src/puzzle.js` | Mô hình bàn cờ, luật chơi, phát hiện xung đột |
 | `src/solver.js` | Bộ giải theo 5 cấp kỹ thuật — dùng cho gợi ý và chấm độ khó |
 | `src/boardview.js` | Vẽ lưới và xử lý thao tác, dùng chung cho game lẫn lab |
-| `src/levels.js` | Bàn tutorial + hai màn đầu, chép từ video, và bảng màu của họ |
+| `src/levels.js` | Bàn tutorial + năm màn đầu (tự sinh, chọn tay) và bảng màu |
 | `src/strings.js` | Bảng chữ: nạp ngôn ngữ, đổi ngôn ngữ, đổ chữ vào HTML |
-| `src/progression.js` | Tuyến 360 màn và lưu tiến trình |
+| `src/progression.js` | Bộ máy chọn màn (chép luật Meowdoku) và lưu tiến trình |
 | `src/tutorial.js` | 8 bước hướng dẫn, tính ô cần bấm từ luật |
 | `src/game.js` | Vòng chơi chính |
 | `src/lab.js` | Trang phân tích |
@@ -142,11 +151,19 @@ Câu giải thích của bộ giải có nhắc hàng/cột/màu thì viết s�
 | `tools/extract_translations.py` | Giải mã bản địa hoá Godot từ `.xapk` ra JSON |
 | `tools/verify_solver.mjs` | Đối chiếu bộ giải của mình với số liệu độ khó của họ |
 | `tools/smoke.mjs` | Kiểm tra logic bàn cờ không cần trình duyệt |
-| `tools/flow_test.mjs` | Kiểm tra tutorial và tuyến chơi không cần trình duyệt |
+| `tools/flow_test.mjs` | Kiểm tra tutorial, bộ máy chọn màn, kho bàn, màn đặc biệt |
+| `tools/profile_shapes.mjs` | Rút hồ sơ hình dạng (thống kê cỡ vùng) từ bank gốc |
+| `tools/generate_levels.mjs` | Bộ sinh bàn theo hồ sơ hình dạng, vá cho duy nhất, chấm bậc |
+| `tools/build_pools.mjs` | Dựng kho bàn `data/pools.json` |
+| `tools/build_specials.mjs` | Dựng màn đặc biệt vẽ hình `data/specials.json` |
+| `tools/pick_opening.mjs` | Chọn năm màn mở đầu |
+| `tools/build_single.mjs` | Gói game thành một file HTML, chỉ mang dữ liệu tự sinh |
+| `tools/dump_gdc.mjs` | Giải mã GDScript biên dịch (`.gdc`, Godot 4.5) ra mã giả |
 | `data/` | 30 bank, 28.755 puzzle (4,1 MB) |
 | `data/raw/` | Bản JSON gốc đã giải mã, giữ nguyên mọi trường (15 MB) |
-| `data/i18n/` | 17 file chữ, mỗi ngôn ngữ một file |
-| `data/reference/` | Bản địa hoá gốc của Meowdoku, dùng để đối chiếu |
+| `data/pools.json`, `data/specials.json` | Kho bàn và màn đặc biệt tự sinh — phần dữ liệu được phát hành |
+| `data/i18n/` | Bảng chữ tiếng Anh và tiếng Việt (viết mới) |
+| `data/reference/` | Bản địa hoá gốc, 15 bản dịch phái sinh, hồ sơ hình dạng, GDScript đã giải mã — chỉ để đối chiếu |
 
 Dựng lại dữ liệu từ APK:
 

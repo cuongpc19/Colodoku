@@ -28,6 +28,15 @@
 
 * { box-sizing: border-box; }
 
+/* iOS Safari bỏ qua `user-scalable=no` trong meta viewport từ iOS 10, nên bấm
+   đúp vào đâu cũng phóng to trang — mà bấm đúp lại chính là thao tác đặt kiến.
+   `manipulation` tắt riêng nhịp phóng to đó, vuốt và chụm hai ngón vẫn chạy. */
+html {
+  touch-action: manipulation;
+  /* Xoay ngang máy không tự thổi to cỡ chữ. */
+  -webkit-text-size-adjust: 100%;
+}
+
 [hidden] { display: none !important; }
 
 body {
@@ -35,7 +44,11 @@ body {
   font: 15px/1.5 "Segoe UI", system-ui, -apple-system, sans-serif;
   color: var(--ink);
   background: var(--paper);
+  /* Hai thứ mặc định của trình duyệt di động, trong game thì chỉ vướng: vệt
+     xám nhấp nháy lúc chạm, và menu bật ra khi giữ lâu. Cả hai đều kế thừa
+     xuống nên đặt ở body là đủ. */
   -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
 
 .topbar {
@@ -107,8 +120,11 @@ main {
   background: var(--card);
   border-radius: 18px;
   box-shadow: 0 4px 16px rgba(80, 60, 40, 0.09);
+  /* Cả bàn cờ chặn hẳn cử chỉ mặc định: vuốt để đánh ✕ hàng loạt không được
+     phép biến thành cuộn trang. */
   touch-action: none;
   user-select: none;
+  -webkit-user-select: none;
   transition: filter 0.25s;
 }
 
@@ -175,43 +191,89 @@ main {
 
 .cell:hover { filter: brightness(1.06); }
 
-.cell.mark::after {
-  content: "✕";
-  font-size: 0.82em;
-  font-weight: 900;
-  color: #fff;
-}
+/* Vệt loé của ô — chỉ dùng lúc đặt con vật. Số đo lấy từ bản ghi màn hình một
+   bản làm lại: vệt trắng nở từ 13% ra kín ô trong 170ms, đậm nhất 59% trắng rồi
+   tắt dần, tổng 0.44s.
 
-/* Ô người chơi đặt sai: ✕ đỏ, khoá luôn, không hoàn tác được. */
-.cell.wrong { cursor: default; }
-.cell.wrong::after { color: var(--danger); }
-
-/* Ô mà thẻ gợi ý sắp đánh ✕ — vẽ mờ để thấy trước kết quả. */
-.cell.preview::after {
-  content: "✕";
-  font-size: 0.82em;
-  font-weight: 900;
-  color: rgba(255, 255, 255, 0.62);
-}
-
-.cell.cat::after {
+   Phải absolute chứ không để nó thành ô lưới: .cell là grid, ::before nằm trong
+   luồng sẽ đẩy con vật lệch khỏi tâm. */
+.cell::before {
   content: "";
-  width: 1.15em;
-  height: 1.15em;
-  background: var(--ant) center / contain no-repeat;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: #fff;
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+}
+.cell.flash::before { animation: cellflash 0.44s linear var(--delay, 0s) both; }
+
+@keyframes cellflash {
+  0% { transform: scale(0.13); opacity: 0.02; }
+  7.5% { transform: scale(0.39); opacity: 0.08; }
+  15% { transform: scale(0.57); opacity: 0.2; }
+  23% { transform: scale(0.7); opacity: 0.33; }
+  30% { transform: scale(0.87); opacity: 0.5; }
+  38% { transform: scale(1); opacity: 0.59; }
+  45% { opacity: 0.54; }
+  53% { opacity: 0.48; }
+  61% { opacity: 0.39; }
+  68% { opacity: 0.33; }
+  76% { opacity: 0.27; }
+  83% { opacity: 0.19; }
+  91% { opacity: 0.08; }
+  100% { transform: scale(1); opacity: 0; }
 }
 
-/* Đặt kiến: hiện ngay ở cỡ thật rồi bung quá cỡ và nảy về — cú bấm đúp phải
-   thấy "đã tay". Easing để trơn (ease-out), độ nảy nằm hết trong keyframe;
-   trộn cả hai thì đoạn cuối bị giật. */
-.cell.pop { z-index: 2; }
-.cell.pop::after { animation: antpop 0.36s ease-out; }
+/* ------------------------------------------------------------- dấu ✕
 
-@keyframes antpop {
-  0% { transform: scale(0.9); }
-  35% { transform: scale(1.34); }
-  62% { transform: scale(0.95); }
-  82% { transform: scale(1.05); }
+   Meowdoku **vẽ** dấu ✕ chứ không phóng to một ký tự: một chấm tròn hiện ra rồi
+   kéo dài thành nét chéo, xong nét thứ nhất mới tới nét thứ hai — đo trên bản
+   ghi màn hình, mỗi nét ~170ms, nét sau vào sau ~70ms. Vẽ xong cả hai thì nảy
+   nhẹ 1.09× rồi lắng, tổng 0.36s.
+
+   Nét chỉ vẽ được bằng stroke-dashoffset, nên đây là SVG chứ không phải ::after. */
+.cell .x {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cell .x line {
+  stroke: #fff;
+  stroke-width: 13;
+  stroke-linecap: round;
+  /* 85 = chiều dài nét chéo trong hệ toạ độ 100×100 của viewBox. */
+  stroke-dasharray: 85;
+  stroke-dashoffset: 85;
+}
+
+.cell.mark .x,
+.cell.unmark .x { opacity: 1; }
+
+.cell.mark .x { animation: markpunch 0.36s ease-out var(--delay, 0s) both; }
+.cell.mark .x line { animation: xdraw 0.17s ease-out var(--delay, 0s) forwards; }
+.cell.mark .x line:nth-child(2) { animation-delay: calc(var(--delay, 0s) + 0.07s); }
+
+/* Bỏ ✕: xoá ngược lại, nét vẽ sau thì tan trước. */
+.cell.unmark .x line { animation: xerase 0.16s ease-in forwards; }
+.cell.unmark .x line:nth-child(1) { animation-delay: 0.05s; }
+
+@keyframes xdraw { to { stroke-dashoffset: 0; } }
+@keyframes xerase {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: 85; }
+}
+
+/* Nảy sau khi vẽ xong, không phải trong lúc vẽ. */
+@keyframes markpunch {
+  0%, 47% { transform: scale(1); }
+  57% { transform: scale(1.09); }
   100% { transform: scale(1); }
 }
 
@@ -475,7 +537,7 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
 }
 .hud small { display: block; font-size: var(--hud-label); color: #b09a86; }
 .hud strong { display: block; font-size: var(--hud-value); color: #8a5a3c; }
-.hud-score strong { font-variant-numeric: tabular-nums; }
+.hud-streak strong { font-variant-numeric: tabular-nums; }
 
 /* Hai chip dưới thanh tiêu đề: đếm kiến, và mạng còn lại. */
 .chips { display: flex; gap: calc(var(--board) * 0.035); justify-content: center; }
@@ -663,16 +725,28 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
 /* Thiếu tiền thì mờ đi nhưng KHÔNG khoá: bấm vào còn báo được lý do. */
 .booster.broke { opacity: 0.5; }
 
-/* Hết lượt miễn phí thì badge đổi vai thành giá tiền — vàng như đồng xu, và
-   không còn là màu cảnh báo nữa. */
-.booster .badge.price { color: #7a5510; background: linear-gradient(#ffd964, #f0b429); }
+/* Hết lượt miễn phí thì badge đổi vai thành **giá tiền**. Chỉ đổi màu thì vẫn
+   dễ đọc nhầm thành "còn 20 lượt", nên nhét luôn đồng xu vào cạnh con số —
+   nhìn là biết đang trả gì, không phải suy từ màu. */
+.booster .badge.price {
+  color: #7a5510;
+  background: linear-gradient(#ffd964, #f0b429);
+}
+.booster .badge .coin {
+  width: 0.95em;
+  height: 0.95em;
+  vertical-align: 0;
+  border-width: 0.08em;
+}
 
 .booster .badge {
   position: absolute;
   top: 0;
   right: 0;
-  display: grid;
-  place-items: center;
+  display: flex;
+  gap: calc(var(--booster) * 0.05);
+  align-items: center;
+  justify-content: center;
   min-width: calc(var(--booster) * 0.38);
   height: calc(var(--booster) * 0.38);
   padding: 0 calc(var(--booster) * 0.07);

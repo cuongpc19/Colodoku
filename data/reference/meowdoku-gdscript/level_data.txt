@@ -1,0 +1,262 @@
+class_name LevelData
+extends RefCounted
+const LEVEL_COUNT : int = 0
+static func is_special_level ( level_num : int ) -> bool :
+return SpecialProvider . SPECIAL_LEVELS . has ( level_num )
+static func strategy_to_rank ( strategy : int ) -> int :
+match strategy :
+5 : return 4
+6 : return 5
+7 : return 5
+_ : return strategy
+static func strategy_to_tier ( strategy : int ) -> String :
+match strategy :
+5 : return "H"
+7 : return "H"
+_ : return "N"
+static func level_min_rank ( level_num : int ) -> int :
+return 2 if level_num >= 51 else 1
+static func compute_prefill ( level_num : int , region_map : Array , solution : Array , sz : int ) -> Array :
+if level_num < 1 or level_num > 10 :
+return [ ]
+var want_size_one : bool = level_num >= 7
+var region_area : Dictionary = { }
+for r : int in range ( sz ) :
+for c : int in range ( sz ) :
+var rid : int = region_map [ r ] [ c ]
+region_area [ rid ] = region_area . get ( rid , 0 ) + 1
+for r : int in range ( sz ) :
+var c : int = solution [ r ]
+var rid : int = region_map [ r ] [ c ]
+var area : int = region_area . get ( rid , 0 )
+if want_size_one and area == 1 :
+return [ r , c ]
+elif not want_size_one and area > 1 :
+return [ r , c ]
+if sz > 0 and solution . size ( ) > 0 :
+return [ 0 , solution [ 0 ] ]
+return [ ]
+const LK_MOD_RESERVED : Array [ int ] = [ 20 , 30 , 53 , 71 , 72 , 75 , 114 , 141 , 164 ]
+const TRANSFORM_COUNT : int = 8
+static func apply_transform ( region_map : Array , solution : Array , sz : int , t : int ) -> Array :
+var rm : Array = region_map
+var sol : Array = solution
+@@warning_ignore ( "integer_division" )
+var mirror : int = t / 4
+var rot : int = t % 4
+if mirror == 1 :
+var new_rm : Array = [ ]
+for r : int in range ( sz ) :
+var row : Array = [ ]
+for c : int in range ( sz ) :
+row . append ( rm [ r ] [ sz - 1 - c ] )
+new_rm . append ( row )
+var new_sol : Array = [ ]
+for r : int in range ( sz ) :
+new_sol . append ( sz - 1 - sol [ r ] )
+rm = new_rm ; sol = new_sol
+elif mirror == 2 :
+var new_rm : Array = [ ]
+for r : int in range ( sz ) :
+new_rm . append ( rm [ sz - 1 - r ] . duplicate ( ) )
+var new_sol : Array = sol . duplicate ( )
+new_sol . reverse ( )
+rm = new_rm ; sol = new_sol
+for _i : int in range ( rot ) :
+var new_rm : Array = [ ]
+for r2 : int in range ( sz ) :
+var row : Array = [ ]
+for c2 : int in range ( sz ) :
+row . append ( rm [ sz - 1 - c2 ] [ r2 ] )
+new_rm . append ( row )
+var new_sol : Array = [ ]
+new_sol . resize ( sz )
+for r2 : int in range ( sz ) :
+new_sol [ sol [ r2 ] ] = sz - 1 - r2
+rm = new_rm ; sol = new_sol
+return [ rm , sol ]
+const _SUFFIX_NAMES : Array [ String ] = [
+"" , "r90" , "r180" , "r270" ,
+"h" , "hr90" , "hr180" , "hr270" ,
+]
+static func compute_puzzle_id ( sz : int , region_map : Array ) -> String :
+var input_norm_str : String = _serialize_region_map ( _normalize_region_map ( region_map , sz ) )
+var transformed_pre : Array = [ ]
+var transformed_str : Array = [ ]
+for t : int in range ( TRANSFORM_COUNT ) :
+var rm_t : Array = _apply_region_transform ( region_map , sz , t )
+transformed_pre . append ( rm_t )
+transformed_str . append ( _serialize_region_map ( _normalize_region_map ( rm_t , sz ) ) )
+var canonical_str : String = transformed_str . min ( )
+var t_input_to_canonical : int = transformed_str . find ( canonical_str )
+var canonical_pre : Array = transformed_pre [ t_input_to_canonical ]
+var suffix_t : int = 0
+for t : int in range ( TRANSFORM_COUNT ) :
+var maybe_input : Array = _apply_region_transform ( canonical_pre , sz , t )
+if _serialize_region_map ( _normalize_region_map ( maybe_input , sz ) ) == input_norm_str :
+suffix_t = t
+break
+var hash16 : String = canonical_str . sha256_text ( ) . substr ( 0 , 16 )
+return compose_puzzle_id ( sz , hash16 , suffix_t )
+static func compose_puzzle_id ( sz : int , hash16 : String , suffix_index : int ) -> String :
+if suffix_index <= 0 or suffix_index >= _SUFFIX_NAMES . size ( ) :
+return "%d_%s" % [ sz , hash16 ]
+return "%d_%s_%s" % [ sz , hash16 , _SUFFIX_NAMES [ suffix_index ] ]
+static func _apply_region_transform ( region_map : Array , sz : int , t : int ) -> Array :
+var rm : Array = region_map
+@@warning_ignore ( "integer_division" )
+var mirror : int = t / 4
+var rot : int = t % 4
+if mirror == 1 :
+var new_rm : Array = [ ]
+for r : int in range ( sz ) :
+var row : Array = [ ]
+for c : int in range ( sz ) :
+row . append ( rm [ r ] [ sz - 1 - c ] )
+new_rm . append ( row )
+rm = new_rm
+elif mirror == 2 :
+var new_rm : Array = [ ]
+for r : int in range ( sz ) :
+new_rm . append ( rm [ sz - 1 - r ] . duplicate ( ) )
+rm = new_rm
+for _i : int in range ( rot ) :
+var new_rm : Array = [ ]
+for r2 : int in range ( sz ) :
+var row : Array = [ ]
+for c2 : int in range ( sz ) :
+row . append ( rm [ sz - 1 - c2 ] [ r2 ] )
+new_rm . append ( row )
+rm = new_rm
+return rm
+static func _normalize_region_map ( region_map : Array , sz : int ) -> Array :
+var id_map : Dictionary = { }
+var next_id : int = 0
+var result : Array = [ ]
+for r : int in range ( sz ) :
+var row : Array = [ ]
+for c : int in range ( sz ) :
+var v : int = int ( region_map [ r ] [ c ] )
+if not id_map . has ( v ) :
+id_map [ v ] = next_id
+next_id += 1
+row . append ( id_map [ v ] )
+result . append ( row )
+return result
+static func _serialize_region_map ( region_map : Array ) -> String :
+var parts : PackedStringArray = PackedStringArray ( )
+for row in region_map :
+for v in row :
+parts . append ( str ( int ( v ) ) )
+return "," . join ( parts )
+static func build_pools ( sz : int , rank : int , tier : String ,
+strict_rank : bool , include_lk_mod : bool , is_main_path : bool = include_lk_mod ,
+force_include_regular : bool = false ) -> Dictionary :
+var regular : Array = BankData . get_levels_by_tier ( sz , rank , tier ) if tier != ""
+else BankData . get_levels ( sz , rank )
+var lkstyle : Array = BankData . get_lk_style_levels_by_tier ( sz , rank , tier ) if tier != ""
+else BankData . get_lk_style_levels ( sz , rank )
+if tier != "" and regular . is_empty ( ) and lkstyle . is_empty ( ) :
+regular = BankData . get_levels ( sz , rank )
+lkstyle = BankData . get_lk_style_levels ( sz , rank )
+if not force_include_regular and ( include_lk_mod or is_main_path ) and sz == 10 and rank in [ 3 , 4 ] :
+regular = [ ]
+var gc : Array = [ ]
+if ( sz == 10 and rank == 1 ) or sz == 11 :
+gc = BankData . get_gc_levels_by_tier ( sz , rank , tier ) if tier != ""
+else BankData . get_gc_levels ( sz , rank )
+if tier != "" and gc . is_empty ( ) :
+gc = BankData . get_gc_levels ( sz , rank )
+var lk_mod : Array = [ ]
+if include_lk_mod :
+var lk_mod_all : Array = BankData . get_lk_modified_levels ( )
+for i : int in range ( lk_mod_all . size ( ) ) :
+if ( i + 1 ) in LK_MOD_RESERVED :
+continue
+var e : Dictionary = lk_mod_all [ i ]
+if int ( e . get ( "size" , 0 ) ) != sz :
+continue
+var e_rank : int = int ( e . get ( "r" , 1 ) ) if strict_rank else int ( e . get ( "maxR" , e . get ( "r" , 1 ) ) )
+if e_rank != rank :
+continue
+lk_mod . append ( e )
+return { "regular" : regular , "lkstyle" : lkstyle , "gc" : gc , "lk_mod" : lk_mod }
+static func pick_at ( pools : Dictionary , pos : Dictionary , rank : int , tier : String ) -> Dictionary :
+var idx : int = int ( pos . get ( "idx" , 0 ) )
+var since_lk : int = int ( pos . get ( "since_lk" , 0 ) )
+var transform : int = int ( pos . get ( "transform" , 0 ) )
+var lk_idx : int = int ( pos . get ( "lk_idx" , 0 ) )
+var is_main_path : bool = bool ( pos . get ( "is_main_path" , false ) )
+var regular : Array = pools . get ( "regular" , [ ] )
+var lkstyle : Array = pools . get ( "lkstyle" , [ ] )
+var gc : Array = pools . get ( "gc" , [ ] )
+var lk_mod : Array = pools . get ( "lk_mod" , [ ] )
+var total_regular : int = regular . size ( )
+var total_lkstyle : int = lkstyle . size ( )
+var total_gc : int = gc . size ( )
+var entry : Dictionary
+var source : String
+var source_idx : int
+if is_main_path :
+if since_lk >= 4 and lk_idx < lk_mod . size ( ) :
+entry = lk_mod [ lk_idx ] . duplicate ( )
+source = "lk_mod" ; source_idx = lk_idx + 1
+elif idx < total_regular :
+entry = regular [ idx ] . duplicate ( )
+source = "regular" ; source_idx = idx + 1
+elif idx < total_regular + total_lkstyle :
+var li : int = idx - total_regular
+entry = lkstyle [ li ] . duplicate ( )
+source = "lkstyle" ; source_idx = li + 1
+elif idx < total_regular + total_lkstyle + total_gc :
+var gi : int = idx - total_regular - total_lkstyle
+entry = gc [ gi ] . duplicate ( )
+source = "gc" ; source_idx = gi + 1
+else :
+return { }
+if transform > 0 and source != "lk_mod" :
+var rm : Array = [ ]
+for row in entry . get ( "regionMap" , [ ] ) :
+var int_row : Array = [ ]
+for v in row : int_row . append ( int ( v ) )
+rm . append ( int_row )
+var sol : Array = [ ]
+for v in entry . get ( "solution" , [ ] ) : sol . append ( int ( v ) )
+var _sz : int = rm . size ( )
+if _sz > 0 :
+var result : Array = apply_transform ( rm , sol , _sz , transform )
+entry [ "regionMap" ] = result [ 0 ]
+entry [ "solution" ] = result [ 1 ]
+entry [ "_bank_source" ] = source
+entry [ "_bank_source_main" ] = source
+entry [ "_bank_idx" ] = source_idx
+entry [ "_bank_tier" ] = tier
+entry [ "_bank_rank" ] = rank
+entry [ "_bank_transform" ] = 0 if source == "lk_mod" else transform
+else :
+var total : int = total_regular + total_lkstyle + total_gc
+if total == 0 :
+return { }
+var real_idx : int = idx % total
+if real_idx < total_regular :
+entry = regular [ real_idx ] . duplicate ( )
+source = "regular" ; source_idx = real_idx + 1
+elif real_idx < total_regular + total_lkstyle :
+entry = lkstyle [ real_idx - total_regular ] . duplicate ( )
+source = "lkstyle" ; source_idx = real_idx - total_regular + 1
+else :
+entry = gc [ real_idx - total_regular - total_lkstyle ] . duplicate ( )
+source = "gc" ; source_idx = real_idx - total_regular - total_lkstyle + 1
+entry [ "_bank_source" ] = source
+entry [ "_bank_idx" ] = source_idx
+entry [ "_bank_tier" ] = tier
+entry [ "_bank_rank" ] = rank
+entry [ "_bank_transform" ] = 0
+PaceEntryStamper . try_stamp ( entry , pos )
+return entry
+static func resolve_strategy ( level_num : int , current_strategy : int , fixed_r1_upper : int ) -> int :
+if level_num <= fixed_r1_upper :
+return 1
+if level_num >= 51 :
+return maxi ( current_strategy , 2 )
+return current_strategy

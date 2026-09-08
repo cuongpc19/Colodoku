@@ -1,0 +1,48 @@
+class_name FinalLevelValidator
+extends RefCounted
+static func validate ( entry : Dictionary , level_num : int ) -> Dictionary :
+var source : String = str ( entry . get ( "_bank_source_main" , entry . get ( "_bank_source" , "" ) ) )
+var is_special : bool = source in [ "sp" , "lk" ]
+var raw_regions : Array = entry . get ( "regionMap" , [ ] )
+var size : int = int ( entry . get ( "size" , raw_regions . size ( ) ) )
+if is_special :
+var normalized : Dictionary = entry . duplicate ( true )
+var int_regions : Array = [ ]
+for row in raw_regions :
+var int_row : Array = [ ]
+for v in ( row as Array ) :
+int_row . append ( int ( v ) )
+int_regions . append ( int_row )
+normalized [ "regionMap" ] = int_regions
+normalized [ "size" ] = size
+normalized [ "_delivery_size" ] = size
+normalized [ "_delivery_rank" ] = int ( entry . get ( "_bank_rank" , 1 ) )
+return { "valid" : true , "entry" : normalized , "reason" : "" }
+if size <= 0 :
+return { "valid" : false , "entry" : entry , "reason" : "invalid_size" }
+if raw_regions . size ( ) != size :
+return { "valid" : false , "entry" : entry , "reason" : "invalid_region_rows" }
+for row in raw_regions :
+if ( row as Array ) . size ( ) != size :
+return { "valid" : false , "entry" : entry , "reason" : "invalid_region_columns" }
+var int_regions : Array = [ ]
+for row in raw_regions :
+var int_row : Array = [ ]
+for v in ( row as Array ) :
+int_row . append ( int ( v ) )
+int_regions . append ( int_row )
+var normalized : Dictionary = entry . duplicate ( true )
+normalized [ "regionMap" ] = int_regions
+normalized [ "size" ] = size
+var raw_solution : Array = entry . get ( "solution" , [ ] )
+if raw_solution . size ( ) != size :
+return { "valid" : false , "entry" : entry , "reason" : "invalid_solution_length" }
+for v in raw_solution :
+var col : int = int ( v )
+if col < 0 or col >= size :
+return { "valid" : false , "entry" : entry , "reason" : "invalid_solution_column" }
+if not QueendokuCore . validate_solution_entry ( normalized , size ) :
+return { "valid" : false , "entry" : entry , "reason" : "invalid_solution_rules" }
+normalized [ "_delivery_size" ] = size
+normalized [ "_delivery_rank" ] = int ( entry . get ( "_bank_rank" , 1 ) )
+return { "valid" : true , "entry" : normalized , "reason" : "" }

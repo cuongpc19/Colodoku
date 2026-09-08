@@ -1,0 +1,92 @@
+class_name SpTtProvider
+extends RefCounted
+const CATEGORY_COUNT : int = 6
+const _CAN_MIRROR : Dictionary = { 1 : false , 2 : false , 3 : false , 4 : true , 5 : true , 6 : true }
+const _CAN_ROTATE : Dictionary = { 1 : false , 2 : true , 3 : true , 4 : true , 5 : true , 6 : true }
+static func next_entry ( sz : int , rank : int ) -> Dictionary :
+var start_cat : int = GameState . get_sp_tt_category_cursor ( )
+for i : int in range ( CATEGORY_COUNT ) :
+var cat : int = ( ( start_cat - 1 + i ) % CATEGORY_COUNT ) + 1
+var picked : Dictionary = _try_category ( cat , sz , rank )
+if not picked . is_empty ( ) :
+picked [ "sz" ] = sz
+picked [ "rank" ] = rank
+return picked
+return { }
+static func commit ( picked : Dictionary , level_num : int ) -> void :
+if picked . is_empty ( ) :
+return
+var cat : int = int ( picked . get ( "category" , 0 ) )
+if cat <= 0 :
+return
+var next_cursor : int = cat % CATEGORY_COUNT + 1
+GameState . commit_sp_tt_delivery (
+level_num , cat , int ( picked . get ( "sz" , 0 ) ) , int ( picked . get ( "rank" , 0 ) ) ,
+picked . get ( "new_progress" , { } ) , next_cursor )
+static func _try_category ( cat : int , sz : int , rank : int ) -> Dictionary :
+var bucket : Array = _bucket_entries ( cat , sz , rank )
+if bucket . is_empty ( ) :
+return { }
+var allowed : Array = _allowed_transforms ( cat )
+var prog : Dictionary = GameState . get_sp_tt_progress ( cat , sz , rank )
+var idx : int = int ( prog . get ( "idx" , 0 ) )
+var t_pos : int = int ( prog . get ( "t_pos" , 0 ) )
+if idx >= bucket . size ( ) :
+idx = 0
+t_pos += 1
+if t_pos >= allowed . size ( ) :
+return { }
+var entry : Dictionary = ( bucket [ idx ] as Dictionary ) . duplicate ( true )
+var transform : int = allowed [ t_pos ]
+if transform > 0 :
+entry = _apply_entry_transform ( entry , transform )
+entry [ "_bank_source" ] = "sp_tt"
+entry [ "_bank_source_main" ] = "sp_tt"
+entry [ "_bank_idx" ] = idx + 1
+entry [ "_bank_transform" ] = transform
+entry [ "_bank_rank" ] = rank
+entry [ "_bank_tier" ] = ""
+entry [ "_sp_tt_category" ] = cat
+return {
+"entry" : entry ,
+"category" : cat ,
+"new_progress" : { "idx" : idx + 1 , "t_pos" : t_pos } ,
+}
+static func _allowed_transforms ( cat : int ) -> Array :
+if _CAN_MIRROR . get ( cat , false ) :
+var all : Array = [ ]
+for t : int in range ( LevelData . TRANSFORM_COUNT ) :
+all . append ( t )
+return all
+if _CAN_ROTATE . get ( cat , false ) :
+return [ 0 , 1 , 2 , 3 ]
+return [ 0 ]
+static func _bucket_entries ( cat : int , sz : int , rank : int ) -> Array :
+var result : Array = [ ]
+for e : Variant in BankData . get_sp_tt_levels ( ) :
+var entry : Dictionary = e as Dictionary
+if int ( entry . get ( "shapeCategory" , 0 ) ) != cat :
+continue
+if int ( entry . get ( "size" , 0 ) ) != sz :
+continue
+if int ( entry . get ( "r" , 0 ) ) != rank :
+continue
+result . append ( entry )
+return result
+static func _apply_entry_transform ( entry : Dictionary , transform : int ) -> Dictionary :
+var rm : Array = [ ]
+for row : Variant in entry . get ( "regionMap" , [ ] ) :
+var int_row : Array = [ ]
+for v : Variant in ( row as Array ) :
+int_row . append ( int ( v ) )
+rm . append ( int_row )
+var sol : Array = [ ]
+for v : Variant in entry . get ( "solution" , [ ] ) :
+sol . append ( int ( v ) )
+var sz : int = rm . size ( )
+if sz == 0 :
+return entry
+var result : Array = LevelData . apply_transform ( rm , sol , sz , transform )
+entry [ "regionMap" ] = result [ 0 ]
+entry [ "solution" ] = result [ 1 ]
+return entry

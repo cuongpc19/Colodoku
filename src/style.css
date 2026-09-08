@@ -307,12 +307,12 @@ main {
   100% { transform: scale(1); }
 }
 
-/* Đặt sai: ô đổi hẳn sang đỏ rồi mới vẽ ✕ lên nền đỏ, đúng bản gốc — #ee4305
-   lấy từ chính bản ghi màn hình.
-
-   Dùng box-shadow inset chứ không phải background: màu nền ô là style inline
-   do JS đặt theo vùng, CSS thường không đè được, mà !important thì bẩn. */
-.cell.wrong { box-shadow: inset 0 0 0 100px #ee4305; }
+/* Đặt sai: giữ nguyên màu vùng (người chơi vẫn phải nhìn ra ô đó màu gì), chỉ
+   viền đỏ và vẽ ✕ đỏ có quầng trắng lên trên. #ee4305 lấy từ bản ghi màn hình
+   của Meowdoku — họ đổ đỏ cả ô, nhưng thế thì mất màu vùng. */
+.cell.wrong { box-shadow: inset 0 0 0 4px #ee4305; }
+.cell.wrong .x { filter: drop-shadow(0 0 1.5px #fff) drop-shadow(0 0 1.5px #fff); }
+.cell.wrong .x line { stroke: #ee4305; }
 
 .cell.conflict {
   box-shadow: 0 0 0 3px var(--danger);

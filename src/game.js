@@ -269,7 +269,8 @@ function onBoardChange() {
 /**
  * Chữ khen bay lên từ ô vừa đặt: chuỗi 2 con là "Nice!", dài hơn thì lời khen
  * mạnh dần tới "Perfect!", kèm hợp âm càng dài càng cao. Bậc = số con đúng
- * liên tiếp trước con này.
+ * liên tiếp trước con này. Lời khen để tiếng Anh ở mọi ngôn ngữ, như một
+ * tiếng reo chứ không phải câu văn.
  */
 function praise(tier) {
   const words = T.combo;

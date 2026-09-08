@@ -1,0 +1,893 @@
+:root {
+  --ink: #2f2a26;
+  --muted: #8a7f76;
+  --paper: #f5f2ed;
+  --card: #ffffff;
+  --line: #e2d8cc;
+  --accent: #f19320;
+  --key: #d94848; /* màu chữ nhấn trong lời hướng dẫn, đúng tag [color] của họ */
+  --coach-ink: #85646a; /* chữ trong thẻ hướng dẫn, lấy mẫu từ khung hình bản gốc */
+  --danger: #e2504a;
+  --good: #4aa96c;
+
+  /* Bảng màu vùng, lấy mẫu pixel từ bản ghi màn hình Meowdoku 1.15.0.
+     --gN là màu ô, --kN là bản đậm hơn dùng cho chữ trên nền trắng. */
+  /* Nhân vật kiến — dùng lại ở bàn cờ, mini-map, logo và chip đếm. */
+  --ant: url("../assets/ant-512.png");
+
+  --g0: #40b5bf; --g1: #f2975e; --g2: #8fe47f; --g3: #ca638e;
+  --g4: #f6dc87; --g5: #c8ab07; --g6: #f08ce2; --g7: #8872d6;
+  --g8: #7ec8f0; --g9: #f4a6a0; --g10: #bcd94f; --g11: #c3ae94;
+
+  --k0: #2f93b8; --k1: #d97a35; --k2: #4ea23c; --k3: #bc537c;
+  --k4: #bf941a; --k5: #9a840a; --k6: #c95bb6; --k7: #6a52c0;
+  --k8: #3f96c8; --k9: #d2685f; --k10: #7d9c1e; --k11: #8d7a62;
+}
+
+* { box-sizing: border-box; }
+
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  font: 15px/1.5 "Segoe UI", system-ui, -apple-system, sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: 0.5px;
+}
+
+.picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.picker select {
+  margin-left: 6px;
+  padding: 5px 8px;
+  font: inherit;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+}
+
+main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 24px;
+  align-items: start;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+
+.stage { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+
+.status { font-size: 14px; color: var(--muted); min-height: 21px; }
+.status.win { color: var(--good); font-weight: 700; }
+.status.bad { color: var(--danger); font-weight: 600; }
+
+.board {
+  /* --board: bề rộng bàn cờ, --n: số ô mỗi cạnh (BoardView đặt khi dựng lưới).
+     Cỡ chữ trong ô suy ra từ hai biến này nên mèo và ✕ luôn vừa ô, mọi cỡ lưới. */
+  --board: min(78vw, 520px);
+  --n: 8;
+  position: relative;
+  display: grid;
+  /* BoardView chỉ đặt số cột; không có dòng này thì hàng tự cao theo nội dung,
+     hàng có ✕ hoặc con kiến sẽ cao hơn hàng trống. */
+  grid-auto-rows: minmax(0, 1fr);
+  gap: 1.8%;
+  width: var(--board);
+  aspect-ratio: 1;
+  padding: 2.2%;
+  background: var(--card);
+  border-radius: 18px;
+  box-shadow: 0 4px 16px rgba(80, 60, 40, 0.09);
+  touch-action: none;
+  user-select: none;
+  transition: filter 0.25s;
+}
+
+.cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  font-size: clamp(12px, calc(var(--board) / var(--n) * 0.6), 62px);
+  line-height: 1;
+  cursor: pointer;
+  border: 0;
+  border-radius: 14%;
+  transition: filter 0.12s;
+}
+
+/* Kiến đứng lẻ trong dòng chữ (logo, chip đếm, màn thắng) — cỡ bám font-size chỗ đặt. */
+.ant {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.14em;
+  background: var(--ant) center / contain no-repeat;
+}
+
+.cell:hover { filter: brightness(1.06); }
+
+.cell.mark::after {
+  content: "✕";
+  font-size: 0.82em;
+  font-weight: 900;
+  color: #fff;
+}
+
+/* Ô người chơi đặt sai: ✕ đỏ, khoá luôn, không hoàn tác được. */
+.cell.wrong { cursor: default; }
+.cell.wrong::after { color: var(--danger); }
+
+/* Ô mà thẻ gợi ý sắp đánh ✕ — vẽ mờ để thấy trước kết quả. */
+.cell.preview::after {
+  content: "✕";
+  font-size: 0.82em;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.cell.cat::after {
+  content: "";
+  width: 1.15em;
+  height: 1.15em;
+  background: var(--ant) center / contain no-repeat;
+}
+
+/* Đặt kiến: hiện ngay ở cỡ thật rồi bung quá cỡ và nảy về — cú bấm đúp phải
+   thấy "đã tay". Easing để trơn (ease-out), độ nảy nằm hết trong keyframe;
+   trộn cả hai thì đoạn cuối bị giật. */
+.cell.pop { z-index: 2; }
+.cell.pop::after { animation: antpop 0.36s ease-out; }
+
+@keyframes antpop {
+  0% { transform: scale(0.9); }
+  35% { transform: scale(1.34); }
+  62% { transform: scale(0.95); }
+  82% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.cell.conflict {
+  box-shadow: 0 0 0 3px var(--danger);
+  animation: shake 0.3s;
+}
+
+.cell.hint {
+  z-index: 1;
+  box-shadow: 0 0 0 4px var(--accent);
+  animation: pulse 1s ease-in-out 3;
+}
+
+@keyframes pulse { 50% { filter: brightness(1.25); } }
+@keyframes shake {
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+.controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; }
+
+button {
+  padding: 9px 16px;
+  font: inherit;
+  color: var(--ink);
+  cursor: pointer;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+}
+
+button:hover:not(:disabled) { border-color: var(--accent); }
+button:disabled { opacity: 0.45; cursor: default; }
+button.ghost { background: transparent; color: var(--muted); }
+
+.toggle { display: flex; gap: 6px; align-items: center; font-size: 13px; color: var(--muted); }
+
+.howto { max-width: 460px; margin: 0; font-size: 13px; color: var(--muted); text-align: center; }
+
+.panel {
+  padding: 18px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.panel h2 { margin: 0 0 14px; font-size: 16px; }
+.panel h3 { margin: 20px 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); }
+
+.meta { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; margin: 0; font-size: 14px; }
+.meta dt { color: var(--muted); }
+.meta dd { margin: 0; font-weight: 600; text-align: right; }
+
+.hint-note { margin: 0 0 10px; font-size: 12px; line-height: 1.45; color: var(--muted); }
+
+.techs { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; font-size: 12.5px; }
+
+.techs li { display: grid; grid-template-columns: 18px 1fr auto; gap: 8px; align-items: center; }
+.techs li.unused { opacity: 0.35; }
+.techs .rank { display: grid; place-items: center; width: 18px; height: 18px; font-size: 11px; font-weight: 700; color: #fff; background: var(--muted); border-radius: 5px; }
+.techs li.used .rank { background: var(--accent); }
+.techs .count { font-variant-numeric: tabular-nums; color: var(--muted); }
+
+.walk { display: flex; gap: 8px; }
+.walk button { padding: 7px 12px; font-size: 13px; }
+
+.explain { min-height: 60px; margin: 10px 0 0; font-size: 13px; line-height: 1.5; color: var(--muted); }
+.explain b { color: var(--ink); }
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 32px;
+  padding: 12px 22px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--good);
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  transform: translateX(-50%);
+}
+
+@media (max-width: 900px) {
+  main { grid-template-columns: minmax(0, 1fr); }
+  .board { --board: min(92vw, 520px); }
+}
+
+/* ======================================================== màn hình game */
+
+body.app { display: flex; flex-direction: column; min-height: 100vh; }
+
+.screen { display: flex; flex-direction: column; align-items: center; flex: 1; }
+.screen[hidden] { display: none; }
+
+/* --- trang chủ --- */
+.home { justify-content: flex-start; gap: 0; padding: 14px 18px 30px; text-align: center; }
+
+.home-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: min(520px, 100%);
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  font-size: 32px;
+  background: var(--g4);
+  border: 3px solid var(--g10);
+  border-radius: 14px;
+}
+
+/* Nút bánh răng tròn, có chấm đỏ như bản gốc. */
+.icon.gear {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  font-size: 22px;
+  color: var(--muted);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(80, 60, 40, 0.12);
+}
+.icon.gear .dot {
+  position: absolute;
+  top: 4px;
+  right: 5px;
+  width: 9px;
+  height: 9px;
+  background: var(--danger);
+  border-radius: 50%;
+}
+
+.home-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  width: min(520px, 100%);
+  margin-top: 18px;
+}
+
+.home-card {
+  position: relative;
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  padding: 18px 14px 16px;
+  border-radius: 18px;
+  color: #fff;
+  text-align: center;
+}
+.home-card b { font-size: 21px; line-height: 1.15; }
+.home-card small { font-size: 13px; opacity: 0.92; }
+.home-card .lock { font-size: 34px; }
+
+.home-card.locked { background: #6d74c4; color: rgba(255, 255, 255, 0.78); }
+.home-card.streak {
+  background: linear-gradient(180deg, #ffd54a, #f5b60f);
+  color: #8a5a12;
+}
+.home-card.streak b { color: #a9670f; }
+.home-card .token { display: grid; place-items: center; font-size: 40px; }
+.home-card .token .ant { width: 1em; height: 1em; }
+.home-card .streak em,
+.home-card.streak em {
+  display: block;
+  width: 78%;
+  padding: 5px 0;
+  font: 700 20px/1.2 inherit;
+  font-style: normal;
+  color: #a9670f;
+  background: rgba(255, 255, 255, 0.62);
+  border-radius: 999px;
+}
+.home-card .tick {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 40px;
+  font-size: 22px;
+  color: #fff;
+  background: #f19320;
+  border-radius: 0 18px 0 18px;
+}
+
+/* Chữ hiệu, thay cho logo vẽ tay của họ. */
+.wordmark {
+  margin: 52px 0 34px;
+  font: 900 46px/0.95 "Segoe UI", system-ui, sans-serif;
+  letter-spacing: 2px;
+  color: #8a5a3c;
+}
+.wordmark span { display: block; color: #6b4630; }
+
+.home-links { display: flex; flex-wrap: wrap; gap: 4px 16px; justify-content: center; margin: 18px 0 0; }
+.progress-line { margin: 10px 0 0; font-size: 13px; color: var(--muted); }
+
+button.primary { color: #fff; background: var(--accent); border-color: var(--accent); font-weight: 600; }
+button.primary:hover:not(:disabled) { filter: brightness(1.07); }
+button.big { padding: 13px 20px; font-size: 16px; }
+
+/* Nút hành động chính dạng viên thuốc, như nút "Level 2" của họ. */
+button.pill {
+  width: min(400px, 86%);
+  padding: 17px 24px;
+  font-size: 22px;
+  font-weight: 700;
+  border-radius: 999px;
+  box-shadow: 0 5px 0 #c9761a;
+}
+button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3px 0 #c9761a; }
+
+.progress-line { margin: 20px 0 4px; font-size: 13px; color: var(--muted); }
+.lab-link { font-size: 12.5px; color: var(--muted); text-decoration: none; border-bottom: 1px dotted var(--line); }
+.lab-link:hover { color: var(--accent); }
+
+/* --- thanh tiêu đề trong màn chơi --- */
+.bar {
+  display: grid;
+  grid-template-columns: 46px 1fr 46px;
+  gap: 10px;
+  align-items: center;
+  width: min(560px, 96vw);
+  padding: 14px 4px;
+}
+.bar h2 { margin: 0; font-size: 17px; text-align: center; }
+.bar .icon { padding: 6px 12px; font-size: 17px; line-height: 1; }
+
+/* Trong màn chơi hai nút góc là hình tròn, không phải nút chữ như ở màn chọn. */
+.play .bar { grid-template-columns: var(--icon-btn) 1fr var(--icon-btn); }
+.play .bar .icon {
+  display: grid;
+  place-items: center;
+  width: var(--icon-btn);
+  height: var(--icon-btn);
+  padding: 0;
+  font-size: calc(var(--icon-btn) * 0.44);
+  border-radius: 50%;
+}
+.play .icon.gear .dot { width: calc(var(--icon-btn) * 0.2); height: calc(var(--icon-btn) * 0.2); }
+/* Level và Score đứng cạnh nhau giữa thanh, nhãn nhỏ ở trên số to. */
+.hud {
+  display: flex;
+  gap: calc(var(--board) * 0.11);
+  justify-content: center;
+  text-align: center;
+  line-height: 1.15;
+}
+.hud small { display: block; font-size: var(--hud-label); color: #b09a86; }
+.hud strong { display: block; font-size: var(--hud-value); color: #8a5a3c; }
+.hud-score strong { font-variant-numeric: tabular-nums; }
+
+/* Hai chip dưới thanh tiêu đề: đếm kiến, và mạng còn lại. */
+.chips { display: flex; gap: calc(var(--board) * 0.035); justify-content: center; }
+.chip {
+  display: flex;
+  gap: calc(var(--chip-h) * 0.22);
+  align-items: center;
+  min-height: var(--chip-h);
+  padding: 0 calc(var(--chip-h) * 0.46);
+  font-size: calc(var(--chip-h) * 0.46);
+  font-weight: 700;
+  background: var(--card);
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(80, 60, 40, 0.08);
+}
+.chip .ant { width: 1.5em; height: 1.5em; }
+.chip b { color: var(--good); font-variant-numeric: tabular-nums; }
+
+.chip.lives { gap: calc(var(--chip-h) * 0.16); padding: 0 calc(var(--chip-h) * 0.36); }
+.chip.coins b { color: #c8951f; }
+
+/* Đồng xu vẽ bằng CSS: đĩa vàng, viền sẫm, một vệt sáng chếch trên trái. */
+.coin {
+  display: inline-block;
+  flex: none;
+  width: 1.25em;
+  height: 1.25em;
+  background:
+    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.85) 0 14%, transparent 42%),
+    radial-gradient(circle at 50% 50%, #ffd964 0 52%, #f0b429 53% 100%);
+  border: 0.09em solid #c8951f;
+  border-radius: 50%;
+  vertical-align: -0.2em;
+}
+
+/* Chip nảy một cái khi bấm trợ giúp mà không đủ tiền. */
+.chips.nudge { animation: shake 0.3s; }
+.life {
+  display: block;
+  width: calc(var(--chip-h) * 0.6);
+  height: calc(var(--chip-h) * 0.6);
+  background: var(--g4);
+  border: 2px solid var(--g5);
+  border-radius: 50% 50% 50% 12px;
+  transform: rotate(-20deg);
+}
+.life.gone { background: #e6e0d6; border-color: #d3cabb; }
+
+.stars { color: var(--accent); font-size: 14px; text-align: right; letter-spacing: 1px; }
+.stars.big { font-size: 28px; letter-spacing: 3px; }
+
+/* --- chọn màn --- */
+.map { padding-bottom: 50px; }
+.map-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(62px, 1fr));
+  gap: 9px;
+  width: min(640px, 94vw);
+}
+.map-cell {
+  display: grid;
+  place-items: center;
+  gap: 1px;
+  padding: 10px 4px;
+  line-height: 1.1;
+}
+.map-cell b { font-size: 15px; }
+.map-cell .stars { font-size: 10px; min-height: 12px; }
+.map-cell.current { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(240, 138, 60, 0.25); }
+.map-cell.locked { color: var(--muted); background: transparent; opacity: 0.4; }
+
+/* --- màn chơi --- */
+/* Mọi thứ quanh bàn cờ đo theo --board chứ không ghi cứng px: desktop bàn cờ
+   phình lên 640px mà HUD giữ nguyên px thì teo hẳn lại so với nó. Các tỉ lệ
+   dưới đây lấy từ ảnh chụp bản gốc, chia cho bề rộng bàn cờ trong ảnh. */
+.play {
+  --board: min(88vw, 460px);
+  --hud-label: calc(var(--board) * 0.042);
+  --hud-value: calc(var(--board) * 0.055);
+  --chip-h: calc(var(--board) * 0.094);
+  --icon-btn: calc(var(--board) * 0.112);
+  --booster: calc(var(--board) * 0.150);
+  gap: 12px;
+  padding-bottom: 44px;
+}
+.play .board { --board: inherit; }
+
+.hint-text { max-width: 460px; margin: 0; padding: 0 16px; font-size: 13px; color: var(--muted); text-align: center; }
+
+/* Hướng dẫn: phủ tối cả bàn cờ rồi nhấc riêng những ô đang được nói tới lên
+   trên lớp phủ. Meowdoku làm đúng như vậy — không viền sáng, không nhấp nháy,
+   nhìn phát biết ngay phải bấm đâu. */
+/* Lớp phủ trải hết màn hình chứ không riêng bàn cờ — trong bản gốc cả trang
+   tối đi, chỉ còn thẻ hướng dẫn và mấy ô đang nói tới là sáng. */
+.board::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 11, 7, 0.78);
+  pointer-events: none;
+  z-index: 3;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+}
+.board.dim::after { opacity: 1; }
+
+.cell.lit { z-index: 4; }
+
+/* Bàn tay minh hoạ thao tác trong tutorial. */
+.hand {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  width: 1em;
+  margin-left: -0.5em;
+  line-height: 1;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.45));
+}
+.hand { transition: transform 0.28s ease; }
+.hand i { display: block; font-style: normal; }
+/* Chỉ mờ dần, KHÔNG động tới transform: vị trí bàn tay do JS đặt inline, dùng
+   keyframe có translate sẽ kéo nó về sai ô trong lúc chạy. */
+.hand.enter { animation: handin 0.3s ease both; }
+
+@keyframes handin {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.hand.tapping i { animation: handtap 1.1s ease-in-out infinite; }
+
+@keyframes handtap {
+  0%, 100% { transform: translateY(0) scale(1); }
+  45% { transform: translateY(-14%) scale(0.9); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hand.tapping i { animation: none; }
+}
+.coach { position: relative; z-index: 4; }
+.overlay { z-index: 10; }
+
+/* Trong lúc hướng dẫn, bản gốc giấu chip đếm mèo, ba thẻ nhắc luật và cả thanh
+   tiêu đề. Ở đây vẫn giữ lại mỗi nút quay lại, nhấc lên trên lớp phủ, để người
+   chơi mở hướng dẫn từ trang chủ còn có đường ra. */
+.play.tutorial { justify-content: center; }
+.play.tutorial .chips,
+.play.tutorial .rules { display: none; }
+.play.tutorial .hud { visibility: hidden; }
+.play.tutorial .bar .icon { position: relative; z-index: 4; }
+
+/* Ô cần bấm hai lần: vòng trắng quanh ô, đập chậm. */
+.cell.ring {
+  z-index: 4;
+  box-shadow: 0 0 0 4px #fff, 0 0 18px 4px rgba(255, 255, 255, 0.45);
+  animation: ringpulse 1.2s ease-in-out infinite;
+}
+
+@keyframes ringpulse {
+  50% { box-shadow: 0 0 0 7px #fff, 0 0 22px 8px rgba(255, 255, 255, 0.6); }
+}
+
+/* Nhịp khen giữa hai bước: bỏ lớp tối, cả bàn sáng bừng lên một cái. */
+.board.flash { filter: brightness(1.1) saturate(1.12); }
+
+/* --- nút trợ giúp tròn dưới bàn cờ --- */
+.boosters { display: flex; gap: calc(var(--board) * 0.22); justify-content: center; margin-top: calc(var(--board) * 0.02); }
+
+.booster {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--booster);
+  height: var(--booster);
+  padding: 0;
+  font-size: calc(var(--booster) * 0.52);
+  background: var(--card);
+  border: 0;
+  border-radius: 50%;
+  box-shadow: 0 3px 10px rgba(80, 60, 40, 0.16);
+}
+.booster .ant { width: 1.15em; height: 1.15em; }
+.booster:disabled { opacity: 0.45; }
+/* Thiếu tiền thì mờ đi nhưng KHÔNG khoá: bấm vào còn báo được lý do. */
+.booster.broke { opacity: 0.5; }
+
+/* Hết lượt miễn phí thì badge đổi vai thành giá tiền — vàng như đồng xu, và
+   không còn là màu cảnh báo nữa. */
+.booster .badge.price { color: #7a5510; background: linear-gradient(#ffd964, #f0b429); }
+
+.booster .badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: grid;
+  place-items: center;
+  min-width: calc(var(--booster) * 0.38);
+  height: calc(var(--booster) * 0.38);
+  padding: 0 calc(var(--booster) * 0.07);
+  /* Không gộp vào shorthand `font`: `inherit` không hợp lệ trong đó, cả dòng
+     sẽ bị bỏ qua và con số lấy nguyên cỡ chữ 0.52×nút của .booster. */
+  font-weight: 700;
+  font-size: calc(var(--booster) * 0.2);
+  line-height: 1;
+  /* Mặc định là số lượt miễn phí còn lại — viên đỏ, như bản gốc. */
+  color: #fff;
+  background: var(--danger);
+  /* Viền màu nền trang: tạo khe hở để con số không dính vào hình bên dưới. */
+  border: calc(var(--booster) * 0.035) solid var(--paper);
+  border-radius: 999px;
+  /* Đẩy chồm ra ngoài góc trên phải thay vì nằm đè lên giữa nút. */
+  transform: translate(38%, -38%);
+}
+
+/* Hai ô chừa sẵn trên và dưới bàn cờ. Thẻ hướng dẫn, thẻ nhắc và nút Got it!/
+   Apply đều nổi tuyệt đối trong đó, nên hiện/ẩn hay dài ngắn cũng không đẩy
+   bàn cờ đi đâu. Ngoài tutorial hai ô này cao 0 — thẻ gợi ý sẽ đè lên phần trên
+   (đã bị phủ tối), đúng như bản gốc. */
+/* Rộng đúng bằng bàn cờ: chữ xuống dòng thành một khối đặc, thay vì trải
+   một dòng mỏng rộng hơn cả bàn cờ. */
+.slot { position: relative; width: var(--board); }
+/* Canh giữa bằng left/right + margin auto, KHÔNG dùng transform: luật
+   `button.pill:active` đặt transform riêng và thắng về độ ưu tiên — nếu định vị
+   bằng translateX thì lúc đè chuột nút văng sang một bên, mouseup rơi ra ngoài
+   và trình duyệt không phát click. Đây là lý do Apply "bấm mãi không ăn". */
+.slot-top .coach { position: absolute; bottom: 6px; left: 0; right: 0; margin: 0 auto; }
+.slot-bottom .coach,
+.slot-bottom .pill.apply { position: absolute; top: 6px; left: 0; right: 0; margin: 0 auto; }
+.pill.apply { z-index: 4; }
+
+/* Đang chìa gợi ý: khoá tương tác toàn màn chơi, chỉ chừa nút Apply. Nhờ vậy
+   cú bấm thứ hai của một lần bấm đúp không lọt xuống nút trợ giúp nằm dưới. */
+.play.offering .board,
+.play.offering .boosters,
+.play.offering .chips,
+.play.offering .rules,
+.play.offering .coach.bottom { pointer-events: none; }
+
+.play.tutorial .slot-top { min-height: 150px; }
+.play.tutorial .slot-bottom { min-height: 108px; }
+
+/* --- thẻ hướng dẫn (trên và dưới bàn cờ) --- */
+.coach {
+  width: min(460px, 92vw);
+  padding: 14px 20px;
+  text-align: center;
+  background: var(--card);
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(80, 60, 40, 0.1);
+}
+.coach strong { display: block; margin-bottom: 3px; font-size: 23px; color: var(--k3); }
+.coach p { margin: 0; font-size: 23px; line-height: 1.4; color: var(--coach-ink); }
+.coach .key { color: var(--key); font-weight: 600; }
+
+/* Sang bước mới: thẻ nhô lên một chút rồi hiện dần, thay vì thay chữ đột ngột. */
+@keyframes coachin {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.coach.enter { animation: coachin 0.26s ease both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .board::after { transition: none; }
+  .hand { transition: none; }
+  .coach.enter,
+  .hand.enter { animation: none; }
+}
+.coach.bottom { padding: 15px 20px; }
+.coach.bottom.tappable { cursor: pointer; transition: transform 0.12s, box-shadow 0.12s; }
+.coach.bottom.tappable p { color: var(--accent); }
+.coach.bottom.tappable:hover { box-shadow: 0 5px 16px rgba(80, 60, 40, 0.18); transform: translateY(-1px); }
+.coach.bottom.tappable:active { transform: translateY(1px); }
+
+/* Thẻ gợi ý trong màn chơi: chữ canh trái, tông dịu, đúng kiểu bản gốc. */
+.coach.tip { padding: 18px 22px; text-align: left; }
+.coach.tip p { font-size: 17.5px; color: #9a6b72; }
+
+/* --- hộp thoại thắng --- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(45, 35, 28, 0.45);
+}
+.overlay[hidden] { display: none; }
+.dialog {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(330px, 90vw);
+  padding: 26px 24px;
+  text-align: center;
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.22);
+}
+.dialog h2 { margin: 0; font-size: 20px; }
+.dialog .logo { font-size: 44px; }
+.win-note { margin: 0 0 8px; font-size: 13px; color: var(--muted); }
+
+/* ------------------------------------------------------------- ăn mừng */
+
+/* Dòng tiền thưởng. */
+.reward {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  color: #c8951f;
+  opacity: 0;
+  animation: rewardpop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation-delay: 0.35s;
+}
+.reward .coin { width: 1.05em; height: 1.05em; vertical-align: 0; }
+@keyframes rewardpop {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Pháo giấy rơi sau lưng hộp thoại: 26 mảnh, mỗi mảnh tự có màu, bề ngang,
+   độ lệch, độ xoay và nhịp riêng do JS gắn vào biến CSS. */
+.confetti { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.confetti i {
+  position: absolute;
+  top: 0;
+  left: var(--x);
+  width: var(--w);
+  height: calc(var(--w) * 1.6);
+  background: var(--tone);
+  border-radius: 2px;
+  animation: fall var(--dur) linear var(--delay) infinite;
+}
+@keyframes fall {
+  from { transform: translate3d(0, -12vh, 0) rotate(0deg); }
+  to { transform: translate3d(var(--drift), 112vh, 0) rotate(var(--spin)); }
+}
+
+/* Dòng chọn ngôn ngữ trong hộp Cài đặt. Căn hai đầu chứ không giữa như phần
+   còn lại của hộp, để nhãn và ô chọn nằm thành một hàng đọc được. */
+.setting-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+  text-align: start;
+}
+.setting-row select {
+  flex: 1;
+  min-width: 0;
+  max-width: 62%;
+  padding: 7px 9px;
+  font: inherit;
+  color: inherit;
+  background: var(--bg);
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  border-radius: 9px;
+}
+
+/* ---------------------------------------------- thẻ nhắc luật trên màn chơi */
+
+.rules {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  width: min(560px, 96vw);
+  padding: 0 4px;
+}
+
+.rule-card {
+  display: flex;
+  flex: 1;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 9px;
+  font-size: 11.5px;
+  line-height: 1.25;
+  color: var(--muted);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.mini {
+  display: grid;
+  flex: none;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  width: 33px;
+}
+
+.mini i {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  font-size: 7px;
+  font-style: normal;
+  background: #ece6dc;
+  border-radius: 3px;
+}
+
+.mini i.on { background: var(--g6); }
+.mini i.x::after { content: "✕"; font-weight: 800; color: rgba(52, 40, 30, 0.7); }
+.mini i.on.x::after { color: #fff; }
+.mini i.cat { background: var(--g4); }
+.mini i.cat::after { content: ""; width: 90%; height: 90%; background: var(--ant) center / contain no-repeat; }
+.mini i.on.cat { background: var(--g6); }
+
+@media (max-width: 420px) {
+  .rule-card { flex-direction: column; gap: 4px; padding: 7px 5px; text-align: center; font-size: 10.5px; }
+}
+
+/* Nút chữ trơn, dùng cho hành động phụ như xoá tiến trình. */
+.linkish {
+  padding: 0 0 0 10px;
+  font-size: 12.5px;
+  color: var(--muted);
+  background: none;
+  border: none;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.linkish:hover { color: var(--danger); }
+
+/* ------------------------------------------------- màn hình rộng (desktop)
+   Trên điện thoại bàn cờ bị giới hạn bởi bề ngang; trên desktop thì ngược lại,
+   chiều cao mới là thứ hiếm — nên lấy vh làm mốc và căn giữa cả cột. */
+@media (min-width: 760px) {
+  .play { justify-content: center; gap: 16px; padding-bottom: 24px; }
+  .play { --board: min(60vh, 62vw, 640px); }
+
+  .bar, .rules { width: min(760px, 94vw); }
+  .status { font-size: 15px; }
+
+  .rules { gap: 14px; }
+  .rule-card { gap: 14px; padding: 15px 17px; font-size: 15.5px; line-height: 1.35; border-radius: 14px; }
+  .mini { width: 62px; gap: 3px; }
+  .mini i { font-size: 15px; border-radius: 4px; }
+
+  .coach { width: min(640px, 92vw); padding: 20px 26px; }
+  .play.tutorial .slot-top { min-height: 164px; }
+  .play.tutorial .slot-bottom { min-height: 118px; }
+  .coach strong { font-size: 25px; }
+  .coach p { font-size: 25px; }
+  .coach.tip p { font-size: 19.5px; }
+
+  .controls { gap: 12px; }
+  .controls button { padding: 10px 18px; font-size: 15px; }
+  .toggle { font-size: 14px; }
+  .hint-text { max-width: 620px; font-size: 14px; }
+}

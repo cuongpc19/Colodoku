@@ -1,0 +1,19 @@
+# File gốc của Meowdoku: bản cài và bản ghi màn hình dùng để đối chiếu.
+# Có bản quyền của com.oakever.meowdoku — và .xapk còn vượt giới hạn 100 MB của GitHub.
+*.xapk
+*.apk
+*.mp4
+
+# Dữ liệu trích ra từ APK của họ, cùng bảng chữ dựng từ bản địa hoá của họ.
+# Xem cảnh báo đầu README: chỉ dùng nội bộ, không phát hành kèm.
+/data/
+
+# Bản build gộp một file — sinh lại bằng `node tools/build_single.mjs`.
+/dist/
+
+# Nháp: trang thử hiệu ứng, ảnh tham khảo…
+/_*
+/Manythings/
+
+Thumbs.db
+.DS_Store

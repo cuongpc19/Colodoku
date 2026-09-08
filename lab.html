@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Colodoku · Lab</title>
+    <link rel="stylesheet" href="src/style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>Colodoku · Lab</h1>
+      <div class="picker">
+        <label>Bank <select id="bank"></select></label>
+        <label>Tier <select id="tier"></select></label>
+        <button id="shuffle" class="ghost">Shuffle</button>
+        <a class="lab-link" href="index.html">← Back to the game</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="stage">
+        <div id="status" class="status">Loading…</div>
+        <div id="board" class="board" role="grid" aria-label="Colodoku board"></div>
+        <div class="controls">
+          <button id="undo">↶ Undo</button>
+          <button id="hint">💡 Hint</button>
+          <button id="reset">↺ Reset</button>
+          <label class="toggle"><input type="checkbox" id="autox" checked /> Auto ✕</label>
+        </div>
+        <p class="howto">
+          Single tap marks <b>✕</b> (drag to mark a run) · double-tap or right-click places an <b><i class="ant"></i></b>
+        </p>
+      </section>
+
+      <aside class="panel">
+        <h2>Level design</h2>
+        <dl class="meta">
+          <dt>Their difficulty rating</dt><dd id="m-rating">—</dd>
+          <dt>Deduction steps</dt><dd id="m-steps">—</dd>
+          <dt>Needs chained inference</dt><dd id="m-chained">—</dd>
+        </dl>
+
+        <h3>Techniques required</h3>
+        <p class="hint-note">
+          Meowdoku rates a puzzle by the <b>highest technique rank</b> its solution forces you to use —
+          not by the number of steps.
+        </p>
+        <ul id="techs" class="techs"></ul>
+
+        <h3>Step through the solver</h3>
+        <div class="walk">
+          <button id="step">▶ Next step</button>
+          <button id="autoplay" class="ghost">⏩ Run to the end</button>
+        </div>
+        <p id="explain" class="explain">Press “Next step” to watch how the solver deduces the next cell.</p>
+      </aside>
+    </main>
+
+    <div id="toast" class="toast" hidden></div>
+    <script type="module" src="src/lab.js"></script>
+  </body>
+</html>

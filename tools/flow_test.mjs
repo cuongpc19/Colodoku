@@ -7,7 +7,7 @@
 
 import { readFileSync, existsSync } from "node:fs";
 import { Board, Puzzle, CAT, MARK, unpackRegions } from "../src/puzzle.js";
-import { Tutorial, buildSteps, tutorialPuzzle } from "../src/tutorial.js";
+import { Tutorial, buildSteps, tutorialPuzzle, planTutorial } from "../src/tutorial.js";
 import { nextDeduction, stateFromBoard, State } from "../src/solver.js";
 import {
   sizeFor, isHardLevel, planLevel, onLevelWon, onLevelFailed, markDirty,
@@ -100,22 +100,50 @@ const tutorial = new Tutorial(puzzle, board);
 
 check(
   tutorial.steps.map((s) => s.id).join(" → ") ===
-    "place-first → rule-colour → exclude-lines → place-second → exclude-touching → place-third → find-last → done",
+    "place-first → rule-colour → exclude-lines → place-second → exclude-touching → place-third → exclude-touching-2 → find-last → done",
   "thứ tự các bước hướng dẫn bị đổi",
 );
 
 const stepById = Object.fromEntries(tutorial.steps.map((s) => [s.id, s]));
-check(sameCells(stepById["place-first"].focus, [[0, 2]]), "bước 1 không chỉ vào ô xanh lá");
+
+// Bàn hướng dẫn phải khác bàn của Meowdoku, kể cả sau tám phép xoay/lật.
+const THEIR_TUTORIAL = { m: "1102" + "1112" + "1112" + "1332", s: [2, 0, 3, 1] };
+const shapeOf = (m) => {
+  const map = new Map();
+  return [...m].map((ch) => { if (!map.has(ch)) map.set(ch, map.size); return map.get(ch); }).join("");
+};
+for (let t = 0; t < 8; t++)
+  check(
+    shapeOf(transformRecord(THEIR_TUTORIAL, 4, t).m) !== shapeOf(TUTORIAL.record.m),
+    `bàn hướng dẫn trùng bàn của Meowdoku (phép biến đổi ${t})`,
+  );
+
+// Đúng một vùng một ô: nước mở màn không được phép nhập nhằng.
+check(singleRegions(TUTORIAL.record.m) === 1, "bàn hướng dẫn phải có đúng một vùng một ô");
+
+// Hai lượt tập vuốt, mỗi lượt ít nhất 2 ô.
+const swipes = tutorial.steps.filter((s) => s.gesture === "swipe");
+check(swipes.length === 2, `cần 2 lượt tập vuốt, có ${swipes.length}`);
+for (const [i, step] of swipes.entries())
+  check(step.focus.length >= 2, `lượt vuốt ${i + 1} chỉ có ${step.focus.length} ô, không ra cử chỉ vuốt`);
+
+// Từng ô của mỗi bước, suy từ luật chứ không ghi cứng — khớp bàn đang dùng.
+const plan = planTutorial(puzzle);
+check(sameCells(stepById["place-first"].focus, [plan.first]), "bước 1 không chỉ vào vùng một ô");
 check(
-  sameCells(stepById["exclude-lines"].focus, [[0, 0], [0, 1], [0, 3], [1, 2], [2, 2], [3, 2]]),
+  plan.lines.length === 6 && sameCells(stepById["exclude-lines"].focus, plan.lines),
   "bước loại theo hàng/cột không đúng 6 ô",
 );
+check(String(stepById["place-second"].ring) === String(plan.second), "con thứ hai không rơi đúng ô");
+check(String(stepById["place-third"].ring) === String(plan.third), "con thứ ba không rơi đúng ô");
+
+// Con thứ hai phải suy ra được: vùng của nó nhiều hơn một ô, chính mấy dấu ✕
+// vừa đánh mới ép nó về một ô.
+const secondColour = TUTORIAL.record.m[plan.second[0] * 4 + plan.second[1]];
 check(
-  sameCells(stepById["exclude-touching"].focus, [[2, 0], [2, 1], [3, 0]]),
-  "bước loại ô kề không đúng 3 ô",
+  [...TUTORIAL.record.m].filter((ch) => ch === secondColour).length > 1,
+  "con thứ hai nằm trong vùng một ô — bước đó thành quà tặng, không dạy được gì",
 );
-check(String(stepById["place-second"].ring) === "3,1", "con thứ hai không rơi vào ô hồng đậm (3,1)");
-check(String(stepById["place-third"].ring) === "1,0", "con thứ ba không rơi vào ô xanh (1,0)");
 
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const cards = [...html.matchAll(/data-rule="(\w+)"/g)].map((m) => m[1]);
@@ -168,7 +196,7 @@ while (!tutorial.done && guard++ < 60) {
   }
 }
 check(tutorial.done, "tutorial không đi hết được các bước");
-check(handMarks === 9, `người chơi tự đánh ${handMarks} dấu ✕, cần 9`);
+check(handMarks === 11, `người chơi tự đánh ${handMarks} dấu ✕, cần 11 (6 nhấn + 2 vuốt + 3 vuốt)`);
 check(handCats === 3, `người chơi tự đặt ${handCats} con trong phần dẫn dắt, cần 3`);
 console.log(`tutorial: ${tutorial.steps.length} bước · tự đánh ${handMarks} ✕ · tự đặt ${handCats} con`);
 

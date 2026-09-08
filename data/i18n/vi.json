@@ -105,6 +105,8 @@
   "tut.doubleTapPlace": "<b>Nhấn hai lần</b> để thả kiến",
   "tut.adjacent": "Kiến không được <b class=\"key\">chạm nhau</b> — chạm góc cũng không.",
   "tut.swipeToExclude": "<b>Kéo</b> qua các ô này để gạch chúng đi.",
+  "tut.adjacentAgain": "Vẫn luật đó — không chạm nhau, chạm góc cũng không.",
+  "tut.swipeAgain": "<b>Kéo</b> qua chúng một lần nữa.",
   "tut.findLast": "<b class=\"key\">Con kiến cuối</b> nằm ở đâu?",
   "tut.tapForHint": "Bí à? Nhấn vào đây để được mách nước. 💡",
   "tut.mastered": "Đủ ba luật rồi. Chơi thôi.",

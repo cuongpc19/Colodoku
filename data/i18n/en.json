@@ -105,6 +105,8 @@
   "tut.doubleTapPlace": "<b>Double-tap</b> to drop the ant",
   "tut.adjacent": "Ants must not <b class=\"key\">touch</b> — corners count too.",
   "tut.swipeToExclude": "<b>Drag</b> across these cells to rule them out.",
+  "tut.adjacentAgain": "Same rule again — no touching, corners included.",
+  "tut.swipeAgain": "<b>Drag</b> across them once more.",
   "tut.findLast": "Where does the <b class=\"key\">last ant</b> go?",
   "tut.tapForHint": "Stuck? Tap here for a nudge. 💡",
   "tut.mastered": "That's all three rules. Off you go.",

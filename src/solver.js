@@ -268,12 +268,28 @@ export function nextDeduction(state) {
   return null;
 }
 
-/** Dựng trạng thái suy luận từ bàn cờ thật: mèo người chơi đã đặt được coi là chắc chắn. */
+/**
+ * Dựng trạng thái suy luận từ bàn cờ thật: con vật đã đặt coi như chắc chắn,
+ * và **những ô người chơi tự đánh ✕ cũng phải nạp vào**.
+ *
+ * Con vật thì bộ giải tự suy ra được ô nào bị loại theo, còn dấu ✕ do người
+ * chơi suy luận ra thì không — bỏ qua chúng là bộ giải quay lại mách đúng
+ * những ô người ta vừa đánh xong.
+ *
+ * Chỉ nạp khi mọi dấu ✕ đều đúng. Dấu ✕ đặt nhầm vào ô của lời giải sẽ kéo cả
+ * chuỗi suy luận sai theo, mà game không chặn người chơi đánh ✕ bừa — gặp thế
+ * thì bỏ hết, chỉ tin mấy con vật đã đặt, đúng như trước đây.
+ */
 export function stateFromBoard(puzzle, cells) {
   const state = new State(puzzle.size, puzzle.regions);
+  const marks = [];
   for (let r = 0; r < puzzle.size; r++)
     for (let c = 0; c < puzzle.size; c++)
       if (cells[r][c] === 2) state.place(r, c);
+      else if (cells[r][c] === 1) marks.push([r, c]);
+
+  if (marks.some(([r, c]) => puzzle.solution[r] === c)) return state;
+  for (const [r, c] of marks) state.cand[r][c] = false;
   return state;
 }
 

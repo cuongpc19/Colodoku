@@ -52,24 +52,27 @@ Game không đánh ✕ hộ ở màn nào — Meowdoku bắt tự loại ô ngay
 
 ## Hướng dẫn
 
-Dựng lại đúng tutorial của Meowdoku, đối chiếu từng khung hình trong video: cùng bàn cờ 4×4, cùng thứ tự bước, cùng câu chữ. Người chơi tự đặt cả ba con mèo đầu và tự đánh 9 dấu ✕ — game không đặt hộ con nào.
+Nhịp dạy học theo Meowdoku, nhưng **bàn cờ là của mình** và có **hai lượt tập vuốt** thay vì một. Bàn do [`tools/pick_tutorial.mjs`](tools/pick_tutorial.mjs) chọn từ bộ sinh: 4×4, chỉ cần kỹ thuật cấp 1, và khác bàn của họ kể cả sau tám phép xoay/lật. Người chơi tự đặt cả ba con kiến đầu và tự đánh 11 dấu ✕ — game không đặt hộ con nào.
 
 | Bước | Lời dẫn | Người chơi làm |
 |---|---|---|
-| `place-first` | ***Double-tap** to place the cat on a cell.* | bấm đúp ô xanh lá |
-| `rule-colour` | *Well done! Only one cat per **color**.* + nút **Got it!** | đọc |
-| `exclude-lines` | *Nice! Cats can't be in the **same row or column**.*<br />*Tap empty cells to exclude them.* | ✕ 6 ô |
-| `place-second` | *Only the last **Rose** remains — **Double-tap** to place a cat* | bấm đúp |
-| `exclude-touching` | *No cats can be **adjacent** to each other.*<br />***Swipe** across these cells to exclude them.* | vuốt 3 ô |
-| `place-third` | *Only the last **Sky Blue** remains — **Double-tap** to place a cat* | bấm đúp |
-| `find-last` | *Find the **last cat**!* + *Tap here for a hint.* | tự giải |
-| `done` | *Excellent! You've mastered the rules!* + **Start Game** | |
+| `place-first` | ***Double-tap** a cell to drop an ant there.* | bấm đúp ô xanh lá |
+| `rule-colour` | *Every **colour** holds exactly one ant.* + nút **Got it** | đọc |
+| `exclude-lines` | *No two ants may share a **row or column**.*<br />*Tap the empty cells to rule them out.* | ✕ 6 ô |
+| `place-second` | ***Pink** is down to a single cell* + ***Double-tap** to drop the ant* | bấm đúp |
+| `exclude-touching` | *Ants must not **touch** — corners count too.*<br />***Drag** across these cells to rule them out.* | **vuốt 2 ô** |
+| `place-third` | ***Orange** is down to a single cell* + ***Double-tap** to drop the ant* | bấm đúp |
+| `exclude-touching-2` | *Same rule again — no touching, corners included.*<br />***Drag** across them once more.* | **vuốt 3 ô** |
+| `find-last` | *Where does the **last ant** go?* + *Stuck? Tap here for a nudge.* | tự giải 2 ô cuối |
+| `done` | *That's all three rules. Off you go.* + **Start playing** | |
 
-Cơ chế chỉ chỗ cũng lấy đúng của họ: **phủ tối cả màn hình**, chỉ chừa lại thẻ hướng dẫn và mấy ô đang được nói tới; ô cần bấm đúp có thêm vòng trắng đập chậm. Trong lúc hướng dẫn, chip đếm mèo và ba thẻ nhắc luật bị giấu đi — bản gốc cũng vậy. Xong mỗi bước, lớp phủ tắt một nhịp cho cả bàn sáng lên rồi mới sang bước sau.
+Lượt vuốt đầu là một nét thẳng ngang hàng cuối, **băng qua chính con kiến vừa đặt** — kéo ngang qua ô có kiến không sinh chuyện gì vì `onPointerMove` chỉ đánh dấu ô còn trống. Lượt thứ hai là một nét chữ L quanh con thứ ba.
+
+Cơ chế chỉ chỗ lấy đúng của họ: **phủ tối cả màn hình**, chỉ chừa lại thẻ hướng dẫn và mấy ô đang được nói tới; ô cần bấm đúp có thêm vòng trắng đập chậm. Trong lúc hướng dẫn, chip đếm kiến và ba thẻ nhắc luật bị giấu đi. Xong mỗi bước, lớp phủ tắt một nhịp cho cả bàn sáng lên rồi mới sang bước sau.
 
 Mỗi bước khoá mọi ô ngoài yêu cầu, và khoá cả thao tác sai kiểu: bấm đúp vào ô đang cần ✕ thì không ăn.
 
-Toạ độ không ghi cứng — [`src/tutorial.js`](src/tutorial.js) suy các ô cần bấm ra từ luật (hàng+cột của con mèo đầu, rồi các ô kề con mèo thứ hai). [`tools/flow_test.mjs`](tools/flow_test.mjs) đối chiếu kết quả đó với đúng những ô video bắt bấm.
+Không toạ độ nào ghi cứng: `planTutorial()` trong [`src/tutorial.js`](src/tutorial.js) suy ra **cả trình tự lẫn từng ô** từ chính luật chơi — con đầu là con nằm trong vùng một ô, rồi cứ vùng nào bị ép còn một ô thì tới lượt nó. Đổi bàn cờ là hướng dẫn tự khớp theo. [`tools/flow_test.mjs`](tools/flow_test.mjs) kiểm lại rằng bàn đang dùng thật sự dạy đủ nhịp đó, và rằng con thứ hai phải *suy ra được* (vùng nhiều hơn một ô) chứ không phải quà tặng.
 
 Một chỗ cố ý khác bản gốc: nút quay lại vẫn hiện trong lúc hướng dẫn, vì ở đây người chơi có thể mở hướng dẫn lại từ trang chủ và cần đường ra.
 
@@ -145,7 +148,7 @@ Câu giải thích của bộ giải có nhắc hàng/cột/màu thì viết s�
 | `src/strings.js` | Bảng chữ: nạp ngôn ngữ, đổi ngôn ngữ, đổ chữ vào HTML |
 | `src/progression.js` | Bộ máy chọn màn (chép luật Meowdoku) và lưu tiến trình |
 | `src/sound.js` | Âm thanh tổng hợp bằng Web Audio (gõ ✕, đặt kiến, đặt sai), không có file |
-| `src/tutorial.js` | 8 bước hướng dẫn, tính ô cần bấm từ luật |
+| `src/tutorial.js` | 9 bước hướng dẫn, tự suy trình tự và ô cần bấm từ luật |
 | `src/game.js` | Vòng chơi chính |
 | `src/lab.js` | Trang phân tích |
 | `tools/extract_levels.py` | Giải mã level bank từ `.xapk` và đóng gói cho web |
@@ -158,6 +161,7 @@ Câu giải thích của bộ giải có nhắc hàng/cột/màu thì viết s�
 | `tools/build_pools.mjs` | Dựng kho bàn `data/pools.json` |
 | `tools/build_specials.mjs` | Dựng màn đặc biệt vẽ hình `data/specials.json` |
 | `tools/pick_opening.mjs` | Chọn hai màn mở đầu |
+| `tools/pick_tutorial.mjs` | Chọn bàn hướng dẫn (hai lượt tập vuốt) |
 | `tools/build_single.mjs` | Gói game thành một file HTML, chỉ mang dữ liệu tự sinh |
 | `tools/dump_gdc.mjs` | Giải mã GDScript biên dịch (`.gdc`, Godot 4.5) ra mã giả |
 | `data/` | 30 bank, 28.755 puzzle (4,1 MB) |

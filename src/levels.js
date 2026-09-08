@@ -22,14 +22,23 @@ export const PALETTE = [
 
 export const colourName = (region) => PALETTE[region % PALETTE.length].name;
 
-// Bàn tutorial: xanh(0) · cam(1) · xanh lá(2) · hồng đậm(3)
+/**
+ * Bàn hướng dẫn — do tools/pick_tutorial.mjs chọn từ bộ sinh của mình, khác
+ * hẳn bàn của Meowdoku (kể cả sau tám phép xoay/lật) nhưng dạy đúng ngần ấy
+ * thứ và cũng chỉ cần kỹ thuật cấp 1.
+ *
+ * Đúng một vùng một ô — xanh lá(2) ở (2,3) — nên nước mở màn không thể nhầm.
+ * Cam(1) là dải dọc 3 ô, hồng đậm(3) là đôi ô dọc, xanh(0) là nền 10 ô.
+ * Nhịp dạy: đặt con đầu → nhấn 6 ô hàng+cột → hồng đậm còn một ô → vuốt 2 ô
+ * dọc hàng cuối → cam còn một ô → vuốt 3 ô nữa → tự tìm con cuối trong 2 ô.
+ */
 export const TUTORIAL = {
   size: 4,
   record: {
-    m: "1102" +
-       "1112" +
-       "1112" +
-       "1332",
+    m: "0000" +
+       "1000" +
+       "1302" +
+       "1300",
     s: [2, 0, 3, 1],
     r: 1, st: 4, rk: [4, 0, 0, 0, 0], ch: 0,
   },

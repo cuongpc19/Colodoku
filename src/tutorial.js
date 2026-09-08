@@ -1,17 +1,19 @@
-// Hướng dẫn cho người mới — dựng lại đúng từng bước tutorial của Meowdoku
-// 1.15.0, đối chiếu khung hình trong bản ghi màn hình:
+// Hướng dẫn cho người mới. Nhịp dạy học theo Meowdoku, nhưng bàn cờ là của
+// mình (tools/pick_tutorial.mjs chọn) và có **hai** lượt tập vuốt thay vì một:
 //
-//   1. Đặt con mèo đầu tiên vào ô xanh lá (ô duy nhất của vùng đó)
-//   2. Thẻ "Well done! Only one cat per color." + nút Got it!
-//   3. Tự đánh ✕ cả hàng và cột của con mèo đó
-//   4. Vùng hồng đậm chỉ còn một ô — đặt mèo thứ hai
-//   5. Vuốt để đánh ✕ ba ô kề con mèo vừa đặt
-//   6. Vùng xanh chỉ còn một ô — đặt mèo thứ ba
-//   7. Tự tìm con mèo cuối
-//   8. "Excellent! You've mastered the rules!"
+//   1. Đặt con kiến đầu vào vùng chỉ có một ô
+//   2. Thẻ "Mỗi màu đúng một con" + nút Hiểu rồi
+//   3. Nhấn từng ô để gạch cả hàng và cột của con đó
+//   4. Một vùng giờ chỉ còn một ô — đặt con thứ hai
+//   5. Vuốt để gạch các ô kề con thứ hai      ← tập vuốt lần 1
+//   6. Vùng khác chỉ còn một ô — đặt con thứ ba
+//   7. Vuốt để gạch các ô kề con thứ ba       ← tập vuốt lần 2
+//   8. Tự tìm con cuối
+//   9. "Đủ ba luật rồi"
 //
-// Bàn cờ nằm ở levels.js. Các ô cần thao tác được suy ra từ luật chứ không ghi
-// cứng toạ độ — chúng trùng khớp với video, và flow_test.mjs kiểm lại điều đó.
+// Không toạ độ nào bị ghi cứng: planTutorial() suy ra cả trình tự lẫn từng ô
+// từ chính luật chơi, nên đổi bàn cờ là hướng dẫn tự khớp theo. flow_test.mjs
+// kiểm lại rằng bàn đang dùng thật sự dạy đủ và đúng nhịp đó.
 
 import { CAT, MARK, Puzzle } from "./puzzle.js";
 import { TUTORIAL, PALETTE } from "./levels.js";
@@ -31,7 +33,7 @@ const cellsWhere = (puzzle, test) => {
 
 const regionOf = (puzzle, [r, c]) => cellsWhere(puzzle, (i, j) => puzzle.regions[i][j] === puzzle.regionAt(r, c));
 
-const catAt = (puzzle, row) => [row, puzzle.solution[row]];
+const key = ([r, c]) => `${r},${c}`;
 
 /**
  * Tên màu vùng, tô đúng màu đó — Meowdoku cũng gắn [color] vào tên màu.
@@ -47,14 +49,12 @@ const colourTag = (region) => {
 const linesOf = (puzzle, [r, c]) =>
   cellsWhere(puzzle, (i, j) => (i === r || j === c) && !(i === r && j === c));
 
-/** Ô chạm cạnh hoặc góc một con mèo, bỏ những ô đã bị các bước trước loại rồi. */
-const touching = (puzzle, [r, c], done) => {
-  const seen = new Set(done.map(([i, j]) => `${i},${j}`));
-  return cellsWhere(
+/** Ô chạm cạnh hoặc góc một con kiến, bỏ những ô các bước trước đã xử lý rồi. */
+const touching = (puzzle, [r, c], used) =>
+  cellsWhere(
     puzzle,
-    (i, j) => Math.abs(i - r) <= 1 && Math.abs(j - c) <= 1 && !(i === r && j === c) && !seen.has(`${i},${j}`),
+    (i, j) => Math.abs(i - r) <= 1 && Math.abs(j - c) <= 1 && !(i === r && j === c) && !used.has(`${i},${j}`),
   );
-};
 
 /**
  * Xếp dãy ô thành một đường vuốt liền: bắt đầu từ ô thấp nhất (trái nhất nếu
@@ -73,7 +73,53 @@ function swipePath(cells) {
 }
 
 /**
- * Kịch bản 8 bước. Mỗi bước có thể:
+ * Suy ra kịch bản dạy từ chính bàn cờ, không ghi cứng toạ độ nào:
+ *
+ *   1. `first`  — con kiến nằm trong vùng chỉ có một ô (nhìn là hiểu vì sao)
+ *   2. `lines`  — cả hàng và cột của nó, dạy nhấn từng ô
+ *   3. `second` — vùng nào nhờ đó mà chỉ còn đúng một ô trống
+ *   4. `swipeOne` — các ô kề con thứ hai, dạy vuốt lần đầu
+ *   5. `third`  — lại một vùng chỉ còn một ô
+ *   6. `swipeTwo` — các ô kề con thứ ba, tập vuốt lần hai
+ *   7. `last`   — con còn lại, để người chơi tự tìm
+ *
+ * Trả về null nếu bàn cờ không dạy được theo nhịp này; tools/pick_tutorial.mjs
+ * dùng đúng hàm này để lọc, nên bàn đã chọn thì chắc chắn chạy được.
+ */
+export function planTutorial(puzzle) {
+  const ants = puzzle.solution.map((c, r) => [r, c]);
+  const used = new Set(); // ô đã đặt kiến hoặc đã gạch
+  const take = (cells) => {
+    for (const cell of cells) used.add(key(cell));
+    return cells;
+  };
+  const open = (cell) => regionOf(puzzle, cell).filter((c2) => !used.has(key(c2)));
+  /** Con kiến kế tiếp mà người chơi suy ra được: vùng của nó chỉ còn một ô. */
+  const forced = () => ants.find((cell) => !used.has(key(cell)) && open(cell).length === 1);
+
+  const first = ants.find((cell) => regionOf(puzzle, cell).length === 1);
+  if (!first) return null;
+  take([first]);
+
+  const lines = take(linesOf(puzzle, first).filter((cell) => !used.has(key(cell))));
+
+  const second = forced();
+  if (!second) return null;
+  take([second]);
+  const swipeOne = take(swipePath(touching(puzzle, second, used)));
+
+  const third = forced();
+  if (!third) return null;
+  take([third]);
+  const swipeTwo = take(swipePath(touching(puzzle, third, used)));
+
+  const last = ants.find((cell) => !used.has(key(cell)));
+  if (!last) return null;
+  return { first, second, third, last, lines, swipeOne, swipeTwo };
+}
+
+/**
+ * Kịch bản 9 bước. Mỗi bước có thể:
  *   focus  — chỉ những ô này sáng, phần còn lại của bàn bị làm tối
  *   ring   — ô được khoanh vòng, nơi cần bấm hai lần
  *   needs  — điều kiện hoàn thành: các ô phải mang giá trị này
@@ -84,12 +130,9 @@ export function buildSteps(puzzle) {
   // Đọc `T.tut` ngay tại đây chứ không giữ sẵn ở đầu file: đổi ngôn ngữ là ruột
   // của `T` bị thay mới, giữ sẵn thì câu chữ sẽ đứng nguyên ở thứ tiếng cũ.
   const { tut } = T;
-  const first = catAt(puzzle, 0); // ô xanh lá — vùng chỉ có một ô nên chắc chắn đúng
-  const second = catAt(puzzle, 3); // vùng hồng đậm
-  const third = catAt(puzzle, 1); // vùng xanh
-
-  const lines = linesOf(puzzle, first);
-  const neighbours = swipePath(touching(puzzle, second, lines));
+  const plan = planTutorial(puzzle);
+  if (!plan) throw new Error("bàn hướng dẫn không dạy được theo nhịp 9 bước");
+  const { first, second, third, lines, swipeOne, swipeTwo } = plan;
 
   return [
     {
@@ -130,8 +173,8 @@ export function buildSteps(puzzle) {
       bottom: tut.swipeToExclude,
       rule: "touch",
       gesture: "swipe",
-      focus: neighbours,
-      needs: { cells: neighbours, value: MARK },
+      focus: swipeOne,
+      needs: { cells: swipeOne, value: MARK },
     },
     {
       id: "place-third",
@@ -140,6 +183,17 @@ export function buildSteps(puzzle) {
       focus: regionOf(puzzle, third),
       ring: third,
       needs: { cells: [third], value: CAT },
+    },
+    // Lượt vuốt thứ hai: cùng luật, nhưng giờ người chơi tự làm chứ không được
+    // nhắc lại từ đầu — một lần nữa để quen tay.
+    {
+      id: "exclude-touching-2",
+      top: tut.adjacentAgain,
+      bottom: tut.swipeAgain,
+      rule: "touch",
+      gesture: "swipe",
+      focus: swipeTwo,
+      needs: { cells: swipeTwo, value: MARK },
     },
     {
       id: "find-last",

@@ -115,5 +115,12 @@
   "wipeLosing": "You will lose: {0} levels cleared · {1} coins · {2}-day streak",
   "wipeYes": "Delete everything",
   "thisColour": "this colour",
-  "sound": "Sound"
+  "sound": "Sound",
+  "combo": [
+    "Nice!",
+    "Great!",
+    "Amazing!",
+    "Awesome!",
+    "Perfect!"
+  ]
 }

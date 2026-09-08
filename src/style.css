@@ -299,6 +299,47 @@ main {
 .cell.pop { z-index: 2; }
 .cell.pop::after { animation: antpop 0.36s ease-out; }
 
+/* Vừa đặt xong: kiến vui một lát (lắc nhẹ) rồi về mặt thường. */
+.cell.happy::after {
+  background-image: var(--ant-happy);
+  animation: antpop 0.36s ease-out, antwiggle 0.9s ease-in-out;
+}
+
+@keyframes antwiggle {
+  20% { transform: rotate(-8deg); }
+  45% { transform: rotate(8deg); }
+  70% { transform: rotate(-5deg); }
+  100% { transform: rotate(0); }
+}
+
+/* Chữ khen bay lên từ ô vừa đặt, đậm dần theo bậc chuỗi. */
+.combo {
+  position: absolute;
+  z-index: 6;
+  transform: translate(-50%, -60%);
+  font-weight: 900;
+  font-size: clamp(18px, calc(var(--board) * 0.07), 30px);
+  letter-spacing: 0.02em;
+  color: #fff;
+  -webkit-text-stroke: 1.5px rgba(70, 40, 20, 0.85);
+  text-shadow: 0 2px 0 rgba(70, 40, 20, 0.35), 0 0 14px rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+  white-space: nowrap;
+  animation: combofloat 0.95s ease-out forwards;
+}
+.combo.tier-0 { color: #ffe27a; }
+.combo.tier-1 { color: #9be86b; }
+.combo.tier-2 { color: #7fd4ff; }
+.combo.tier-3 { color: #ff9ad0; }
+.combo.tier-4 { color: #ffb347; font-size: clamp(20px, calc(var(--board) * 0.085), 36px); }
+
+@keyframes combofloat {
+  0% { opacity: 0; transform: translate(-50%, -30%) scale(0.5); }
+  18% { opacity: 1; transform: translate(-50%, -70%) scale(1.15); }
+  35% { transform: translate(-50%, -80%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -150%) scale(1); }
+}
+
 @keyframes antpop {
   0% { transform: scale(0.9); }
   35% { transform: scale(1.34); }

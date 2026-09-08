@@ -10,6 +10,9 @@ import { EMPTY, MARK, CAT } from "./puzzle.js";
 // người chơi chỉ thấy ✕ loé lên rồi thành kiến — đúng như bản gốc.
 const DOUBLE_TAP_MS = 260;
 
+// Kiến vui bao lâu rồi về mặt thường.
+const HAPPY_MS = 900;
+
 export class BoardView {
   constructor(container, options = {}) {
     this.el = container;
@@ -228,15 +231,18 @@ export class BoardView {
     this.pop(r, c);
   }
 
-  /** Nhịp bung của con kiến vừa đặt. Gỡ class trước rồi ép reflow, nếu không
-   *  đặt hai con liên tiếp thì con sau không chạy lại animation. */
+  /** Nhịp bung của con kiến vừa đặt, kèm ảnh kiến vui một lát rồi về ảnh
+   *  thường. Gỡ class trước rồi ép reflow, nếu không đặt hai con liên tiếp thì
+   *  con sau không chạy lại animation. */
   pop(r, c) {
     const node = this.cells[r]?.[c];
     if (!node || this.board.get(r, c) !== CAT) return;
-    node.classList.remove("pop");
+    node.classList.remove("pop", "happy");
     void node.offsetWidth;
-    node.classList.add("pop");
+    node.classList.add("pop", "happy");
     node.addEventListener("animationend", () => node.classList.remove("pop"), { once: true });
+    clearTimeout(node.happyTimer);
+    node.happyTimer = setTimeout(() => node.classList.remove("happy"), HAPPY_MS);
   }
 
   /** Ghi một ô là đặt sai: ✕ đỏ, khoá lại, không hoàn tác được. */
@@ -255,7 +261,8 @@ export class BoardView {
   commit(changes) {
     if (this.board.apply(changes)) {
       this.render();
-      if (changes.some(([, , v]) => v === CAT)) this.onPlace();
+      const cat = changes.find(([, , v]) => v === CAT);
+      if (cat) this.onPlace(cat[0], cat[1]);
       else this.onMark();
       this.onChange();
     }

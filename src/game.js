@@ -87,7 +87,7 @@ const view = new BoardView($("board"), {
   // Meowdoku bắt lỗi ngay lúc đặt chứ không để người chơi ôm một thế cờ sai.
   validate: (r, c) => Boolean(state.tutorial) || state.puzzle.solution[r] === c,
   onReject: (r, c) => onWrongPlacement(r, c),
-  onPlace: () => sound.pop(),
+  onPlace: (r, c) => { state.lastPlaced = [r, c]; sound.pop(); },
   onMark: () => sound.tick(),
 });
 
@@ -259,10 +259,36 @@ function onBoardChange() {
   if (placed > state.scored) {
     state.score += SCORE_BASE + SCORE_STEP * state.chain;
     state.chain++;
+    if (state.chain >= 2) praise(state.chain - 1);
   }
   state.scored = placed;
   refreshHud();
   if (state.board.isSolved()) finishLevel();
+}
+
+/**
+ * Chữ khen bay lên từ ô vừa đặt: chuỗi 2 con là "Nice!", dài hơn thì lời khen
+ * mạnh dần tới "Perfect!", kèm hợp âm càng dài càng cao. Bậc = số con đúng
+ * liên tiếp trước con này.
+ */
+function praise(tier) {
+  const words = T.combo;
+  const index = Math.min(tier - 1, words.length - 1);
+  const [r, c] = state.lastPlaced || [0, 0];
+  const cell = view.cells[r]?.[c];
+  if (!cell) return;
+  const node = document.createElement("div");
+  node.className = `combo tier-${index}`;
+  node.textContent = words[index];
+  const board = view.el.getBoundingClientRect();
+  const box = cell.getBoundingClientRect();
+  // Kẹp vào trong bàn để chữ ở cột biên không văng ra ngoài màn hình.
+  const margin = Math.min(70, board.width * 0.18);
+  node.style.left = `${Math.max(margin, Math.min(board.width - margin, box.left - board.left + box.width / 2))}px`;
+  node.style.top = `${box.top - board.top}px`;
+  view.el.appendChild(node);
+  node.addEventListener("animationend", () => node.remove(), { once: true });
+  sound.combo(index);
 }
 
 /** Đặt sai chỗ: ✕ đỏ vĩnh viễn trên ô đó, mất một mạng, chuỗi điểm về 0. */

@@ -115,5 +115,12 @@
   "wipeLosing": "Bạn sẽ mất: {0} màn đã qua · {1} xu · chuỗi {2} ngày",
   "wipeYes": "Xoá tất cả",
   "thisColour": "này",
-  "sound": "Âm thanh"
+  "sound": "Âm thanh",
+  "combo": [
+    "Tốt!",
+    "Hay lắm!",
+    "Tuyệt vời!",
+    "Xuất sắc!",
+    "Hoàn hảo!"
+  ]
 }

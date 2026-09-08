@@ -89,4 +89,12 @@ export const sound = {
     if (!enabled) return;
     tone({ type: "sawtooth", from: 170, to: 120, duration: 0.2, gain: 0.12 });
   },
+  /** Chuỗi đặt đúng: rải hợp âm đi lên, bậc càng cao càng nhiều nốt. */
+  combo(tier) {
+    if (!enabled) return;
+    const notes = [523, 659, 784, 1047, 1319, 1568]; // C5 E5 G5 C6 E6 G6
+    const count = Math.min(notes.length, tier + 1);
+    for (let i = 0; i < count; i++)
+      tone({ type: "triangle", from: notes[i], duration: 0.16, gain: 0.14, at: i * 0.055 });
+  },
 };

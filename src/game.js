@@ -633,11 +633,16 @@ ui.replay.addEventListener("click", () => {
 // mức cả trang: hai cú chạm liên tiếp vừa nhanh vừa gần nhau thì huỷ hành vi
 // mặc định của cú thứ hai.
 //
-// Bắt buộc phải xét **khoảng cách**, không chỉ thời gian: chạm nhanh vào hai
-// nút khác nhau là thao tác hợp lệ, huỷ mất thì nút thứ hai coi như hỏng.
-// Bàn cờ không ảnh hưởng — nó chạy bằng pointerdown, không cần click.
-const TAP_GUARD_MS = 400;
-const TAP_GUARD_PX = 48;
+// Ngoài bàn cờ thì phải xét **khoảng cách**, không chỉ thời gian: chạm nhanh
+// vào hai nút khác nhau là thao tác hợp lệ, huỷ mất thì nút thứ hai coi như
+// hỏng. Hai nút gần nhau nhất trên màn hình cách nhau ~150px nên 90px vẫn an
+// toàn; ngưỡng cũ 48px hụt hẳn so với một cú bấm đúp lệch tay trên ô cỡ lớn.
+//
+// Trong bàn cờ thì bỏ hẳn phép đo khoảng cách: ở đó bấm đúp là thao tác đặt
+// kiến, chạy bằng pointerdown chứ không cần click, nên huỷ mặc định bao nhiêu
+// cũng không mất gì.
+const TAP_GUARD_MS = 500;
+const TAP_GUARD_PX = 90;
 let lastTapAt = 0;
 let lastTapX = 0;
 let lastTapY = 0;
@@ -649,7 +654,8 @@ document.addEventListener(
     if (!touch) return;
     const now = performance.now();
     const near = Math.hypot(touch.clientX - lastTapX, touch.clientY - lastTapY) < TAP_GUARD_PX;
-    if (near && now - lastTapAt < TAP_GUARD_MS) event.preventDefault();
+    const onBoard = event.target instanceof Element && event.target.closest("#board");
+    if ((onBoard || near) && now - lastTapAt < TAP_GUARD_MS) event.preventDefault();
     lastTapAt = now;
     lastTapX = touch.clientX;
     lastTapY = touch.clientY;

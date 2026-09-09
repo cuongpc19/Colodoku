@@ -41,6 +41,11 @@ html {
 
 body {
   margin: 0;
+  /* Lặp lại `touch-action` ở body chứ không chỉ để trên html: iOS Safari có
+     lúc bỏ qua thuộc tính này khi nó nằm trên phần tử gốc. Bàn cờ đã tự chặn
+     bằng `touch-action: none`, dòng này lo phần còn lại của trang — HUD, thẻ
+     luật, nút trợ giúp, hộp thoại, và cả khoảng trống. */
+  touch-action: manipulation;
   font: 15px/1.5 "Segoe UI", system-ui, -apple-system, sans-serif;
   color: var(--ink);
   background: var(--paper);

@@ -46,6 +46,8 @@ Bàn trong kho **hoàn toàn tự sinh** ([`tools/generate_levels.mjs`](tools/ge
 
 Hai màn đầu chọn tay bằng [`tools/pick_opening.mjs`](tools/pick_opening.mjs): mỗi màn 1–2 màu chỉ có một ô, nền to, giải trọn bằng cấp 1, và sau con tặng sẵn luôn còn một "màu một ô" để bắt đầu.
 
+Thử nhanh một màn bất kỳ khi chạy ở máy mình: `index.html?level=12`. Đường tắt này không nhảy cóc suông mà chạy thật `onLevelWon` cho từng màn trước đó, dựng lại đúng trạng thái của người thắng sạch liên tiếp — chiến lược, con trỏ kho bàn và ví tiền đều khớp như chơi tay, nên bàn hiện ra đúng là bàn người chơi thật sẽ gặp. Chỉ mở khi `location.hostname` là localhost; bản phát hành không có.
+
 Sao mỗi màn: 3 sao nếu không dùng gợi ý, 2 sao nếu dùng 1–2 lần, 1 sao nếu nhiều hơn. Tiến trình (kể cả chiến lược và con trỏ kho) lưu ở `localStorage`.
 
 Game không đánh ✕ hộ ở màn nào — Meowdoku bắt tự loại ô ngay từ màn 1, vì đó là thao tác chính của trò này.

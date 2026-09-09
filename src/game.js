@@ -751,5 +751,27 @@ $("btn-play").addEventListener("click", () => {
 });
 $("btn-tutorial").addEventListener("click", startTutorial);
 
+/**
+ * Đường tắt để thử một màn bất kỳ: mở `index.html?level=12`.
+ *
+ * Không nhảy cóc suông mà **dựng lại đúng trạng thái** của người đã thắng sạch
+ * liên tiếp tới trước màn đó — chạy thật `onLevelWon` từng màn một, nên chiến
+ * lược, con trỏ kho bàn và ví tiền đều khớp y như chơi tay. Có thế mới thử
+ * đúng cái bàn mà người chơi thật sẽ gặp.
+ *
+ * Chỉ mở khi trang chạy từ máy mình; bản phát hành không có đường tắt này.
+ */
+function devJump() {
+  if (!["localhost", "127.0.0.1", "[::1]"].includes(location.hostname)) return;
+  const wanted = Number(new URLSearchParams(location.search).get("level"));
+  if (!Number.isInteger(wanted) || wanted < 1) return;
+
+  let progress = { ...clearProgress(), tutorialDone: true };
+  for (let n = 1; n < wanted; n++) progress = onLevelWon(markCleared(progress, n, 3), n);
+  state.progress = addCoins(progress, COIN_REWARD * wanted);
+  startLevel(wanted);
+}
+
 applyStatic();
 show("home");
+devJump();

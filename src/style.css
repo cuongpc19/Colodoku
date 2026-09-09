@@ -1112,6 +1112,9 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
 
 /* --- khoảnh khắc cả đàn kiến cảm ơn --- */
 .badge-master {
+  /* Hộp thoại xếp dọc và kéo giãn con, nên viên thuốc phải tự co về đúng bề
+     rộng chữ — không thì nó thành một thanh cam vắt ngang cả hộp. */
+  align-self: center;
   margin: 0;
   padding: 3px 14px;
   font-size: 12px;

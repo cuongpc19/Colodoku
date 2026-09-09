@@ -366,14 +366,24 @@ function shout(text, variant) {
       lấy trung vị sáu nước gần nhất — trung vị để một lần bí ba phút không kéo
       lệch cả cái thước, sáu nước gần nhất để thước bám theo màn khó dần.
 
-   Cửa 2 nới tay hơn hồi chưa có cửa 1 (1,5 lần thay vì 2,2; 8 giây thay vì 12):
-   khi bộ giải đã xác nhận nước này khó thật, đồng hồ chỉ còn việc loại mấy lần
-   ăn may. */
-const HARD_FLOOR_MS = 8_000;   // dưới ngần này thì chưa gọi là săn, dù nhịp có nhanh tới đâu
+   Hai cửa này ĐÁNH ĐỔI cho nhau chứ không phải hai chốt cứng. Một nước chỉ hơi
+   khó — thấp hơn trần của bàn một bậc — nhưng người chơi phải soi hẳn nửa phút
+   mới ra thì với họ nó cũng là một ngách, và đáng được khen y như vậy. Nên
+   thiếu bao nhiêu bậc thì cửa đồng hồ đòi cao lên bấy nhiêu.
+
+   Sàn tuyệt đối là bậc 2: bậc 1 nghĩa là "ô cuối cùng còn khả dĩ của một hàng /
+   cột / vùng" — nhìn phát thấy. Ngồi lâu trên một ô như thế không phải là suy
+   luận, chỉ là đang mải chỗ khác. */
 const HARD_CEIL_MS = 240_000;  // quá ngần này là đứng dậy đi làm việc khác, không phải nghĩ
-const HARD_RATIO = 1.5;        // chậm gấp ngần này so với nhịp thường của chính họ
 const HARD_WINDOW = 6;         // chỉ so với 6 nước gần nhất, để thước bám theo màn khó dần
 const HARD_COOLDOWN = 1;       // hai nước liền nhau cùng bí thì chỉ khen nước đầu
+
+/** Thiếu mấy bậc so với trần của bàn → phải bù lại bằng bấy nhiêu công sức. */
+const HARD_TRADE = [
+  { ratio: 1.5, floor: 8_000 },  // đúng tầm trần của bàn: chỉ cần không phải ăn may
+  { ratio: 2.2, floor: 15_000 }, // thấp hơn trần một bậc: phải thật sự dừng lại nghĩ
+  { ratio: 3.0, floor: 25_000 }, // thấp hơn hai bậc trở lên: phải soi rất lâu mới tính
+];
 const SPARK_PIECES = 18;
 const EUREKA_HAPPY_MS = 2200; // kiến giữ mặt vui lâu hơn hẳn 900ms thường lệ
 
@@ -411,17 +421,19 @@ function brokeThrough(rank) {
   if (!recent.length) return false; // nước đầu màn phần lớn là thời gian đọc bàn
   if (since < HARD_COOLDOWN) return false;
 
-  // Cửa 1: phải là ngách khó của chính bàn này. `placementRank` dừng ở bậc 3
-  // cho kịp nhịp chơi, nên bàn bậc 4-5 cũng chỉ đòi tới mức đó.
-  if (state.rating < 2) return false;
-  if (rank < Math.min(state.rating, EASY_RANKS + 1)) return false;
+  // Cửa 1 dựng mốc, cửa 2 gánh phần còn thiếu. `placementRank` dừng ở bậc 3 cho
+  // kịp nhịp chơi, nên bàn bậc 4-5 cũng chỉ đòi tới mức đó.
+  if (rank < 2) return false;
+  const bar = Math.min(state.rating, EASY_RANKS + 1);
+  const short = Math.min(Math.max(bar - rank, 0), HARD_TRADE.length - 1);
+  const { ratio, floor } = HARD_TRADE[short];
 
   // Cửa 2: phải thật sự có ngồi săn. Chưa đủ ba mẫu thì lấy quãng dài nhất làm
   // mốc chứ không lấy trung vị — với một hai mẫu, trung vị dễ khiến người chơi
   // vốn thong thả bị khen oan ngay nước thứ hai.
-  if (gap < HARD_FLOOR_MS || gap > HARD_CEIL_MS) return false;
+  if (gap < floor || gap > HARD_CEIL_MS) return false;
   const usual = recent.length >= 3 ? median(recent) : Math.max(...recent);
-  const hard = gap >= usual * HARD_RATIO;
+  const hard = gap >= usual * ratio;
   if (hard) state.sinceHard = 0;
   return hard;
 }
@@ -731,7 +743,10 @@ function finishLevel() {
   // mất cả chip lẫn kho — hai đầu của đường bay đều nằm dưới lớp phủ.
   flyCandy(earned).then(() => {
     state.progress = bankSpoils(state.progress, { ants, candy: earned });
-    refreshHud();
+    // Chỉ cập nhật con số trong kho, KHÔNG gọi refreshHud: nó vẽ lại chip theo
+    // state.candy nên ba viên vừa bay đi lại hiện về chỗ cũ. Mà state.candy thì
+    // phải giữ nguyên — nút "Next level" đọc nó để biết vừa thắng hay vừa thua.
+    ui.bank.textContent = state.progress.candy || 0;
     showWin(earned);
   });
 }

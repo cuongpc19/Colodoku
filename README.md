@@ -80,10 +80,13 @@ Một chỗ cố ý khác bản gốc: nút quay lại vẫn hiện trong lúc h
 
 ## Màn chơi
 
-Bố cục chép theo ảnh chụp bản gốc: **Level** và **Score** hai bên thanh trên, bánh răng bên phải, dưới đó là chip đếm con vật và chip mạng, rồi ba thẻ nhắc luật, bàn cờ, và hai nút trợ giúp tròn.
+Bố cục chép theo ảnh chụp bản gốc: **Level** và **Score** hai bên thanh trên, bánh răng bên phải, dưới đó là chip đếm con vật và chip kẹo, rồi ba thẻ nhắc luật, bàn cờ, và hai nút trợ giúp tròn.
 
 - **Điểm** đọc ngược ra từ video: `576` cho con đầu, mỗi con đúng liên tiếp sau đó `+96`, đặt sai thì chuỗi về 0. Khớp đúng cả hai màn trong video — màn 1 `576 + 576 + 672 = 1824`, màn 2 `576 + 672 + 768 = 2016`.
-- **Mạng**: 3 lượt. Đặt sai chỗ thì ô đó mang ✕ đỏ vĩnh viễn và mất một mạng, đúng như bản gốc — họ bắt lỗi ngay lúc đặt chứ không để người chơi ôm một thế cờ sai.
+- **Kẹo**: mỗi màn 3 viên, đứng đúng chỗ Meowdoku để 3 cái mạng. Đặt sai chỗ thì ô đó mang ✕ đỏ vĩnh viễn và một viên kẹo bị ăn mất; hết kẹo là thua màn. Bản gốc cũng bắt lỗi ngay lúc đặt chứ không để người chơi ôm một thế cờ sai.
+
+  Chỗ khác họ: kẹo **còn dư thì mang về được**. Thắng màn xong, mấy viên chưa mất bay từ chip lên kho kẹo trên thanh HUD, con số nhích lên đúng lúc từng viên chạm đích. Nhờ vậy chơi cẩn thận có thưởng thật, chứ không chỉ là "đừng thua" — thua thì không mang về viên nào, vì đã ăn hết cả ba.
+- **Ăn mừng** đổi theo việc vừa làm được, không phải một câu lặp mãi: giữ trọn ba viên kẹo mà không xin gợi ý thì *Flawless!*, đang thắng liền từ ba ván thì đếm luôn chuỗi, còn lại bốc một trong sáu câu. Ở **màn 5, màn 10 và mọi màn khó** thì cả đàn kiến cúi chào, có huy hiệu **MASTER**, kèn hiệu, pháo giấy gấp đôi, và một câu cảm ơn đếm đủ số kiến lẫn số kẹo đã gom từ đầu game.
 - **Hai nút trợ giúp**, mỗi nút 5 lượt mỗi màn. Nút con vật đặt hộ một con đúng chỗ; nút bóng đèn đưa ra gợi ý.
 - **Gợi ý** trình bày y như họ: phủ tối màn hình, sáng những ô liên quan và vẽ sẵn ✕ mờ lên chúng để thấy trước kết quả, kèm nút **Apply** to ở dưới. Câu đầu tiên cũng là câu của họ — *"This ant's row, column and neighbors can't have other ants — exclude them"*; hết chỗ loại quanh các con đã đặt thì mới nhờ tới bộ giải.
 

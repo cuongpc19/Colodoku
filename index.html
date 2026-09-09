@@ -3,116 +3,82 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-    <title>Colodoku</title>
-    <meta name="description" content="Xếp kiến vào tổ: mỗi hàng, mỗi cột, mỗi vùng đúng một con. Càng lên cao càng phải suy." />
-    <meta name="theme-color" content="#f5f2ed" />
+    <title>Ant Guard</title>
+    <meta name="description" content="Đặt kiến gác: mỗi hàng, mỗi cột, mỗi buồng đúng một con. Kiến không đứng sát nhau. Gác đủ năm đêm là giữ được một buồng của tổ." />
+    <meta name="theme-color" content="#141826" />
     <link rel="icon" type="image/png" sizes="32x32" href="assets/logo-32.png" />
     <link rel="apple-touch-icon" href="assets/logo-180.png" />
     <link rel="manifest" href="manifest.webmanifest" />
     <!-- Chạy toàn màn hình khi thêm vào màn hình chính trên iOS. -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-title" content="Colodoku" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Ant Guard" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="mobile-web-app-capable" content="yes" />
     <!-- Ảnh xem trước khi dán link. Open Graph đòi địa chỉ tuyệt đối, không nhận
          đường dẫn tương đối. Tạm dùng logo vuông; ảnh 1200×630 riêng sẽ đẹp hơn. -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Colodoku" />
-    <meta property="og:description" content="Xếp kiến vào tổ: mỗi hàng, mỗi cột, mỗi vùng đúng một con." />
+    <meta property="og:title" content="Ant Guard" />
+    <meta property="og:description" content="Đặt kiến gác: mỗi hàng, mỗi cột, mỗi buồng đúng một con. Kiến không đứng sát nhau." />
     <meta property="og:image" content="https://cuongpc19.github.io/Colodoku/assets/logo-512.png" />
     <meta property="og:url" content="https://cuongpc19.github.io/Colodoku/" />
     <meta name="twitter:card" content="summary" />
     <link rel="stylesheet" href="src/style.css" />
   </head>
   <body class="app">
-    <!-- ------------------------------------------------------ trang chủ -->
+    <!-- ------------------------------------------------------ trang chủ
+         Mặt cắt tổ kiến: năm buồng của tầng đang đào, buồng nào gác đủ năm đêm
+         thì treo đèn. Chữ giữ ở mức tối thiểu — tên tầng, tên buồng, năm chấm. -->
     <section id="screen-home" class="screen home">
       <div class="home-top">
-        <div class="avatar"><i class="ant"></i></div>
-        <div class="chip coins"><i class="coin"></i><b id="home-coins">0</b></div>
-        <button class="icon gear" data-settings>&#9881;<i class="dot"></i></button>
-      </div>
-
-      <div class="home-cards">
-        <!-- Thẻ Daily Challenge mới chỉ có phần vỏ: chưa có chế độ chơi hằng ngày. -->
-        <div class="home-card locked">
-          <b data-i18n="dailyChallenge">Daily Challenge</b>
-          <span class="lock">&#128274;</span>
-          <small data-i18n="dailyLocked">Unlocks at Lv.21</small>
-        </div>
-        <div class="home-card streak">
-          <b data-i18n="streak">Streak</b>
-          <span class="tick" id="streak-tick" hidden>&#10003;</span>
-          <span class="token"><i class="ant"></i></span>
-          <em id="streak-count">0</em>
+        <div class="brand"><i class="ant"></i><span>Ant Guard</span></div>
+        <div class="home-pills">
+          <div class="pill-stat" data-i18n="candyBankTip" data-i18n-attr="title" title="Candy carried home">
+            <i class="candy tiny"></i><b id="home-bank">0</b>
+          </div>
+          <div class="pill-stat coins"><i class="coin"></i><b id="home-coins">0</b></div>
+          <button class="icon gear" data-settings>&#9881;<i class="dot"></i></button>
         </div>
       </div>
 
-      <h1 class="wordmark">COLO<span>DOKU</span></h1>
+      <div class="chapter">
+        <small id="home-kicker">Floor 1 · Chapter 1</small>
+        <b id="home-room">Nest gate</b>
+        <div class="dots" id="home-dots"></div>
+      </div>
 
-      <button id="btn-play" class="primary pill">Play</button>
+      <div id="nest" class="nest"></div>
 
+      <button id="btn-play" class="primary pill"><i class="ant"></i><span id="play-label">Play</span></button>
       <p class="home-links">
         <button id="btn-tutorial" class="linkish" data-i18n="howToPlay">How to play</button>
       </p>
-      <p class="progress-line"><span id="home-progress">&hellip;</span></p>
     </section>
 
-    <!-- ------------------------------------------------------ chọn màn -->
     <!-- ---------------------------------------------------------- chơi -->
     <section id="screen-play" class="screen play" hidden>
       <header class="bar">
         <button class="icon" data-goto="home" data-i18n="back" data-i18n-attr="aria-label">&larr;</button>
         <div class="hud">
-          <div><small id="play-kicker">Level</small><strong id="play-title">1</strong></div>
-          <div class="hud-streak">
-            <small data-i18n="bestStreak">Best streak</small><strong id="play-best">0</strong>
-          </div>
-          <div class="hud-candy" data-i18n="candyBankTip" data-i18n-attr="title" title="Candy carried home">
-            <small data-i18n="candy">Candy</small>
-            <strong><i class="candy tiny"></i><b id="play-bank">0</b></strong>
+          <div class="hud-level"><small id="play-kicker">Night</small><strong id="play-title">1</strong></div>
+          <div class="hud-pills">
+            <div class="pill-stat" data-i18n="candyBankTip" data-i18n-attr="title" title="Candy carried home">
+              <i class="candy tiny"></i><b id="play-bank">0</b>
+            </div>
+            <div class="pill-stat coins"><i class="coin"></i><b id="play-coins">0</b></div>
           </div>
         </div>
         <button class="icon gear" data-settings>&#9881;<i class="dot"></i></button>
       </header>
 
-      <!-- Chip đếm kiến và chip kẹo, đúng chỗ Meowdoku đặt chip mạng. -->
+      <!-- Hàng dưới thanh tiêu đề: ba viên kẹo mạng, chuỗi thắng, đếm kiến. -->
       <div class="chips" id="chips">
-        <div class="chip"><i class="ant"></i><b id="play-count">0/4</b></div>
         <div class="chip candies" id="play-candy" data-i18n="candyTip" data-i18n-attr="title" title="Candy left"></div>
-        <div class="chip coins"><i class="coin"></i><b id="play-coins">0</b></div>
-      </div>
-
-      <!-- Ba thẻ nhắc luật, luôn hiện để người chơi không phải nhớ. -->
-      <div class="rules" id="rules">
-        <div class="rule-card" data-rule="region">
-          <div class="mini">
-            <i class="on cat"></i><i class="on x"></i><i></i>
-            <i class="on x"></i><i class="on x"></i><i></i>
-            <i></i><i></i><i></i>
-          </div>
-          <span data-i18n="rules.region">1 Ant per color</span>
-        </div>
-        <div class="rule-card" data-rule="line">
-          <div class="mini">
-            <i></i><i class="x"></i><i></i>
-            <i class="x"></i><i class="cat"></i><i class="x"></i>
-            <i></i><i class="x"></i><i></i>
-          </div>
-          <span data-i18n="rules.line">1 Ant per column and row</span>
-        </div>
-        <div class="rule-card" data-rule="touch">
-          <div class="mini">
-            <i class="x"></i><i class="x"></i><i class="x"></i>
-            <i class="x"></i><i class="cat"></i><i class="x"></i>
-            <i class="x"></i><i class="x"></i><i class="x"></i>
-          </div>
-          <span data-i18n="rules.touch">Ants cannot touch</span>
-        </div>
+        <div class="chip"><small data-i18n="bestStreak">Best</small><b id="play-best">0</b></div>
+        <div class="chip"><b id="play-count">0/4</b><i class="ant"></i></div>
       </div>
 
       <!-- Thẻ hướng dẫn / thẻ gợi ý NỔI trên bàn cờ trong một ô chừa sẵn, nên dù
-           thẻ dài ngắn ra sao bàn cờ cũng không dịch — như bản gốc. -->
+           thẻ dài ngắn ra sao bàn cờ cũng không dịch. -->
       <div class="slot slot-top">
         <div id="coach-top" class="coach" hidden>
           <strong id="coach-title" hidden></strong>
@@ -120,7 +86,7 @@
         </div>
       </div>
 
-      <div id="board" class="board" role="grid" aria-label="Colodoku board"></div>
+      <div id="board" class="board" role="grid" aria-label="Ant Guard board"></div>
 
       <!-- Dưới bàn cờ: thẻ nhắc thao tác, hoặc nút Got it! / Apply — cùng một ô.
            Chữ trên nút do JS đặt theo vai đang dùng. -->
@@ -129,15 +95,19 @@
         <button id="btn-apply" class="primary pill apply" hidden>Apply</button>
       </div>
 
+      <!-- Một dòng nhắc luật, thay cho ba thẻ minh hoạ. Bài hướng dẫn đầy đủ mở
+           lại được từ Cài đặt → Cách chơi. -->
+      <p class="rules" id="rules" data-i18n="rulesLine">One ant per colour, row and column. Ants never touch.</p>
+
       <div id="play-status" class="status"></div>
 
-      <!-- Hai nút trợ giúp tròn ngay dưới bàn cờ. -->
+      <!-- Hai nút trợ giúp gộp trong một viên thuốc. -->
       <div id="boosters" class="boosters">
         <button id="btn-reveal" class="booster" data-i18n="revealTip" data-i18n-attr="title" title="Place one ant for me">
-          <i class="ant"></i><b class="badge" id="reveal-left">5</b>
+          <i class="ant"></i><span data-i18n="reveal">Place</span><b class="badge" id="reveal-left">5</b>
         </button>
         <button id="btn-hint" class="booster" data-i18n="hintTip" data-i18n-attr="title" title="Hint">
-          <span class="glyph">&#128161;</span><b class="badge" id="hint-left">5</b>
+          <span class="glyph">&#128161;</span><span data-i18n="hint">Hint</span><b class="badge" id="hint-left">5</b>
         </button>
       </div>
 
@@ -158,8 +128,8 @@
           <span id="win-candy-row" hidden><i class="candy"></i><b id="win-candy">+0</b></span>
         </p>
         <p id="win-note" class="win-note"></p>
-        <button id="btn-next" class="primary big">Next level</button>
-        <button id="btn-replay" class="ghost" data-i18n="replay">Replay this level</button>
+        <button id="btn-next" class="primary big">Next night</button>
+        <button id="btn-replay" class="ghost" data-i18n="replay">Replay this night</button>
       </div>
     </div>
 
@@ -169,8 +139,6 @@
         <h2 data-i18n="settings">Settings</h2>
         <p class="win-note" id="settings-note"></p>
 
-        <!-- Chọn ngôn ngữ: 17 thứ tiếng Meowdoku phát hành, mặc định tiếng Anh.
-             Danh sách đổ vào từ LANGUAGES trong src/strings.js. -->
         <label class="setting-row">
           <span data-i18n="language">Language</span>
           <select id="opt-language"></select>
@@ -180,6 +148,8 @@
           <input type="checkbox" id="opt-sound" checked />
         </label>
 
+        <!-- Trong màn chơi không còn thẻ luật, nên bài hướng dẫn mở lại từ đây. -->
+        <button id="btn-howto" class="ghost" data-i18n="howToPlay">How to play</button>
         <button id="btn-restart" class="ghost" data-i18n="restart" hidden>Restart level</button>
         <button id="btn-wipe" class="ghost" data-i18n="wipe">Reset progress</button>
         <button id="btn-close-settings" class="primary big" data-i18n="close">Close</button>

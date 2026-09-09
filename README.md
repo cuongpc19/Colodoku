@@ -1,6 +1,12 @@
-# Colodoku
+# Ant Guard
 
-Bản dựng lại Meowdoku trên web, dùng chính bộ level đã giải mã từ APK để nghiên cứu cách họ thiết kế màn chơi.
+(Tên mã cũ: Colodoku — repo, khoá `localStorage` và tool vẫn giữ tên đó.)
+
+Game xếp kiến gác kiểu Star Battle trên web: mỗi hàng, mỗi cột, mỗi vùng màu đúng một con kiến, kiến không đứng sát nhau. Bắt đầu như một bản dựng lại Meowdoku để nghiên cứu cách họ thiết kế màn chơi; từ 9/2026 đổi hẳn phần nhìn và câu chuyện để không còn là bản sao:
+
+- **Theme đêm.** Nền tối, 12 màu vùng rực, không còn dấu ✕: ô người chơi loại trừ thì **tắt đèn** (mờ đi), càng chơi bàn cờ càng sáng dần về đáp án. Ba thẻ luật thay bằng một dòng; bài hướng dẫn mở lại từ Cài đặt → Cách chơi.
+- **Câu chuyện theo chương.** Mỗi màn là một *đêm gác*, năm đêm là một *chương*, mỗi chương giữ an toàn một *buồng* của tổ (Cổng tổ → Buồng trứng → Vườn nấm → Kho kẹo → Buồng chúa), hết năm buồng là xuống *tầng* mới. Xong đêm thứ 5 thì hộp thoại thắng đổi thành "Buồng X đã an toàn" và nút "Về tổ" đưa về trang chủ — ở đó là mặt cắt tổ ([`src/nest.js`](src/nest.js)), buồng đã giữ được treo đèn, buồng đang gác có kiến đứng.
+- **Kẹo.** Ba viên mỗi đêm, đặt sai một con là mất một viên; viên còn dư bay về kho trên HUD.
 
 > **Chỉ dùng nội bộ.** Bộ level trong `data/` là dữ liệu có bản quyền của `com.oakever.meowdoku`, trích ra để học cách họ làm. Luật chơi và thuật toán thì tự do dùng lại, nhưng đừng phát hành bản có sẵn dữ liệu này — mỗi puzzle gốc còn mang hash `_pid_h` nhận diện được. Muốn phát hành thì thay bằng level tự sinh.
 >

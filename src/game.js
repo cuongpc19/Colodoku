@@ -6,10 +6,11 @@ import { nextDeduction, stateFromBoard, placementRank, EASY_RANKS } from "./solv
 import { Tutorial, tutorialPuzzle } from "./tutorial.js";
 import { T, explain, applyStatic, LANGUAGES, getLocale, setLocale } from "./strings.js";
 import { sound } from "./sound.js";
+import { chapterOf, nightOf, floorOf, roomOf, endsChapter, floorRooms, renderNest, CHAPTER_LEN, ROOMS } from "./nest.js";
 import {
   levelRecord, autoMarksFor, onLevelWon, onLevelFailed, onLevelRestarted, markDirty,
   loadProgress, markCleared, clearProgress, currentLevel, starsFor,
-  touchStreak, streakDoneToday, addCoins, spendCoins, useFree,
+  touchStreak, addCoins, spendCoins, useFree,
   bankSpoils, CANDY_PER_LEVEL, COIN_REWARD, COIN_COST,
 } from "./progression.js";
 
@@ -40,8 +41,8 @@ const $ = (id) => document.getElementById(id);
 const screens = { home: $("screen-home"), play: $("screen-play") };
 
 const ui = {
-  homeProgress: $("home-progress"),
-  streakCount: $("streak-count"), streakTick: $("streak-tick"),
+  homeKicker: $("home-kicker"), homeRoom: $("home-room"), homeDots: $("home-dots"),
+  nest: $("nest"), homeBank: $("home-bank"), playLabel: $("play-label"),
   kicker: $("play-kicker"), title: $("play-title"), best: $("play-best"),
   chips: $("chips"), count: $("play-count"), candies: $("play-candy"),
   bank: $("play-bank"), candyFly: $("candy-fly"),
@@ -62,7 +63,7 @@ const ui = {
   settings: $("settings"), settingsNote: $("settings-note"), language: $("opt-language"),
   soundToggle: $("opt-sound"),
   confirm: $("confirm"), wipeLosing: $("wipe-losing"),
-  restart: $("btn-restart"),
+  restart: $("btn-restart"), howto: $("btn-howto"),
 };
 
 const state = {
@@ -86,6 +87,7 @@ const state = {
   sinceHard: 99,   // bao nhiêu nước kể từ lần ăn mừng lớn gần nhất
   rating: 0,       // bậc của bàn đang chơi — trần độ khó của chính nó
   prevCells: null, // bàn cờ ngay trước nước vừa rồi, để chấm nước đó khó tới đâu
+  chapterOver: false, // vừa gác xong đêm cuối của một chương: nút Tiếp đưa về tổ
 };
 
 const view = new BoardView($("board"), {
@@ -108,15 +110,26 @@ function show(name) {
   if (name === "home") refreshHome();
 }
 
+/**
+ * Trang chủ kể câu chuyện bằng hình: tầng nào, chương nào, buồng nào đang gác,
+ * đã gác mấy đêm. Chữ chỉ có tên tầng và tên buồng.
+ */
 function refreshHome() {
-  const done = state.progress.cleared;
-  // Dòng này không đếm gì cả — không tổng số màn, không số màn đã qua. Người
-  // chơi đã biết mình tới đâu qua nút Tiếp tục ngay bên dưới.
-  ui.homeProgress.textContent = T.levelsWaiting;
-  $("btn-play").textContent = done ? T.playOn(currentLevel(state.progress)) : T.play;
+  const current = currentLevel(state.progress);
+  const chapter = chapterOf(current);
+  const rooms = floorRooms(current);
+  const names = rooms.map((room) => T.rooms[ROOMS.indexOf(room.key)]);
+
+  ui.homeKicker.textContent = T.homeKicker(floorOf(chapter), chapter);
+  ui.homeRoom.textContent = T.rooms[ROOMS.indexOf(roomOf(chapter))];
+  const done = nightOf(current) - 1;
+  ui.homeDots.innerHTML = Array.from({ length: CHAPTER_LEN }, (_, i) =>
+    `<i class="${i < done ? "on" : i === done ? "now" : ""}"></i>`).join("");
+  renderNest(ui.nest, rooms, names, "assets/ant-256.png");
+
+  ui.playLabel.textContent = state.progress.cleared ? T.playOn(current) : T.play;
+  ui.homeBank.textContent = state.progress.candy || 0;
   refreshCoins();
-  ui.streakCount.textContent = state.progress.streak || 0;
-  ui.streakTick.hidden = !streakDoneToday(state.progress);
 }
 
 for (const button of document.querySelectorAll("[data-goto]"))
@@ -510,17 +523,16 @@ function renderCoach() {
     ui.coachBottom.hidden = true;
     ui.apply.hidden = true;
     view.locked = true;
-    // Thưởng luôn cả buổi hướng dẫn: không thì người mới vào màn 1 với ví rỗng,
-    // hai nút trợ giúp mờ tịt đúng lúc họ cần chúng nhất.
-    state.progress = addCoins(
-      markCleared({ ...state.progress, tutorialDone: true }, 0, 0),
-      COIN_REWARD,
-    );
+    // Thưởng cả buổi hướng dẫn, nhưng chỉ LẦN ĐẦU: không thì người mới vào
+    // màn 1 với ví rỗng, mà mở lại từ Cài đặt thì lại thành máy in tiền.
+    const firstTime = !state.progress.tutorialDone;
+    state.progress = markCleared({ ...state.progress, tutorialDone: true }, 0, 0);
+    if (firstTime) state.progress = addCoins(state.progress, COIN_REWARD);
     refreshCoins();
     cheer();
     ui.winTitle.textContent = T.tut.mastered;
     ui.winBadge.hidden = true;
-    ui.winReward.hidden = false;
+    ui.winReward.hidden = !firstTime;
     ui.winCoins.textContent = `+${COIN_REWARD}`;
     ui.winCandyRow.hidden = true; // buổi hướng dẫn không phát kẹo
     ui.winNote.textContent = "";
@@ -818,7 +830,7 @@ function flyCandy(count) {
  *   còn lại — một câu trong sáu câu, bốc ngẫu nhiên
  */
 function isMasterWin() {
-  return state.level === 5 || state.level === 10 || Boolean(state.spec?.hard);
+  return endsChapter(state.level) || Boolean(state.spec?.hard);
 }
 
 function showWin(earned) {
@@ -826,8 +838,12 @@ function showWin(earned) {
   const flawless = earned === CANDY_PER_LEVEL && state.hintsUsed === 0;
   const streak = state.progress.winStreak || 0;
 
+  state.chapterOver = endsChapter(state.level);
   if (master) {
-    ui.winTitle.textContent = T.masterTitle;
+    // Đêm cuối chương: nói rõ buồng nào vừa được giữ, rồi nút Tiếp đưa về tổ.
+    ui.winTitle.textContent = state.chapterOver
+      ? T.chapterDone(T.rooms[ROOMS.indexOf(roomOf(chapterOf(state.level)))])
+      : T.masterTitle;
     ui.winNote.textContent = T.masterNote(state.progress.ants || 0, state.progress.candy || 0);
   } else {
     ui.winTitle.textContent = flawless
@@ -844,7 +860,7 @@ function showWin(earned) {
 
   ui.winBadge.hidden = !master;
   if (master) ui.winBadge.textContent = T.masterBadge;
-  ui.next.textContent = T.nextLevel;
+  ui.next.textContent = state.chapterOver ? T.backToNest : T.nextLevel;
   ui.replay.hidden = false;
   ui.win.hidden = false;
   celebrate(COIN_REWARD, earned, master);
@@ -928,6 +944,7 @@ function gameOver() {
   state.progress = onLevelFailed(state.progress, state.level);
   closeOffer();
   stopCelebration();
+  state.chapterOver = false;
   // Hết mạng: kiến bối rối, không phải kiến reo mừng.
   showArt("ant-sad");
   ui.winBadge.hidden = true;
@@ -942,8 +959,12 @@ function gameOver() {
 ui.next.addEventListener("click", () => {
   ui.win.hidden = true;
   stopCelebration();
-  if (state.tutorial) return startLevel(1);
-  if (state.candy <= 0) return startLevel(state.level); // hết kẹo, chơi lại màn cũ
+  // Hướng dẫn mở lại từ Cài đặt thì về đúng đêm đang gác; người mới thì đêm 1.
+  if (state.tutorial) return startLevel(currentLevel(state.progress));
+  if (state.candy <= 0) return startLevel(state.level); // hết kẹo, gác lại đêm cũ
+  // Xong một chương thì về tổ xem buồng vừa giữ được sáng đèn; nút Play ở đó
+  // đã trỏ sẵn sang đêm kế.
+  if (state.chapterOver) return show("home");
   startLevel(state.level + 1);
 });
 
@@ -1012,6 +1033,11 @@ for (const button of document.querySelectorAll("[data-settings]"))
   });
 
 $("btn-close-settings").addEventListener("click", () => (ui.settings.hidden = true));
+
+ui.howto.addEventListener("click", () => {
+  ui.settings.hidden = true;
+  startTutorial();
+});
 
 ui.restart.addEventListener("click", () => {
   ui.settings.hidden = true;

@@ -6,18 +6,18 @@
 // một ô để bắt đầu.
 
 export const PALETTE = [
-  { key: "blue", name: "Sky Blue" },
-  { key: "orange", name: "Orange" },
-  { key: "green", name: "Green" },
-  { key: "rose", name: "Rose" },
-  { key: "sand", name: "Sand" },
-  { key: "gold", name: "Gold" },
-  { key: "orchid", name: "Orchid" },
-  { key: "purple", name: "Purple" },
-  { key: "mint", name: "Mint" },
+  { key: "cyan", name: "Cyan" },
   { key: "coral", name: "Coral" },
   { key: "lime", name: "Lime" },
-  { key: "taupe", name: "Taupe" },
+  { key: "pink", name: "Pink" },
+  { key: "amber", name: "Amber" },
+  { key: "yellow", name: "Yellow" },
+  { key: "violet", name: "Violet" },
+  { key: "mint", name: "Mint" },
+  { key: "blue", name: "Blue" },
+  { key: "orange", name: "Orange" },
+  { key: "lavender", name: "Lavender" },
+  { key: "tan", name: "Tan" },
 ];
 
 export const colourName = (region) => PALETTE[region % PALETTE.length].name;

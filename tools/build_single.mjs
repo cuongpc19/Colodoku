@@ -4,7 +4,7 @@
 // bảng chữ (data/i18n/en.json, vi.json), ảnh con kiến và CSS. Không mang theo
 // một byte nào từ bank giải mã của Meowdoku.
 //
-//   node tools/build_single.mjs        →  dist/colodoku.html
+//   node tools/build_single.mjs        →  dist/ant-guard.html
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 
@@ -15,7 +15,7 @@ const readJson = (path, fallback) => (existsSync(new URL(path, root)) ? JSON.par
 // Thứ tự phụ thuộc — nối tay thay vì gọi bundler, dự án không có bước build nào khác.
 const MODULES = [
   "src/puzzle.js", "src/solver.js", "src/levels.js", "src/strings.js", "src/sound.js",
-  "src/boardview.js", "src/tutorial.js", "src/progression.js", "src/game.js",
+  "src/boardview.js", "src/tutorial.js", "src/progression.js", "src/nest.js", "src/game.js",
 ];
 
 /** Gỡ import/export để các module ghép lại thành một khối script chạy được. */
@@ -65,7 +65,7 @@ const html = read("index.html")
   .replace(/\s*<a class="linkish" href="lab\.html">[^<]*<\/a>/, "");
 
 mkdirSync(new URL("dist/", root), { recursive: true });
-writeFileSync(new URL("dist/colodoku.html", root), html);
+writeFileSync(new URL("dist/ant-guard.html", root), html);
 
 // Bản cho Artifact: nơi đó tự bọc <html>/<head>/<body> nên chỉ nộp phần ruột,
 // và class "app" trên <body> phải gắn bằng script vì thẻ body không phải của mình.
@@ -73,9 +73,9 @@ const artifact = html
   .replace(/^[\s\S]*?<title>/, "<title>")
   .replace(/<\/head>\s*<body class="app">/, '<script>document.body.classList.add("app");</script>')
   .replace(/\s*<\/body>\s*<\/html>\s*$/, "");
-writeFileSync(new URL("dist/colodoku-artifact.html", root), artifact);
+writeFileSync(new URL("dist/ant-guard-artifact.html", root), artifact);
 
 const kb = (n) => `${(n / 1024).toFixed(0)} KB`;
 const poolCount = Object.values(pools).reduce((a, list) => a + list.length, 0);
-console.log(`dist/colodoku.html · ${kb(html.length)} (ảnh ${kb(embedded)}, ${poolCount} bàn trong ${Object.keys(pools).length} kho, ${Object.keys(specials).length} màn đặc biệt)`);
-console.log(`dist/colodoku-artifact.html · ${kb(artifact.length)}`);
+console.log(`dist/ant-guard.html · ${kb(html.length)} (ảnh ${kb(embedded)}, ${poolCount} bàn trong ${Object.keys(pools).length} kho, ${Object.keys(specials).length} màn đặc biệt)`);
+console.log(`dist/ant-guard-artifact.html · ${kb(artifact.length)}`);

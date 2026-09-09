@@ -454,7 +454,12 @@ button.danger:hover:not(:disabled) { filter: brightness(1.06); }
 
 /* ======================================================== màn hình game */
 
-body.app { display: flex; flex-direction: column; min-height: 100vh; }
+/* `100dvh` chứ không phải `100vh`: trên Safari/Chrome di động `100vh` là chiều
+   cao khi thanh địa chỉ đã thu lại, nên lúc thanh còn hiện trang luôn cao hơn
+   khung nhìn khoảng 60-100px — kéo dài ra một quãng trống và ép người chơi
+   phải vuốt dù nội dung vừa đủ. Dòng `100vh` giữ lại làm dự phòng cho trình
+   duyệt cũ chưa biết đơn vị dvh. */
+body.app { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
 
 .screen { display: flex; flex-direction: column; align-items: center; flex: 1; }
 .screen[hidden] { display: none; }
@@ -700,7 +705,12 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
    phình lên 640px mà HUD giữ nguyên px thì teo hẳn lại so với nó. Các tỉ lệ
    dưới đây lấy từ ảnh chụp bản gốc, chia cho bề rộng bàn cờ trong ảnh. */
 .play {
-  --board: min(88vw, 460px);
+  /* Chiều cao cũng phải vào công thức, không chỉ bề rộng. Cả cột cao xấp xỉ
+     1,38 x bàn cờ + 249px cố định (thanh tiêu đề, chip, thẻ luật, dòng trạng
+     thái, hai nút trợ giúp, các khe hở) — giải ra `board <= 72dvh - 180px`.
+     Thiếu vế này thì trên máy màn hình ngắn bàn cờ vẫn lấy 88vw và đẩy nút trợ
+     giúp xuống dưới mép màn hình. */
+  --board: min(88vw, 460px, max(210px, 72vh - 190px));
   --hud-label: calc(var(--board) * 0.042);
   --hud-value: calc(var(--board) * 0.055);
   --chip-h: calc(var(--board) * 0.094);
@@ -883,8 +893,21 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
 .play.offering .rules,
 .play.offering .coach.bottom { pointer-events: none; }
 
-.play.tutorial .slot-top { min-height: 150px; }
-.play.tutorial .slot-bottom { min-height: 108px; }
+/* Màn hình ngắn thì bóp hai ô chừa chứ đừng bóp bàn cờ: thẻ hướng dẫn hụt vài
+   dòng vẫn đọc được, còn bàn cờ 4x4 mà teo lại thì bấm trượt ô. */
+.play.tutorial .slot-top { min-height: 150px; min-height: min(150px, 21dvh); }
+.play.tutorial .slot-bottom { min-height: 108px; min-height: min(108px, 15dvh); }
+/* Hai ô chừa ăn mất 258px nên bàn cờ trong tutorial phải chặt tay hơn màn
+   chơi thường: `board <= 50dvh - 125px`. */
+.play.tutorial { --board: min(88vw, 460px, max(155px, 50vh - 125px)); }
+
+/* Biến tuỳ biến không bị loại khi giá trị sai — trình duyệt cứ thay nguyên xi
+   vào chỗ dùng rồi mới hỏng ở đó. Nên không thể viết hai dòng vh/dvh chồng
+   nhau như với thuộc tính thường; phải hỏi @supports trước. */
+@supports (height: 1dvh) {
+  .play { --board: min(88vw, 460px, max(210px, 72dvh - 190px)); }
+  .play.tutorial { --board: min(88vw, 460px, max(155px, 50dvh - 125px)); }
+}
 
 /* --- thẻ hướng dẫn (trên và dưới bàn cờ) --- */
 .coach {
@@ -1085,7 +1108,11 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
    chiều cao mới là thứ hiếm — nên lấy vh làm mốc và căn giữa cả cột. */
 @media (min-width: 760px) {
   .play { justify-content: center; gap: 16px; padding-bottom: 24px; }
-  .play { --board: min(60vh, 62vw, 640px); }
+  /* Cùng công thức chiều cao như bản hẹp, chỉ khác hằng số: thẻ luật to hơn,
+     khe hở 16px, đệm đáy 24px — cộng lại 279px. `60vh` cũ chỉ đúng khi cửa sổ
+     cao hơn 1600px; laptop 1080p thì nó thừa gần 90px bàn cờ và đẩy hai nút
+     trợ giúp xuống dưới mép. */
+  .play { --board: min(62vw, 640px, max(300px, 72vh - 215px)); }
 
   .bar, .rules { width: min(760px, 94vw); }
   .status { font-size: 15px; }
@@ -1096,8 +1123,9 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
   .mini i { font-size: 15px; border-radius: 4px; }
 
   .coach { width: min(640px, 92vw); padding: 20px 26px; }
-  .play.tutorial .slot-top { min-height: 164px; }
-  .play.tutorial .slot-bottom { min-height: 118px; }
+  .play.tutorial .slot-top { min-height: 164px; min-height: min(164px, 21dvh); }
+  .play.tutorial .slot-bottom { min-height: 118px; min-height: min(118px, 15dvh); }
+  .play.tutorial { --board: min(62vw, 640px, max(200px, 50vh - 165px)); }
   .coach strong { font-size: 25px; }
   .coach p { font-size: 25px; }
   .coach.tip p { font-size: 19.5px; }

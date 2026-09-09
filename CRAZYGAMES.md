@@ -56,7 +56,7 @@ chuyện hai bản lệch nhau — nhưng đăng lại thì vẫn phải làm ta
 gói nộp.
 
 ⚠ **Nội dung phải khớp với thứ game thật sự lưu.** Thêm một khoá localStorage
-là trang đó sai ngay hôm ấy. Ba khoá hiện có liệt kê ở §5.
+là trang đó sai ngay hôm ấy. Ba khoá hiện có liệt kê ở §6.
 
 ---
 
@@ -200,7 +200,51 @@ thư mục gốc nên chịu được, nhưng đừng chạy build với output 
 
 ---
 
-## 5. Những thứ không được đổi sau khi phát hành
+## 5. Bàn cờ: màu vùng, ô đã loại, và cỡ bàn
+
+Ba thứ này ràng buộc lẫn nhau, và đều đo được bằng `python tools/palette.py`.
+
+⚠ **Bàn n vùng dùng ĐÚNG n MÀU ĐẦU của bảng** (`Puzzle.colourOf`: `region % 12`),
+nên bàn 6×6 chỉ thấy `--g0..--g5`. Chấm một bảng màu phải chấm trên MỌI TIỀN TỐ
+game dùng thật, không phải chỉ trên cả 12 màu — bảng cũ tách tốt ở 4×4 và 5×5
+(ΔE00 22) nhưng rớt xuống 11,5 từ 6×6 trở đi, tức gần suốt game.
+
+⚠ **Bàn cờ KHÔNG vẽ viền vùng — màu là dấu hiệu duy nhất**, nên hai vùng nhìn
+giống nhau không phải chuyện xấu đẹp mà là chơi sai được.
+
+**Ô đã loại chừa một VÀNH giữ nguyên màu vùng.** Trước đây ô tắt để
+`opacity: 0.28`, kéo mọi màu hội tụ về nền và bóp khoảng cách còn một phần tư:
+ΔE00 rớt từ 11,5 xuống **6,2**, dưới hẳn ngưỡng phân biệt. ⚠ Tăng độ mờ gần như
+vô ích — từ 28% lên 52% chỉ nhích lên 8,6, mà lại làm mất tín hiệu "ô này đã
+loại". Vành giữ nguyên màu thì khoảng cách lúc tắt **bằng đúng** lúc sáng, tức
+xoá hẳn một ràng buộc thay vì đánh đổi. Bảng màu hiện tại đo được **17,8** ở bàn
+10×10.
+
+⚠ **Vành vẽ bằng HAI LỚP `box-shadow: inset` trong chính ô**, không dùng lớp con
+đặt lệch theo phần trăm. Lớp con là một lượt tô riêng, mỗi ô lại rơi vào một vị
+trí lẻ pixel khác nhau nên trình duyệt làm tròn mỗi ô một kiểu — vành mỏng 4-5px
+thì lệch nửa pixel đã thấy rõ, cả bàn trông xô lệch. Vì cần `currentColor`,
+`boardview.js` đặt màu vùng vào `color` chứ không phải `background`.
+
+⚠ **Pseudo-element trong `.cell` phải `position: absolute`.** `.cell` là
+`display: grid`, nên một pseudo ở chế độ `relative` là phần tử lưới thật: nó đặt
+sàn bề rộng cho ô, mà cột bàn cờ khai `1fr` = `minmax(auto, 1fr)` — cột nào có
+kiến thì bị đẩy rộng ra, các cột còn lại chia phần thừa nên hẹp lại. Lỗi này có
+sẵn trong `.cell.cat::after` từ đầu, chỉ lộ ra khi ô nhỏ tới mức `1.15em` vượt bề
+ngang ô, tức trên máy phóng to màn hình — headless luôn chạy ở tỉ lệ 1 nên không
+bao giờ gặp.
+
+**Cỡ bàn: khung không được phình theo bàn.** Chữ, chip và nút trợ giúp từng đo
+thẳng bằng `--board`, thành vòng lặp: bàn to lên thì khung cũng to lên và ăn lại
+chỗ vừa giành được — ở 1920×1080 khung chiếm 474px, gần bằng cả bàn cờ. Nay
+chúng bám `--ui: min(var(--board), 460px)`, quá mức đó thì khung thôi lớn. Đo
+thẳng quan hệ cỡ bàn ↔ chiều cao nội dung ra hai đoạn tuyến tính cắt nhau đúng
+tại 460px: `cao = 1,40 × bàn + 168` khi bàn ≤ 460, `cao = bàn + 354` khi lớn hơn.
+Công thức `--board` giải ngược từ đó.
+
+---
+
+## 6. Những thứ không được đổi sau khi phát hành
 
 - ⚠ **Tiền tố khoá `antguard.`** Automatic Progress Save sao lưu `localStorage`
   nguyên văn, nên đổi tên khoá sau khi phát hành là khôi phục tên cũ vào một game
@@ -213,7 +257,7 @@ thư mục gốc nên chịu được, nhưng đừng chạy build với output 
 
 ---
 
-## 6. Basic Launch chấm cái gì
+## 7. Basic Launch chấm cái gì
 
 Không chỉ là duyệt chất lượng: đó là **hai tuần chạy có giới hạn lượt truy cập**,
 và bộ phận kiểm duyệt theo dõi mức độ gắn bó trong lúc chạy. Mấy con số ấy quyết
@@ -232,7 +276,7 @@ khung hình đầu. Nên đừng thêm gì vào đường khởi động mà kh�
 
 ---
 
-## 7. Còn thiếu
+## 8. Còn thiếu
 
 - Chạy Quality Assurance Tool của họ và dọn cảnh báo.
 - Khai báo thanh toán.

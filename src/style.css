@@ -32,9 +32,9 @@
   --ant-happy: url("../assets/ant-happy-512.png");
   --ant-sad: url("../assets/ant-sad-512.png");
 
-  --g0: #5fd4e8; --g1: #ff7b6b; --g2: #b9e06a; --g3: #ff8fc6;
-  --g4: #ffc46b; --g5: #f2ea6a; --g6: #9d8cff; --g7: #6ee0b1;
-  --g8: #7ab5ff; --g9: #ff9a5c; --g10: #e3a7ff; --g11: #d8b48a;
+  --g0: #00b8f8; --g1: #e8e840; --g2: #f888b8; --g3: #00f8d0;
+  --g4: #f8a008; --g5: #b8b8f8; --g6: #00c858; --g7: #50e8f8;
+  --g8: #c0b070; --g9: #c0e8a8; --g10: #e090f8; --g11: #f8c090;
 
   --k0: var(--g0); --k1: var(--g1); --k2: var(--g2); --k3: var(--g3);
   --k4: var(--g4); --k5: var(--g5); --k6: var(--g6); --k7: var(--g7);
@@ -156,6 +156,7 @@ main {
   cursor: pointer;
   border: 0;
   border-radius: 24%;
+  background: currentColor;
   transition: filter 0.12s, transform 0.09s ease-out;
 }
 
@@ -163,21 +164,37 @@ main {
    dần về đúng những ô còn khả dĩ — càng chơi càng thấy rõ đáp án, và không còn
    dấu ✕ nào. Nhịp tắt lệch pha theo --delay (sóng lan từ con kiến vừa đặt). */
 .cell.mark {
-  opacity: 0.28;
+  /* Ô đã loại: tô tối cả ô nhưng CHỪA MỘT VÀNH nguyên màu vùng ở mép.
+     Vành nguyên màu là chỗ mấu chốt — nó không pha loãng gì, nên ô đã loại vẫn
+     đọc ra vùng dễ y như ô còn sáng. Cách cũ làm mờ cả ô (opacity 0.28) kéo mọi
+     màu hội tụ về nền, bóp khoảng cách màu còn một phần tư: ΔE00 rớt từ 11.5
+     xuống 6.2, dưới hẳn ngưỡng phân biệt được (tools/palette.py).
+
+     Vẽ bằng HAI LỚP box-shadow trong chính ô, không dùng lớp con đặt lệch theo
+     phần trăm. Lớp con là một lớp tô riêng, mỗi ô lại rơi vào một vị trí lẻ
+     pixel khác nhau nên trình duyệt làm tròn mỗi ô một kiểu — vành mỏng 4-5px
+     thì lệch nửa pixel đã thấy rõ, cả bàn trông xô lệch. Hai lớp shadow nằm
+     trong cùng một lượt tô của cùng một ô nên không thể lệch nhau.
+
+     Lớp đầu vẽ sau cùng nên nằm trên: vành màu đè lên nền tối. Nền tối pha về
+     ĐEN chứ không về màu nền bàn, vì pha về đen là phép nhân, giữ được tỉ lệ
+     ba kênh tức giữ được sắc. */
+  box-shadow:
+    inset 0 0 0 calc(var(--board) / var(--n) * 0.15) currentColor,
+    inset 0 0 0 100vmax rgba(5, 8, 16, 0.74);
   animation: lightoff 0.42s ease-out var(--delay, 0s) both;
 }
 @keyframes lightoff {
-  0% { opacity: 1; filter: brightness(1.35); transform: scale(1.02); }
-  35% { opacity: 0.55; filter: brightness(0.9); }
-  55% { opacity: 0.4; filter: brightness(1.05); }
-  100% { opacity: 0.28; filter: brightness(1); transform: scale(1); }
+  0% { filter: brightness(1.35); transform: scale(1.03); }
+  45% { filter: brightness(0.85); transform: scale(0.97); }
+  100% { filter: brightness(1); transform: scale(1); }
 }
 /* Bật lại: sáng lên một nhịp rồi về thường. */
 .cell.unmark { animation: lighton 0.3s ease-out both; }
 @keyframes lighton {
-  0% { opacity: 0.28; }
-  60% { opacity: 1; filter: brightness(1.3); }
-  100% { opacity: 1; filter: brightness(1); }
+  0% { filter: brightness(0.7); }
+  60% { filter: brightness(1.3); }
+  100% { filter: brightness(1); }
 }
 /* Ô có kiến: viền trắng mảnh, để con kiến nổi hẳn lên khỏi các ô cùng màu. */
 .cell.cat { box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.85); }
@@ -296,7 +313,7 @@ main {
   stroke-dashoffset: 66;
 }
 
-.cell.wrong .x { opacity: 1; }
+.cell.wrong .x { opacity: 1; z-index: 2; }
 .cell.wrong .x line { animation: xdraw 0.17s ease-out forwards; }
 .cell.wrong .x line:nth-child(2) { animation-delay: 0.07s; }
 @keyframes xdraw { to { stroke-dashoffset: 0; } }
@@ -306,8 +323,17 @@ main {
    z-index để vệt loé lúc đặt (::before, absolute) không phủ trắng lên nó. */
 .cell.cat::after {
   content: "";
-  position: relative;
+  /* ⚠ absolute, KHÔNG relative. `.cell` là display:grid, nên một pseudo ở chế
+     độ relative là phần tử lưới thật: nó đặt sàn bề rộng cho ô, mà cột bàn cờ
+     là `1fr` = `minmax(auto, 1fr)` — cột nào có kiến thì bị đẩy rộng ra, các
+     cột còn lại chia phần thừa nên hẹp lại, cả bàn trông xô lệch. Chỉ lộ ra khi
+     ô nhỏ tới mức 1.15em vượt bề ngang ô, tức trên máy phóng to màn hình hoặc
+     cửa sổ thấp. Absolute thì kiến nằm ngoài dòng chảy, không đo được vào cột.
+     Cùng lý do với ::before ở trên. */
+  position: absolute;
+  inset: 0;
   z-index: 1;
+  margin: auto;
   width: 1.15em;
   height: 1.15em;
   background: var(--ant) center / contain no-repeat;
@@ -702,7 +728,7 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
 }
 .hud-level strong {
   display: block;
-  font-size: calc(var(--board) * 0.12);
+  font-size: calc(var(--ui) * 0.12);
   font-weight: 900;
   letter-spacing: -0.03em;
   color: var(--ink);
@@ -811,7 +837,11 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
      hai nút trợ giúp, các khe hở) — giải ra `board <= 72dvh - 145px`. Thiếu vế
      này thì trên máy màn hình ngắn bàn cờ vẫn lấy 88vw và đẩy nút trợ giúp
      xuống dưới mép màn hình. */
-  --board: min(96vw, 560px, max(210px, 72vh - 148px));
+  /* Hai chế độ, lấy chế độ nào cho bàn LỚN hơn — đo được ở tools, xem
+     CRAZYGAMES.md: bàn <=460px thì khung còn phình theo nên cao = 1,40*bàn +
+     168; quá 460px thì khung đứng yên, cao = bàn + 354. Hai vế cắt nhau đúng
+     tại 460px nên công thức liền mạch. */
+  --board: min(96vw, 760px, max(210px, 100vh - 388px, 71vh - 152px));
   /* Bề ngang thẻ hướng dẫn — KHAI MỘT CHỖ, vì .slot phải rộng ít nhất bằng nó.
      Trước đây hai bên ghi cứng hai con số, và màn hình rộng đổi thẻ lên 640px
      mà quên đổi khung chứa: thẻ tràn khỏi màn hình 18px. */
@@ -820,11 +850,17 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
      bị 96vw chặn trước nên gần như luôn còn dư chiều cao — dồn hết xuống đáy
      thì cả màn hình lệch lên trên. */
   justify-content: center;
-  --hud-label: calc(var(--board) * 0.042);
-  --hud-value: calc(var(--board) * 0.055);
-  --chip-h: calc(var(--board) * 0.094);
-  --icon-btn: calc(var(--board) * 0.112);
-  --booster: calc(var(--board) * 0.150);
+  /* Cỡ của thanh trên, chip và nút trợ giúp bám --ui chứ không bám thẳng
+     --board. Bám thẳng thì thành vòng lặp: bàn to lên, khung cũng to lên, ăn
+     lại đúng chỗ vừa giành được — đo ở 1920x1080 thấy khung chiếm 474px, gần
+     bằng cả bàn cờ, khoá trần bàn ở 56% chiều cao dù còn thừa 1314px ngang.
+     Quá 460px thì khung thôi lớn, chỗ dôi ra dồn hết cho bàn. */
+  --ui: min(var(--board), 460px);
+  --hud-label: calc(var(--ui) * 0.042);
+  --hud-value: calc(var(--ui) * 0.055);
+  --chip-h: calc(var(--ui) * 0.094);
+  --icon-btn: calc(var(--ui) * 0.112);
+  --booster: calc(var(--ui) * 0.150);
   gap: 12px;
   padding-bottom: 44px;
 }
@@ -921,7 +957,7 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
   display: flex;
   gap: 6px;
   padding: 6px;
-  margin-top: calc(var(--board) * 0.02);
+  margin-top: calc(var(--ui) * 0.02);
   background: var(--card);
   border-radius: 999px;
 }
@@ -932,7 +968,7 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
   gap: 0.4em;
   align-items: center;
   justify-content: center;
-  min-width: calc(var(--board) * 0.36);
+  min-width: calc(var(--ui) * 0.36);
   height: calc(var(--booster) * 0.78);
   padding: 0 calc(var(--booster) * 0.28);
   font-size: calc(var(--booster) * 0.24);
@@ -1023,7 +1059,7 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
    vào chỗ dùng rồi mới hỏng ở đó. Nên không thể viết hai dòng vh/dvh chồng
    nhau như với thuộc tính thường; phải hỏi @supports trước. */
 @supports (height: 1dvh) {
-  .play { --board: min(96vw, 560px, max(210px, 72dvh - 148px)); }
+  .play { --board: min(96vw, 760px, max(210px, 100dvh - 388px, 71dvh - 152px)); }
   .play.tutorial { --board: min(96vw, 560px, max(155px, 50dvh - 125px)); }
 }
 
@@ -1070,15 +1106,7 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
   position: fixed;
   inset: 0;
   display: grid;
-  /* Màn quá ngắn thì hộp thoại phải cuộn được, chứ căn giữa suông là nó tràn
-     đều hai đầu và phần trên bị cắt mất — không lôi lại được. `safe center`
-     đẩy nó về mép trên đúng lúc đó; trình duyệt cũ không hiểu thì bỏ dòng sau
-     và giữ dòng trước (thuộc tính thường bị loại ngay lúc phân tích, khác hẳn
-     biến tuỳ biến). Mẹo vuốt làm hộp thoại đêm 1 cao thêm ~95px nên chỗ này
-     mới thành thật sự chạm ngưỡng. */
   place-items: center;
-  place-items: safe center;
-  overflow-y: auto;
   padding: 20px;
   background: rgba(5, 8, 16, 0.62);
 }
@@ -1111,41 +1139,6 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
 .dialog h2 { margin: 0; font-size: 20px; }
 .dialog .logo { font-size: 44px; }
 .win-note { margin: 0 0 8px; font-size: 13px; color: var(--muted); }
-
-/* --- mẹo vuốt trong hộp thoại thắng ---
-   Sáu ô kề nhau, một ngón tay trượt qua, đèn tắt dần theo sau. Nhịp do JS đặt
-   bằng Web Animations: cả bảy phần tử chạy CHUNG một vòng 3,2s, chỗ khác nhau
-   nằm ở mốc trong khung hình chứ không ở độ trễ — lệch pha bằng animation-delay
-   thì ô cuối còn tối trong khi ô đầu đã sáng lại, hỏng mất hướng trượt. */
-.tip {
-  display: grid;
-  gap: 10px;
-  justify-items: center;
-  width: 100%;
-  margin: 0 0 4px;
-  padding: 12px 10px 10px;
-  background: rgba(0, 0, 0, 0.16);
-  border-radius: 12px;
-}
-/* Chừa chỗ cho ngón tay thò xuống dưới đáy dãy ô. */
-.tip-demo { position: relative; padding-bottom: 12px; }
-.tip-row { display: flex; gap: 4px; }
-.tip-row i { width: 26px; height: 26px; border-radius: 24%; }
-/* Ngón tay chạm vào giữa ô đầu (13px = nửa cạnh ô) rồi trượt sang phải. */
-.tip-hand {
-  position: absolute;
-  top: 42%;
-  left: 13px;
-  margin-left: -0.5em;
-  width: 1em;
-  font-size: 24px;
-  font-style: normal;
-  line-height: 1;
-  pointer-events: none;
-  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.45));
-}
-.tip-text { margin: 0; font-size: 13px; line-height: 1.45; color: var(--muted); }
-.tip-text b { color: var(--key); }
 
 /* ------------------------------------------------------------- ăn mừng */
 
@@ -1288,7 +1281,7 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
   .play { justify-content: center; gap: 16px; padding-bottom: 24px; }
   /* Cùng công thức chiều cao như bản hẹp, chỉ khác hằng số: khe hở 16px và
      đệm đáy 24px thay cho 12/44. */
-  .play { --board: min(62vw, 640px, max(300px, 72vh - 172px)); }
+  .play { --board: min(72vw, 860px, max(300px, 100vh - 388px, 71vh - 152px)); }
 
   .bar { width: min(760px, 94vw); }
   .status { font-size: 15px; }
@@ -1317,13 +1310,13 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
    Nên ở đây hạ sàn xuống mức chỉ vừa đủ đọc. Bàn nhỏ đi thì chữ và nút nhỏ
    theo, vì mọi thứ đều đo bằng --board; thà bàn bé mà bấm được còn hơn bàn to
    mà nửa giao diện nằm ngoài màn hình. */
-@media (max-height: 560px) {
+@media (max-height: 780px) {
   /* Khoảng đệm co lại trước, rồi mới tới bàn cờ. Phần khung cố định chiếm 221px
      dù bàn to hay nhỏ — đo được bằng hai điểm: bàn 300px thì cột cao 604px, bàn
      152px thì cao 415px. Cắt đệm đi ~56px là bàn to thêm được gần một nửa. */
   .play { gap: 8px; padding-bottom: 10px; }
   .bar { padding: 6px 4px; }
-  .play { --board: min(62vw, 640px, max(120px, 84vh - 152px)); }
+  .play { --board: min(72vw, 860px, max(120px, 100vh - 300px, 71vh - 96px)); }
   .play.tutorial { --board: min(62vw, 640px, max(110px, 50vh - 165px)); }
 }
 

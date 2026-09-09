@@ -39,10 +39,6 @@ export class BoardView {
     // phải chờ timer của cú bấm đơn chạy xong.
     this.tap = { dragging: false, last: null, lastAt: 0, lastCell: null };
 
-    // Cả màn này người chơi đã vuốt lần nào chưa. Ai chỉ bấm lẻ từng ô là chưa
-    // biết tới thao tác vuốt — hết màn sẽ được chỉ cho một lần.
-    this.dragged = false;
-
     // Bàn tay minh hoạ thao tác trong lúc hướng dẫn. Lớp ngoài lo vị trí, lớp
     // trong lo nhịp nhấn/trượt, để hai transform không giẫm chân nhau.
     this.handEl = document.createElement("div");
@@ -67,7 +63,6 @@ export class BoardView {
     this.el.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
     // CSS lấy --n để tính cỡ mèo/✕ theo cạnh ô thật.
     this.el.style.setProperty("--n", n);
-    this.dragged = false;
     this.hideHand();
     this.el.innerHTML = "";
     this.el.append(this.handEl);
@@ -83,7 +78,9 @@ export class BoardView {
         cell.innerHTML =
           '<svg class="x" viewBox="0 0 100 100" aria-hidden="true">' +
           '<line x1="27" y1="27" x2="73" y2="73" /><line x1="73" y1="27" x2="27" y2="73" /></svg>';
-        cell.style.background = `var(--g${board.puzzle.colourOf(regions[r][c])})`;
+        // Màu vùng đặt vào `color`, không phải `background`: ô đã loại vẽ vành
+        // bằng box-shadow, mà box-shadow chỉ lấy được màu qua currentColor.
+        cell.style.color = `var(--g${board.puzzle.colourOf(regions[r][c])})`;
         cell.dataset.r = r;
         cell.dataset.c = c;
         this.el.append(cell);
@@ -343,7 +340,6 @@ export class BoardView {
 
     if (!this.tap.dragging) { // vừa rời ô đầu tiên: chuyển hẳn sang chế độ kéo
       this.tap.dragging = true;
-      this.dragged = true;
       // Kéo tiếp thì cú bấm này không còn là nửa đầu của một lần bấm đúp nữa.
       this.tap.lastCell = null;
       const [fr, fc] = this.tap.last;

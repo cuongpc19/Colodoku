@@ -16,6 +16,15 @@
      Bản 256px là đủ: chỗ vẽ to nhất là ô bàn 4x4, cỡ ~84px, tức ~252px thật
      trên màn hình 3x. Ảnh 512px chỉ dành cho hai tư thế trong hộp thoại, mà
      hai ảnh đó tới lúc mở hộp thoại mới tải. */
+  /* Kẹo — thứ kiến thích nhất, cũng là "mạng" của mỗi màn: đặt sai một con là
+     mất một viên, còn dư bao nhiêu thì mang về tổ bấy nhiêu.
+     Ba tư thế: viên thường, viên đã mất (xám), và viên lấp lánh dùng cho lúc
+     bay vào kho với dòng thưởng ở màn thắng. 192px là đủ — chỗ vẽ to nhất là
+     viên trên chip, cỡ ~44px, tức ~132px thật trên màn hình 3x. */
+  --candy: url("../assets/candy-192.png");
+  --candy-gone: url("../assets/candy-gone-192.png");
+  --candy-spark: url("../assets/candy-spark-192.png");
+
   --ant: url("../assets/ant-256.png");
   --ant-happy: url("../assets/ant-happy-512.png");
   --ant-sad: url("../assets/ant-sad-512.png");
@@ -666,7 +675,9 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
 /* Level và Score đứng cạnh nhau giữa thanh, nhãn nhỏ ở trên số to. */
 .hud {
   display: flex;
-  gap: calc(var(--board) * 0.11);
+  /* Ba ô (Level · chuỗi dài nhất · kho kẹo) nên khoảng cách hẹp hơn hồi hai ô,
+     không thì trên máy 360px chữ "Best streak" xuống dòng. */
+  gap: calc(var(--board) * 0.07);
   justify-content: center;
   text-align: center;
   line-height: 1.15;
@@ -674,6 +685,22 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
 .hud small { display: block; font-size: var(--hud-label); color: #b09a86; }
 .hud strong { display: block; font-size: var(--hud-value); color: #8a5a3c; }
 .hud-streak strong { font-variant-numeric: tabular-nums; }
+/* Kho kẹo: viên kẹo nhỏ đứng ngay trước con số, để không phải đọc nhãn mới hiểu. */
+.hud-candy strong {
+  display: flex;
+  gap: 0.22em;
+  align-items: center;
+  justify-content: center;
+  font-variant-numeric: tabular-nums;
+}
+.hud-candy .candy.tiny { width: 1.15em; height: 1.15em; }
+/* Kẹo vừa rơi vào kho: con số nảy một cái rồi về — đủ để mắt bắt được nó đã tăng. */
+.hud-candy strong.bump { animation: candybump 0.42s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes candybump {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.4); color: var(--accent); }
+  100% { transform: scale(1); }
+}
 
 /* Hai chip dưới thanh tiêu đề: đếm kiến, và mạng còn lại. */
 .chips { display: flex; gap: calc(var(--board) * 0.035); justify-content: center; }
@@ -692,7 +719,7 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
 .chip .ant { width: 1.5em; height: 1.5em; }
 .chip b { color: var(--good); font-variant-numeric: tabular-nums; }
 
-.chip.lives { gap: calc(var(--chip-h) * 0.16); padding: 0 calc(var(--chip-h) * 0.36); }
+.chip.candies { gap: calc(var(--chip-h) * 0.16); padding: 0 calc(var(--chip-h) * 0.36); }
 .chip.coins b { color: #c8951f; }
 
 /* Đồng xu vẽ bằng CSS: đĩa vàng, viền sẫm, một vệt sáng chếch trên trái. */
@@ -711,16 +738,28 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
 
 /* Chip nảy một cái khi bấm trợ giúp mà không đủ tiền. */
 .chips.nudge { animation: shake 0.3s; }
-.life {
-  display: block;
-  width: calc(var(--chip-h) * 0.6);
-  height: calc(var(--chip-h) * 0.6);
-  background: var(--g4);
-  border: 2px solid var(--g5);
-  border-radius: 50% 50% 50% 12px;
-  transform: rotate(-20deg);
+/* Viên kẹo. Ảnh vuông, viên kẹo nằm chéo trong khung. */
+.candy {
+  display: inline-block;
+  flex: none;
+  width: 1.35em;
+  height: 1.35em;
+  background: var(--candy) center / contain no-repeat;
 }
-.life.gone { background: #e6e0d6; border-color: #d3cabb; }
+.chip.candies .candy {
+  width: calc(var(--chip-h) * 0.86);
+  height: calc(var(--chip-h) * 0.86);
+  transition: transform 0.18s ease;
+}
+/* Viên đã mất: xám hẳn và nhỏ lại một chút, để liếc là biết còn mấy viên. */
+.candy.gone { background-image: var(--candy-gone); transform: scale(0.86); }
+/* Vừa mất một viên: giật nảy rồi xẹp xuống thành ô xám. */
+.chip.candies .candy.eaten { animation: candyeaten 0.5s ease-out; }
+@keyframes candyeaten {
+  0% { transform: scale(1.35) rotate(-14deg); }
+  55% { transform: scale(0.7) rotate(10deg); }
+  100% { transform: scale(0.86); }
+}
 
 .stars { color: var(--accent); font-size: 14px; text-align: right; letter-spacing: 1px; }
 .stars.big { font-size: 28px; letter-spacing: 3px; }
@@ -1033,10 +1072,69 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
   animation: rewardpop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   animation-delay: 0.35s;
 }
+/* Hai phần thưởng đứng cạnh nhau: xu, và kẹo mang về tổ. Kẹo đổi màu chữ để
+   không đọc nhầm hai con số thành một. */
+.reward span { display: flex; gap: 0.28em; align-items: center; }
 .reward .coin { width: 1.05em; height: 1.05em; vertical-align: 0; }
+.reward .candy { width: 1.5em; height: 1.5em; background-image: var(--candy-spark); }
+#win-candy-row { color: var(--k3); }
 @keyframes rewardpop {
   0% { transform: scale(0.5); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
+}
+
+/* --- kẹo bay từ chip vào kho trên HUD ---
+   Lớp phủ cả trang, position: fixed, nên đường bay không bị khung nào cắt.
+   Toạ độ đầu/cuối do JS đo tại chỗ và truyền vào bằng biến. */
+.candy-fly {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+}
+.candy-fly i {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--size);
+  height: var(--size);
+  background: var(--candy-spark) center / contain no-repeat;
+  transform: translate(var(--x0), var(--y0));
+  animation: candyfly var(--dur) cubic-bezier(0.5, 0, 0.35, 1) var(--delay) both;
+}
+/* Nhún lên một nhịp rồi mới vọt vào kho — bay thẳng tắp nhìn như trượt, còn
+   nhún trước thì mắt kịp bám theo viên kẹo. */
+@keyframes candyfly {
+  0% { transform: translate(var(--x0), var(--y0)) scale(0.9) rotate(0deg); opacity: 0; }
+  12% { transform: translate(var(--x0), calc(var(--y0) - 22px)) scale(1.3) rotate(-14deg); opacity: 1; }
+  100% { transform: translate(var(--x1), var(--y1)) scale(0.5) rotate(300deg); opacity: 1; }
+}
+
+/* --- khoảnh khắc cả đàn kiến cảm ơn --- */
+.badge-master {
+  margin: 0;
+  padding: 3px 14px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  color: #fff;
+  background: linear-gradient(100deg, var(--accent), #e0662a);
+  border-radius: 999px;
+  box-shadow: 0 3px 10px rgba(224, 102, 42, 0.35);
+  animation: rewardpop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+}
+/* Ba con kiến cúi chào: con giữa to nhất, hai con hai bên vào sau một nhịp. */
+.parade { display: flex; gap: 2px; align-items: flex-end; justify-content: center; }
+.parade .ant-happy {
+  width: 46px;
+  height: 46px;
+  animation: bow 1.5s ease-in-out var(--delay) infinite;
+}
+.parade .ant-happy.lead { width: 68px; height: 68px; }
+@keyframes bow {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  30% { transform: translateY(6px) rotate(-9deg); }
+  60% { transform: translateY(-4px) rotate(5deg); }
 }
 
 /* Pháo giấy rơi sau lưng hộp thoại: 26 mảnh, mỗi mảnh tự có màu, bề ngang,

@@ -269,6 +269,46 @@ export function nextDeduction(state) {
 }
 
 /**
+ * Ô này phải suy tới bậc mấy mới ra?
+ *
+ * Chạy lại chính thang kỹ thuật nhưng chặn trần ở bậc `cap`, xem tới bậc nào
+ * thì ô (r, c) bị ép — tức nó là ô cuối cùng còn khả dĩ của một nhóm, hoặc
+ * chính thang đã đặt con vào đó. Bậc nhỏ nhất làm được việc ấy là "giá" của
+ * nước đi. Cùng một thước với `analyse` chấm cả bàn, chỉ khác là hỏi về một ô.
+ *
+ * Dừng ở bậc 3: bậc 4 và 5 phải thử giả định trên từng ô còn trống rồi lan
+ * truyền, quá đắt để chạy ngay giữa lúc chơi — mà cũng không cần, vì "quá tầm
+ * ba bậc rẻ" đã đủ để kết luận nước này khó.
+ */
+export const EASY_RANKS = 3;
+
+function forced(state, r, c) {
+  if (state.placed[r][c]) return true;
+  if (!state.cand[r][c]) return false;
+  for (const kind of KINDS) {
+    const key = kind === "row" ? r : kind === "col" ? c : state.regions[r][c];
+    if (state.groupHasCat(kind, key)) continue;
+    if (state.groupCells(kind, key).length === 1) return true;
+  }
+  return false;
+}
+
+export function placementRank(base, r, c, stepCap = 200) {
+  for (let cap = 1; cap <= EASY_RANKS; cap++) {
+    const state = base.clone();
+    for (let steps = 0; steps <= stepCap; steps++) {
+      if (forced(state, r, c)) return cap;
+      let move = null;
+      for (let i = 0; i < cap && !move; i++) move = LADDER[i](state);
+      if (!move) break; // bí ở trần này, thử trần cao hơn
+      if (move.action === "place") state.place(move.cells[0][0], move.cells[0][1]);
+      else for (const [er, ec] of move.cells) state.cand[er][ec] = false;
+    }
+  }
+  return EASY_RANKS + 1;
+}
+
+/**
  * Dựng trạng thái suy luận từ bàn cờ thật: con vật đã đặt coi như chắc chắn,
  * và **những ô người chơi tự đánh ✕ cũng phải nạp vào**.
  *

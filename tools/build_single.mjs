@@ -35,9 +35,19 @@ const i18n = { en: readJson("data/i18n/en.json"), vi: readJson("data/i18n/vi.jso
 
 // --- nhúng tài nguyên ----------------------------------------------------
 
-const antData = readFileSync(new URL("assets/ant-512.png", root)).toString("base64");
-const css = read("src/style.css")
-  .replace(/url\("\.\.\/assets\/ant-512\.png"\)/g, `url("data:image/png;base64,${antData}")`);
+// Nhúng MỌI ảnh mà style.css trỏ tới, không chỉ một cái tên viết cứng: bản một
+// file mà còn đường dẫn `../assets/...` thì mở lên chẳng thấy con kiến nào —
+// mà tên file thì đổi theo thời gian, nên dò thẳng trong CSS mới chắc.
+let embedded = 0;
+const css = read("src/style.css").replace(
+  /url\("\.\.\/assets\/([\w.-]+\.png)"\)/g,
+  (_, file) => {
+    const data = readFileSync(new URL(`assets/${file}`, root)).toString("base64");
+    embedded += data.length;
+    return `url("data:image/png;base64,${data}")`;
+  },
+);
+if (!embedded) throw new Error("không nhúng được ảnh nào — kiểm lại đường dẫn trong style.css");
 
 const script = [
   `globalThis.__COLODOKU_POOLS = ${JSON.stringify(pools)};`,
@@ -67,5 +77,5 @@ writeFileSync(new URL("dist/colodoku-artifact.html", root), artifact);
 
 const kb = (n) => `${(n / 1024).toFixed(0)} KB`;
 const poolCount = Object.values(pools).reduce((a, list) => a + list.length, 0);
-console.log(`dist/colodoku.html · ${kb(html.length)} (kiến ${kb(antData.length)}, ${poolCount} bàn trong ${Object.keys(pools).length} kho, ${Object.keys(specials).length} màn đặc biệt)`);
+console.log(`dist/colodoku.html · ${kb(html.length)} (ảnh ${kb(embedded)}, ${poolCount} bàn trong ${Object.keys(pools).length} kho, ${Object.keys(specials).length} màn đặc biệt)`);
 console.log(`dist/colodoku-artifact.html · ${kb(artifact.length)}`);

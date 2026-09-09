@@ -2,7 +2,7 @@
 
 import { Board, Puzzle, CAT, MARK, EMPTY } from "./puzzle.js";
 import { BoardView } from "./boardview.js";
-import { nextDeduction, stateFromBoard } from "./solver.js";
+import { nextDeduction, stateFromBoard, placementRank, EASY_RANKS } from "./solver.js";
 import { Tutorial, tutorialPuzzle } from "./tutorial.js";
 import { T, explain, applyStatic, LANGUAGES, getLocale, setLocale } from "./strings.js";
 import { sound } from "./sound.js";
@@ -10,7 +10,7 @@ import {
   levelRecord, autoMarksFor, onLevelWon, onLevelFailed, onLevelRestarted, markDirty,
   loadProgress, markCleared, clearProgress, currentLevel, starsFor,
   touchStreak, streakDoneToday, addCoins, spendCoins, useFree,
-  COIN_REWARD, COIN_COST,
+  bankSpoils, CANDY_PER_LEVEL, COIN_REWARD, COIN_COST,
 } from "./progression.js";
 
 // Nhịp nháy sáng cả bàn cờ sau khi làm xong một bước hướng dẫn, trước khi sang
@@ -25,9 +25,10 @@ function replay(node, className) {
   node.classList.add(className);
 }
 
-// Ngần này mạng mỗi màn — đúng con số hiện trên màn hình Meowdoku. Hai nút trợ
-// giúp thì không giới hạn lượt nữa mà trả bằng tiền (COIN_COST trong progression).
-const LIVES = 3;
+// Mỗi màn phát ba viên kẹo — đúng chỗ Meowdoku để ba cái mạng. Đặt sai một con
+// kiến là mất một viên; hết kẹo thì thua màn. Còn dư bao nhiêu thì mang về tổ
+// bấy nhiêu, nên chơi cẩn thận có thưởng thật chứ không chỉ "đừng thua".
+// Hai nút trợ giúp thì không giới hạn lượt, trả bằng tiền (COIN_COST).
 
 // Điểm mỗi lần đặt đúng, đọc ngược từ video: 576 cho con đầu, mỗi con đúng liên
 // tiếp sau đó cộng thêm 96, đặt sai thì chuỗi về 0.
@@ -42,7 +43,8 @@ const ui = {
   homeProgress: $("home-progress"),
   streakCount: $("streak-count"), streakTick: $("streak-tick"),
   kicker: $("play-kicker"), title: $("play-title"), best: $("play-best"),
-  chips: $("chips"), count: $("play-count"), lives: $("play-lives"),
+  chips: $("chips"), count: $("play-count"), candies: $("play-candy"),
+  bank: $("play-bank"), candyFly: $("candy-fly"),
   status: $("play-status"), hintText: $("hint-text"),
   coachTop: $("coach-top"), coachTitle: $("coach-title"), coachText: $("coach-text"),
   coachBottom: $("coach-bottom"), coachHint: $("coach-hint"),
@@ -53,7 +55,9 @@ const ui = {
   hint: $("btn-hint"), hintLeft: $("hint-left"),
   playCoins: $("play-coins"), homeCoins: $("home-coins"),
   win: $("win"), winTitle: $("win-title"), winNote: $("win-note"),
-  winArt: $("win-art"), winReward: $("win-reward"), confetti: $("confetti"),
+  winArt: $("win-art"), winBadge: $("win-badge"), winReward: $("win-reward"),
+  winCoins: $("win-coins"), winCandy: $("win-candy"), winCandyRow: $("win-candy-row"),
+  confetti: $("confetti"),
   next: $("btn-next"), replay: $("btn-replay"),
   settings: $("settings"), settingsNote: $("settings-note"), language: $("opt-language"),
   soundToggle: $("opt-sound"),
@@ -70,7 +74,7 @@ const state = {
   score: 0,
   chain: 0,   // số lần đặt đúng liên tiếp, dùng để cộng dồn điểm
   scored: 0,  // số con đã tính điểm, để biết lần thay đổi nào là đặt thêm
-  lives: LIVES,
+  candy: CANDY_PER_LEVEL, // kẹo còn lại trong màn đang chơi
   hintsUsed: 0,
   offer: null, // nước đi thẻ gợi ý đang chỉ, chờ bấm Apply
   tutorial: null,
@@ -80,6 +84,8 @@ const state = {
   thinkHints: 0,   // số lượt trợ giúp tính tới lúc bắt đầu nghĩ, để biết có được chỉ chỗ không
   gaps: [],        // các quãng nghĩ đã đo trong màn — nhịp riêng của người chơi hôm nay
   sinceHard: 99,   // bao nhiêu nước kể từ lần ăn mừng lớn gần nhất
+  rating: 0,       // bậc của bàn đang chơi — trần độ khó của chính nó
+  prevCells: null, // bàn cờ ngay trước nước vừa rồi, để chấm nước đó khó tới đâu
 };
 
 const view = new BoardView($("board"), {
@@ -119,16 +125,19 @@ for (const button of document.querySelectorAll("[data-goto]"))
 // --------------------------------------------------------------- vào màn
 
 /** Đưa một bàn cờ lên màn chơi — dùng chung cho màn thường lẫn tutorial. */
-function mountPlay({ puzzle, kicker, title, autoMark, given = [], note = "" }) {
+function mountPlay({ puzzle, kicker, title, autoMark, given = [], note = "", rating = 0 }) {
   state.puzzle = puzzle;
   state.board = new Board(puzzle);
   state.score = 0;
   state.chain = 0;
-  state.lives = LIVES;
+  state.candy = CANDY_PER_LEVEL;
   state.hintsUsed = 0;
+  buildCandyChip();
   state.flashing = false;
   state.gaps = [];
   state.sinceHard = 99;
+  state.rating = rating;
+  state.prevCells = null;
   resetThink();
 
   // Con vật game đặt sẵn: ghi thẳng vào bàn cờ rồi xoá lịch sử, để Hoàn tác
@@ -167,6 +176,8 @@ async function startLevel(n) {
     title: String(n),
     // Bánh xe phụ: chỉ hai màn đầu game mới đánh ✕ hộ, sau đó người chơi tự loại ô.
     autoMark: autoMarksFor(n),
+    // Bậc của chính bàn này, để biết thế nào là "ngách khó" trên nó.
+    rating: loaded.record.r || 0,
     given: loaded.given,
   });
   screens.play.classList.remove("tutorial");
@@ -200,13 +211,29 @@ function refreshHud() {
   // Ô bên phải HUD là kỷ lục **chuỗi thắng liên tiếp**, không phải chuỗi ngày
   // điểm danh (`progress.streak`) — cái đó cả ngày chơi bao nhiêu ván vẫn là 1.
   ui.best.textContent = state.progress.bestWin || 0;
-  ui.lives.innerHTML = Array.from(
-    { length: LIVES },
-    (_, i) => `<i class="life${i < state.lives ? "" : " gone"}"></i>`,
-  ).join("");
+  paintCandy();
   refreshBooster(ui.reveal, ui.revealLeft, "reveal");
   refreshBooster(ui.hint, ui.hintLeft, "hint");
   refreshCoins();
+}
+
+/**
+ * Ba viên kẹo dựng một lần mỗi màn rồi giữ nguyên phần tử. Không vẽ lại bằng
+ * innerHTML ở mỗi nhịp HUD: làm thế là animation "vừa mất một viên" bị xoá
+ * ngay giữa chừng, mà đó lại là lúc cần thấy nó nhất.
+ */
+function buildCandyChip() {
+  ui.candies.innerHTML = Array.from(
+    { length: CANDY_PER_LEVEL },
+    () => `<i class="candy"></i>`,
+  ).join("");
+}
+
+/** Tô lại ba viên kẹo theo số còn lại, và con số trong kho trên HUD. */
+function paintCandy() {
+  for (const [i, node] of [...ui.candies.children].entries())
+    node.classList.toggle("gone", i >= state.candy);
+  ui.bank.textContent = state.progress.candy || 0;
 }
 
 /** Số tiền hiện có, vẽ ở cả trang chủ lẫn màn chơi. */
@@ -268,12 +295,23 @@ function onBoardChange() {
     state.chain++;
     // Gỡ được ngách khó thì ăn mừng riêng, không chồng thêm lời khen chuỗi:
     // hai dòng chữ cùng bay lên từ một ô thì đè lên nhau, đọc không ra chữ nào.
-    if (brokeThrough()) eureka();
+    if (brokeThrough(rankOfLastMove())) eureka();
     else if (state.chain >= 2) praise(state.chain - 1);
   }
   state.scored = placed;
+  // Bàn cờ lúc này là "bàn ngay trước" của nước sau. Con kiến và loạt ✕ tự đánh
+  // kèm theo nó vào cùng một lần commit, nên bản chụp này không lẫn thông tin
+  // do chính nước sắp tới sinh ra.
+  state.prevCells = state.board.cells.map((row) => row.slice());
   refreshHud();
   if (state.board.isSolved()) finishLevel();
+}
+
+/** Nước vừa đặt phải suy tới bậc mấy mới ra, chấm trên bàn ngay trước nó. */
+function rankOfLastMove() {
+  const [r, c] = state.lastPlaced || [];
+  if (r === undefined || !state.prevCells) return 1;
+  return placementRank(stateFromBoard(state.puzzle, state.prevCells), r, c);
 }
 
 /**
@@ -314,14 +352,26 @@ function shout(text, variant) {
    nước đó được ăn mừng to hơn hẳn: chữ riêng, cỡ lớn hơn, pháo giấy bung ra từ
    chính ô vừa đặt, hợp âm dài hơn, và con kiến giữ mặt vui lâu hơn.
 
-   "Bí" đo theo nhịp của chính người chơi chứ không theo một con số cứng: người
-   chơi nhanh thì 15 giây đã là bí, người chơi thong thả thì 15 giây là bình
-   thường. Mốc lấy trung vị sáu nước gần nhất — trung vị chứ không phải trung
-   bình, để một lần bí ba phút không kéo lệch cả cái thước; sáu nước gần nhất
-   chứ không phải cả màn, để thước bám theo được màn mỗi lúc một khó. */
-const HARD_FLOOR_MS = 12_000;  // dưới ngần này thì chưa gọi là bí, dù nhịp có nhanh tới đâu
+   Hai cửa phải qua, mỗi cửa trả lời một câu khác nhau.
+
+   1. NƯỚC ĐÓ CÓ KHÓ THẬT KHÔNG — `placementRank` trong bộ giải trả lời, bằng
+      đúng thang 5 bậc dùng để chấm cả bàn. Và "khó" phải tính theo *bàn này*:
+      đo trên toàn bộ kho, trần độ khó của một bàn luôn đúng bằng bậc kho của
+      nó, còn bàn bậc 1 thì 100% số nước là bậc 1 — chẳng có ngách nào để khoe.
+      Nên mốc là bậc của chính bàn: trên bàn bậc 2 thì một nước bậc 2 đã là
+      đỉnh của nó, còn trên bàn bậc 4 thì nước bậc 2 chỉ là việc thường ngày.
+
+   2. NGƯỜI CHƠI CÓ THẬT SỰ PHẢI SĂN KHÔNG — đồng hồ trả lời. Nước khó mà liếc
+      cái ra ngay thì không phải là gỡ được ngách; cùng lắm là mắt tinh. Mốc
+      lấy trung vị sáu nước gần nhất — trung vị để một lần bí ba phút không kéo
+      lệch cả cái thước, sáu nước gần nhất để thước bám theo màn khó dần.
+
+   Cửa 2 nới tay hơn hồi chưa có cửa 1 (1,5 lần thay vì 2,2; 8 giây thay vì 12):
+   khi bộ giải đã xác nhận nước này khó thật, đồng hồ chỉ còn việc loại mấy lần
+   ăn may. */
+const HARD_FLOOR_MS = 8_000;   // dưới ngần này thì chưa gọi là săn, dù nhịp có nhanh tới đâu
 const HARD_CEIL_MS = 240_000;  // quá ngần này là đứng dậy đi làm việc khác, không phải nghĩ
-const HARD_RATIO = 2.2;        // chậm gấp ngần này so với nhịp thường của chính họ
+const HARD_RATIO = 1.5;        // chậm gấp ngần này so với nhịp thường của chính họ
 const HARD_WINDOW = 6;         // chỉ so với 6 nước gần nhất, để thước bám theo màn khó dần
 const HARD_COOLDOWN = 1;       // hai nước liền nhau cùng bí thì chỉ khen nước đầu
 const SPARK_PIECES = 18;
@@ -345,8 +395,8 @@ document.addEventListener("visibilitychange", () => {
   if (!document.hidden) resetThink();
 });
 
-/** Đo quãng vừa nghĩ, và trả lời: nước này có phải là gỡ được một ngách khó không? */
-function brokeThrough() {
+/** Nước vừa rồi có phải là gỡ được một ngách khó không? */
+function brokeThrough(rank) {
   const gap = performance.now() - state.thinkStart;
   const helped = state.hintsUsed > state.thinkHints;
   const recent = state.gaps.slice(-HARD_WINDOW);
@@ -359,11 +409,17 @@ function brokeThrough() {
 
   if (helped) return false;         // gợi ý chỉ tận nơi thì không phải họ tự tìm ra
   if (!recent.length) return false; // nước đầu màn phần lớn là thời gian đọc bàn
-  if (gap < HARD_FLOOR_MS || gap > HARD_CEIL_MS) return false;
   if (since < HARD_COOLDOWN) return false;
-  // Chưa đủ ba mẫu thì lấy quãng dài nhất làm mốc chứ không lấy trung vị: với
-  // một hai mẫu, trung vị dễ khiến người chơi vốn thong thả bị khen oan ngay
-  // nước thứ hai. Lấy mốc cao là chịu bỏ sót, chứ không khen nhầm.
+
+  // Cửa 1: phải là ngách khó của chính bàn này. `placementRank` dừng ở bậc 3
+  // cho kịp nhịp chơi, nên bàn bậc 4-5 cũng chỉ đòi tới mức đó.
+  if (state.rating < 2) return false;
+  if (rank < Math.min(state.rating, EASY_RANKS + 1)) return false;
+
+  // Cửa 2: phải thật sự có ngồi săn. Chưa đủ ba mẫu thì lấy quãng dài nhất làm
+  // mốc chứ không lấy trung vị — với một hai mẫu, trung vị dễ khiến người chơi
+  // vốn thong thả bị khen oan ngay nước thứ hai.
+  if (gap < HARD_FLOOR_MS || gap > HARD_CEIL_MS) return false;
   const usual = recent.length >= 3 ? median(recent) : Math.max(...recent);
   const hard = gap >= usual * HARD_RATIO;
   if (hard) state.sinceHard = 0;
@@ -412,14 +468,21 @@ function sparkle(cell) {
   setTimeout(() => layer.remove(), longest * 1000 + 100);
 }
 
-/** Đặt sai chỗ: ✕ đỏ vĩnh viễn trên ô đó, mất một mạng, chuỗi điểm về 0. */
+/** Đặt sai chỗ: ✕ đỏ vĩnh viễn trên ô đó, kiến ăn mất một viên kẹo, chuỗi điểm về 0. */
 function onWrongPlacement(r, c) {
   sound.buzz();
   state.chain = 0;
-  state.lives--;
+  state.candy--;
   view.markWrong(r, c);
   refreshHud();
-  if (state.lives <= 0) gameOver();
+  // Viên vừa bị ăn giật nảy một cái rồi mới xám đi — gắn lớp SAU refreshHud,
+  // vì chính nhịp đó mới đặt lớp `gone` lên nó.
+  const eaten = ui.candies.children[state.candy];
+  if (eaten) {
+    eaten.classList.add("eaten");
+    eaten.addEventListener("animationend", () => eaten.classList.remove("eaten"), { once: true });
+  }
+  if (state.candy <= 0) gameOver();
 }
 
 // ------------------------------------------------------------ hướng dẫn
@@ -444,8 +507,10 @@ function renderCoach() {
     refreshCoins();
     cheer();
     ui.winTitle.textContent = T.tut.mastered;
+    ui.winBadge.hidden = true;
     ui.winReward.hidden = false;
-    ui.winReward.querySelector("b").textContent = `+${COIN_REWARD}`;
+    ui.winCoins.textContent = `+${COIN_REWARD}`;
+    ui.winCandyRow.hidden = true; // buổi hướng dẫn không phát kẹo
     ui.winNote.textContent = "";
     ui.next.textContent = T.tut.startGame;
     ui.replay.hidden = true;
@@ -652,6 +717,8 @@ ui.apply.addEventListener("click", () => {
 
 function finishLevel() {
   view.locked = true;
+  const earned = Math.max(0, state.candy); // kẹo chưa bị kiến ăn — cái mang về được
+  const ants = state.board.size;
   const stars = starsFor(state.hintsUsed);
   state.progress = addCoins(
     touchStreak(onLevelWon(markCleared(state.progress, state.level, stars), state.level)),
@@ -660,14 +727,112 @@ function finishLevel() {
   refreshCoins();
   refreshHud(); // chuỗi thắng vừa +1, đừng để HUD sau lưng hộp thoại còn số cũ
 
-  ui.winTitle.textContent = T.cleared;
-  // Không có dòng tổng kết ở màn thắng. Vẫn phải xoá, vì hộp thoại này dùng
-  // chung với màn hết mạng — nó có để lại chữ ở đó.
-  ui.winNote.textContent = "";
+  // Kẹo bay vào kho TRƯỚC khi hộp thoại mở ra. Mở hộp thoại trước là nó che
+  // mất cả chip lẫn kho — hai đầu của đường bay đều nằm dưới lớp phủ.
+  flyCandy(earned).then(() => {
+    state.progress = bankSpoils(state.progress, { ants, candy: earned });
+    refreshHud();
+    showWin(earned);
+  });
+}
+
+// Một viên bay mất ngần này, viên sau cất cánh sau viên trước ngần này.
+const CANDY_FLY_MS = 640;
+const CANDY_FLY_GAP = 150;
+
+/**
+ * Kẹo còn dư bay từ chip lên kho trên HUD, con số trong kho nhích lên đúng lúc
+ * từng viên chạm đích. Trả về lời hứa hoàn tất, để bên gọi biết lúc nào mở
+ * hộp thoại thắng.
+ *
+ * Toạ độ đo tại chỗ chứ không tính sẵn: cỡ bàn cờ đổi theo màn hình nên chip
+ * và kho không đứng cố định ở đâu cả.
+ */
+function flyCandy(count) {
+  const target = ui.bank.parentElement;
+  if (!count || !target || ui.chips.hidden) return Promise.resolve();
+
+  const nest = target.getBoundingClientRect();
+  const layer = ui.candyFly;
+  layer.innerHTML = "";
+  const base = state.progress.candy || 0;
+  let flying = 0;
+
+  for (let i = 0; i < count; i++) {
+    const box = ui.candies.children[i]?.getBoundingClientRect();
+    if (!box) continue;
+    const piece = document.createElement("i");
+    piece.style.cssText = [
+      `--size:${box.width}px`,
+      `--x0:${box.left}px`,
+      `--y0:${box.top}px`,
+      `--x1:${nest.left + nest.width / 2 - box.width / 2}px`,
+      `--y1:${nest.top + nest.height / 2 - box.height / 2}px`,
+      `--dur:${CANDY_FLY_MS}ms`,
+      `--delay:${i * CANDY_FLY_GAP}ms`,
+    ].join(";");
+    // Viên nào bay đi thì chỗ cũ trên chip trống ngay, không để hai viên cùng hiện.
+    ui.candies.children[i].classList.add("gone");
+    layer.append(piece);
+    flying++;
+    const landed = i;
+    setTimeout(() => {
+      ui.bank.textContent = base + landed + 1;
+      replay(target, "bump");
+      sound.candy(landed);
+    }, i * CANDY_FLY_GAP + CANDY_FLY_MS);
+  }
+
+  if (!flying) return Promise.resolve();
+  return new Promise((done) =>
+    setTimeout(() => {
+      layer.innerHTML = "";
+      done();
+    }, (flying - 1) * CANDY_FLY_GAP + CANDY_FLY_MS + 220),
+  );
+}
+
+/**
+ * Hộp thoại thắng. Câu khen đổi theo việc người chơi vừa làm được, chứ không
+ * phải một câu "Well Played" lặp lại mãi:
+ *
+ *   master  — mốc đáng nhớ (màn 5, màn 10, và mọi màn khó): cả đàn kiến cúi
+ *             chào, có huy hiệu, có kèn, và đếm luôn tổng kiến + kẹo đã gom
+ *   flawless— giữ trọn ba viên kẹo, không xin gợi ý lần nào
+ *   streak  — đang thắng liền từ ba ván trở lên
+ *   còn lại — một câu trong sáu câu, bốc ngẫu nhiên
+ */
+function isMasterWin() {
+  return state.level === 5 || state.level === 10 || Boolean(state.spec?.hard);
+}
+
+function showWin(earned) {
+  const master = isMasterWin();
+  const flawless = earned === CANDY_PER_LEVEL && state.hintsUsed === 0;
+  const streak = state.progress.winStreak || 0;
+
+  if (master) {
+    ui.winTitle.textContent = T.masterTitle;
+    ui.winNote.textContent = T.masterNote(state.progress.ants || 0, state.progress.candy || 0);
+  } else {
+    ui.winTitle.textContent = flawless
+      ? T.winFlawless
+      : streak >= 3
+        ? T.winStreakTitle(streak)
+        : T.winTitles[Math.floor(Math.random() * T.winTitles.length)];
+    ui.winNote.textContent = flawless
+      ? T.winFlawlessNote
+      : earned
+        ? T.candySaved(earned)
+        : T.candyNone;
+  }
+
+  ui.winBadge.hidden = !master;
+  if (master) ui.winBadge.textContent = T.masterBadge;
   ui.next.textContent = T.nextLevel;
   ui.replay.hidden = false;
   ui.win.hidden = false;
-  celebrate(COIN_REWARD);
+  celebrate(COIN_REWARD, earned, master);
 }
 
 // ------------------------------------------------------------- ăn mừng
@@ -678,12 +843,22 @@ const CONFETTI_PIECES = 26;
  * Kiến reo mừng bung vào, rồi tới dòng tiền thưởng, pháo giấy rơi suốt phía sau.
  * Nhịp lấy theo màn thắng của Marble Sort.
  */
-function celebrate(coins) {
-  cheer();
+function celebrate(coins, candy = 0, master = false) {
+  if (master) {
+    parade();
+    sound.fanfare();
+  } else {
+    cheer();
+  }
   ui.winReward.hidden = false;
-  ui.winReward.querySelector("b").textContent = `+${coins}`;
+  ui.winCoins.textContent = `+${coins}`;
+  ui.winCandyRow.hidden = !candy;
+  ui.winCandy.textContent = `+${candy}`;
 
-  ui.confetti.innerHTML = Array.from({ length: CONFETTI_PIECES }, () => {
+  // Mốc đáng nhớ thì pháo giấy dày gấp đôi — cùng một hộp thoại, nhưng nhìn là
+  // biết lần này khác mọi lần.
+  const pieces = master ? CONFETTI_PIECES * 2 : CONFETTI_PIECES;
+  ui.confetti.innerHTML = Array.from({ length: pieces }, () => {
     // Mỗi mảnh một màu trong bảng màu vùng, rơi lệch và xoay ngẫu nhiên.
     const style = [
       `--x:${Math.random() * 100}%`,
@@ -703,6 +878,21 @@ function cheer() {
 }
 
 /**
+ * Ba con kiến cúi chào — hình ảnh "cả đàn cảm ơn bạn". Dựng bằng ba lần cùng
+ * một ảnh kiến vui, con giữa to hơn và hai con bên vào lệch nhịp, nên không
+ * cần thêm ảnh nào mà vẫn ra đám đông.
+ */
+function parade() {
+  ui.winArt.hidden = false;
+  ui.winArt.innerHTML =
+    `<div class="parade">` +
+    [0.35, 0, 0.55]
+      .map((delay, i) => `<i class="ant-happy${i === 1 ? " lead" : ""}" style="--delay:${delay}s"></i>`)
+      .join("") +
+    `</div>`;
+}
+
+/**
  * Đặt hình vào hộp thoại. Gán lại innerHTML mỗi lần để animation chạy từ đầu —
  * thắng màn thứ hai mà kiến đứng im thì mất nửa cái hay.
  */
@@ -715,6 +905,7 @@ function showArt(kind) {
 function stopCelebration() {
   ui.confetti.innerHTML = "";
   ui.winReward.hidden = true;
+  ui.winBadge.hidden = true;
 }
 
 function gameOver() {
@@ -724,6 +915,7 @@ function gameOver() {
   stopCelebration();
   // Hết mạng: kiến bối rối, không phải kiến reo mừng.
   showArt("ant-sad");
+  ui.winBadge.hidden = true;
   ui.winTitle.textContent = T.outOfLives;
   ui.winReward.hidden = true;
   ui.winNote.textContent = T.outOfLivesNote;
@@ -736,7 +928,7 @@ ui.next.addEventListener("click", () => {
   ui.win.hidden = true;
   stopCelebration();
   if (state.tutorial) return startLevel(1);
-  if (state.lives <= 0) return startLevel(state.level); // Try again
+  if (state.candy <= 0) return startLevel(state.level); // hết kẹo, chơi lại màn cũ
   startLevel(state.level + 1);
 });
 
@@ -850,7 +1042,7 @@ function relocalize() {
 // nói rõ mất những gì — thay cho confirm() của trình duyệt.
 $("btn-wipe").addEventListener("click", () => {
   const p = state.progress;
-  ui.wipeLosing.textContent = T.wipeLosing(p.cleared || 0, p.coins || 0, p.streak || 0);
+  ui.wipeLosing.textContent = T.wipeLosing(p.cleared || 0, p.coins || 0, p.candy || 0, p.streak || 0);
   ui.confirm.hidden = false;
 });
 

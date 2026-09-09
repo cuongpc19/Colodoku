@@ -108,4 +108,29 @@ export const sound = {
     tone({ type: "triangle", from: 1568, duration: 0.55, gain: 0.13, at: 0.36 }); // G6 ngân
     tone({ type: "sine", from: 2093, duration: 0.45, gain: 0.06, at: 0.39 });     // C7 lấp lánh, rất nhẹ
   },
+  /**
+   * Một viên kẹo rơi vào kho: tiếng "tinh" rất ngắn, cao dần theo viên thứ mấy
+   * nên ba viên liên tiếp nghe thành một câu đi lên chứ không phải ba tiếng
+   * giống hệt nhau.
+   */
+  candy(index = 0) {
+    if (!enabled) return;
+    const notes = [988, 1175, 1397, 1568]; // B5 D6 F6 G6
+    tone({ type: "triangle", from: notes[Math.min(index, notes.length - 1)], duration: 0.16, gain: 0.12 });
+  },
+  /**
+   * Khoảnh khắc cả đàn kiến cảm ơn: một câu kèn ngắn — ba nốt nảy rồi mở ra
+   * hợp âm trưởng ngân dài. Dài hơn eureka vì nó đóng lại cả một chặng, không
+   * phải một nước đi.
+   */
+  fanfare() {
+    if (!enabled) return;
+    const lead = [784, 784, 1047]; // G5 G5 C6, nhịp kèn hiệu
+    lead.forEach((hz, i) =>
+      tone({ type: "triangle", from: hz, duration: 0.14, gain: 0.16, at: i * 0.13 }));
+    // Hợp âm Đô trưởng đọng lại, mỗi nốt vào lệch một chút cho nghe ra bề dày.
+    [1047, 1319, 1568].forEach((hz, i) =>
+      tone({ type: "triangle", from: hz, duration: 0.9, gain: 0.11, at: 0.42 + i * 0.04 }));
+    tone({ type: "sine", from: 523, duration: 0.95, gain: 0.09, at: 0.42 }); // C5 làm nền
+  },
 };

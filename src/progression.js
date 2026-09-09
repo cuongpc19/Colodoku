@@ -334,6 +334,8 @@ const BLANK = {
   // bên trên — cái đó đếm ngày điểm danh, cả ngày chơi bao nhiêu ván vẫn là 1.
   winStreak: 0, bestWin: 0,
   dirty: false, retried: false, current: null, cursors: {},
+  // Chiến lợi phẩm mang về tổ: kiến đã cứu, và kẹo còn dư sau mỗi màn.
+  ants: 0, candy: 0,
 };
 
 export function loadProgress() {
@@ -387,6 +389,24 @@ export function useFree(progress, kind) {
 /** Cộng tiền thưởng vào ví và ghi đĩa ngay — thắng màn xong là tiền có thật. */
 export function addCoins(progress, amount) {
   const next = { ...progress, coins: (progress.coins || 0) + amount };
+  saveProgress(next);
+  return next;
+}
+
+/**
+ * Mỗi màn phát ngần này viên kẹo. Đặt sai một con kiến là mất một viên; hết
+ * kẹo thì thua màn. Còn dư bao nhiêu thì mang về tổ bấy nhiêu — thua thì không
+ * mang được viên nào, vì đã ăn hết cả ba.
+ */
+export const CANDY_PER_LEVEL = 3;
+
+/** Cất chiến lợi phẩm một màn vào kho: số kiến đã đặt, và số kẹo còn dư. */
+export function bankSpoils(progress, { ants = 0, candy = 0 }) {
+  const next = {
+    ...progress,
+    ants: (progress.ants || 0) + ants,
+    candy: (progress.candy || 0) + candy,
+  };
   saveProgress(next);
   return next;
 }

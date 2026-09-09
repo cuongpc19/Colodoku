@@ -1,0 +1,87 @@
+<!doctype html>
+<!-- Trang thử tạm, xoá sau khi kiểm xong. -->
+<html>
+  <head><meta charset="utf-8" /><title>probe</title>
+  <style>body{margin:0;font:12px monospace}iframe{width:420px;height:820px;border:0;display:block}pre{margin:0;padding:4px;background:#eee}</style>
+  </head>
+  <body>
+    <pre id="out">running…</pre>
+    <iframe id="f"></iframe>
+    <script>
+      const mode = new URLSearchParams(location.search).get("mode") || "win";
+      const f = document.getElementById("f");
+      const out = document.getElementById("out");
+      f.src = "index.html?level=5";
+
+      const log = [];
+      const say = (m) => { log.push(m); out.textContent = log.join("\n"); };
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+      // Bàn cờ tìm ô bằng elementFromPoint(clientX, clientY), không dùng
+      // event.target — nên phải gửi toạ độ thật, gửi 0,0 là trượt hết.
+      function tap(doc, cell) {
+        const b = cell.getBoundingClientRect();
+        const at = { clientX: b.left + b.width / 2, clientY: b.top + b.height / 2 };
+        for (const type of ["pointerdown", "pointerup"])
+          cell.dispatchEvent(new PointerEvent(type, { bubbles: true, button: 0, buttons: 1, pointerId: 1, ...at }));
+      }
+
+      async function run() {
+        await new Promise((r) => (f.onload = r));
+        const w = f.contentWindow, d = f.contentDocument;
+        for (let i = 0; i < 80 && !d.querySelector("#board .cell"); i++) await sleep(100);
+        const cells = [...d.querySelectorAll("#board .cell")];
+        say("level=" + d.getElementById("play-title").textContent + " ô=" + cells.length);
+        say("chip kẹo=" + d.getElementById("play-candy").children.length +
+            " kho=" + d.getElementById("play-bank").textContent);
+
+        if (mode === "chip") {
+          // Đặt sai một con để xem viên kẹo bị ăn.
+          for (const cell of cells.slice(0, 6)) {
+            tap(d, cell); await sleep(60); tap(d, cell); await sleep(400);
+            if (d.querySelector(".cell.wrong")) break;
+          }
+          const chip = [...d.getElementById("play-candy").children].map((n) => n.className);
+          say("ô sai=" + d.querySelectorAll(".cell.wrong").length +
+              " kiến=" + d.querySelectorAll(".cell.cat").length +
+              " ✕=" + d.querySelectorAll(".cell .x").length);
+          say("sau khi đặt sai: " + JSON.stringify(chip));
+          say("DONE");
+          return;
+        }
+
+        // Giải bằng nút "đặt hộ một con" cho tới khi thắng.
+        let maxFly = 0; const bankSeq = [];
+        const watch = setInterval(() => {
+          const n = d.querySelectorAll("#candy-fly i").length;
+          if (n > maxFly) maxFly = n;
+          const b = d.getElementById("play-bank").textContent;
+          if (bankSeq[bankSeq.length - 1] !== b) bankSeq.push(b);
+        }, 50);
+
+        for (let i = 0; i < 14; i++) {
+          if (!d.getElementById("win").hidden) break;
+          d.getElementById("btn-reveal").click();
+          await sleep(260);
+          d.getElementById("btn-apply").click();
+          await sleep(520);
+        }
+        for (let i = 0; i < 60 && d.getElementById("win").hidden; i++) await sleep(100);
+        await sleep(900);
+        clearInterval(watch);
+
+        say("kẹo bay: tối đa " + maxFly + " viên cùng lúc");
+        say("kho chạy: " + bankSeq.join(" → "));
+        say("tiêu đề: " + d.getElementById("win-title").textContent);
+        say("ghi chú: " + d.getElementById("win-note").textContent);
+        say("huy hiệu: " + (d.getElementById("win-badge").hidden ? "ẩn" : d.getElementById("win-badge").textContent));
+        say("thưởng: " + d.getElementById("win-coins").textContent +
+            " | kẹo " + (d.getElementById("win-candy-row").hidden ? "ẩn" : d.getElementById("win-candy").textContent));
+        say("kiến cúi chào: " + d.querySelectorAll("#win-art .parade .ant-happy").length);
+        say("pháo giấy: " + d.querySelectorAll("#confetti i").length);
+        say("DONE");
+      }
+      run().catch((e) => say("LỖI " + e.message + "\nDONE"));
+    </script>
+  </body>
+</html>

@@ -10,3 +10,6 @@ data/raw/
 
 # Ảnh gốc gửi sang để cắt ra assets/ — nặng, và bản đã cắt mới là bản dùng.
 Manythings/
+
+# Cache của Firebase CLI, sinh lại mỗi lần deploy.
+.firebase/

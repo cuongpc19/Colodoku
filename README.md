@@ -68,7 +68,7 @@ Game không đánh ✕ hộ ở màn nào — Meowdoku bắt tự loại ô ngay
 
 ## Hướng dẫn
 
-Nhịp dạy học theo Meowdoku, nhưng **bàn cờ là của mình** và có **hai lượt tập vuốt** thay vì một. Bàn do [`tools/pick_tutorial.mjs`](tools/pick_tutorial.mjs) chọn từ bộ sinh: 4×4, chỉ cần kỹ thuật cấp 1, và khác bàn của họ kể cả sau tám phép xoay/lật. Người chơi tự đặt cả ba con kiến đầu và tự đánh 11 dấu ✕ — game không đặt hộ con nào.
+Nhịp dạy học theo Meowdoku, nhưng **bàn cờ là của mình** và có **hai lượt tập vuốt** thay vì một, rồi khép lại bằng **hai bài tập kéo thật** trên bàn dọn sạch — trọn một hàng, trọn một cột, bấm lẻ không tính. Bàn do [`tools/pick_tutorial.mjs`](tools/pick_tutorial.mjs) chọn từ bộ sinh: 4×4, chỉ cần kỹ thuật cấp 1, và khác bàn của họ kể cả sau tám phép xoay/lật. Người chơi tự đặt cả ba con kiến đầu và tự đánh 11 dấu ✕ trong phần dẫn dắt — game không đặt hộ con nào.
 
 | Bước | Lời dẫn | Người chơi làm |
 |---|---|---|
@@ -167,7 +167,7 @@ Câu giải thích của bộ giải có nhắc hàng/cột/màu thì viết s�
 | `src/strings.js` | Bảng chữ: nạp ngôn ngữ, đổi ngôn ngữ, đổ chữ vào HTML |
 | `src/progression.js` | Bộ máy chọn màn (chép luật Meowdoku) và lưu tiến trình |
 | `src/sound.js` | Âm thanh tổng hợp bằng Web Audio (gõ ✕, đặt kiến, đặt sai), không có file |
-| `src/tutorial.js` | 9 bước hướng dẫn, tự suy trình tự và ô cần bấm từ luật |
+| `src/tutorial.js` | 11 bước hướng dẫn (9 dẫn dắt + 2 bài tập kéo thật), tự suy trình tự và ô cần bấm từ luật |
 | `src/game.js` | Vòng chơi chính |
 | `src/lab.js` | Trang phân tích |
 | `tools/extract_levels.py` | Giải mã level bank từ `.xapk` và đóng gói cho web |

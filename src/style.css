@@ -1106,7 +1106,15 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
   position: fixed;
   inset: 0;
   display: grid;
+  /* Màn quá ngắn thì hộp thoại phải cuộn được, chứ căn giữa suông là nó tràn
+     đều hai đầu và phần trên bị cắt mất — không lôi lại được. `safe center`
+     đẩy nó về mép trên đúng lúc đó; trình duyệt cũ không hiểu thì bỏ dòng sau
+     và giữ dòng trước (thuộc tính thường bị loại ngay lúc phân tích, khác hẳn
+     biến tuỳ biến). Mẹo vuốt làm hộp thoại đêm 1 cao thêm ~95px nên chỗ này
+     mới thành thật sự chạm ngưỡng. */
   place-items: center;
+  place-items: safe center;
+  overflow-y: auto;
   padding: 20px;
   background: rgba(5, 8, 16, 0.62);
 }
@@ -1139,6 +1147,42 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
 .dialog h2 { margin: 0; font-size: 20px; }
 .dialog .logo { font-size: 44px; }
 .win-note { margin: 0 0 8px; font-size: 13px; color: var(--muted); }
+
+/* --- mẹo vuốt trong hộp thoại thắng đêm 1 ---
+   Sáu ô kề nhau, một ngón tay trượt qua, đèn tắt dần theo sau. Nhịp do JS đặt
+   bằng Web Animations: cả bảy phần tử chạy CHUNG một vòng 3,2s, chỗ khác nhau
+   nằm ở mốc trong khung hình chứ không ở độ trễ — lệch pha bằng animation-delay
+   thì ô cuối còn tối trong khi ô đầu đã sáng lại, hỏng mất hướng trượt.
+   Tên lớp có tiền tố vì `.tip` đã là lớp của thẻ gợi ý trên màn chơi. */
+.swipe-tip {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  width: 100%;
+  margin: 0 0 4px;
+  padding: 12px 10px 10px;
+  background: rgba(0, 0, 0, 0.16);
+  border-radius: 12px;
+}
+/* Chừa chỗ cho ngón tay thò xuống dưới đáy dãy ô. */
+.swipe-tip-demo { position: relative; padding-bottom: 12px; }
+.swipe-tip-row { display: flex; gap: 4px; }
+.swipe-tip-row i { width: 26px; height: 26px; border-radius: 24%; }
+/* Ngón tay chạm vào giữa ô đầu (13px = nửa cạnh ô) rồi trượt sang phải. */
+.swipe-tip-hand {
+  position: absolute;
+  top: 42%;
+  left: 13px;
+  margin-left: -0.5em;
+  width: 1em;
+  font-size: 24px;
+  font-style: normal;
+  line-height: 1;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.45));
+}
+.swipe-tip-text { margin: 0; font-size: 13px; line-height: 1.45; color: var(--muted); }
+.swipe-tip-text b { color: var(--key); }
 
 /* ------------------------------------------------------------- ăn mừng */
 

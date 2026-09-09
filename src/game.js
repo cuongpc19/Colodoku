@@ -571,6 +571,22 @@ function renderCoach() {
   refreshHud();
 }
 
+/**
+ * Sang bước kế của hướng dẫn. Bước nào đòi bàn sạch (bài tập vuốt trọn hàng,
+ * trọn cột — lúc đó bàn đã kín, không còn ô trống để gạch) thì dựng bàn mới
+ * rồi đưa cho hướng dẫn, trước khi vẽ.
+ */
+function advanceTutorial() {
+  const tutorial = state.tutorial;
+  tutorial.advance();
+  if (tutorial.step.fresh) {
+    state.board = new Board(state.puzzle);
+    view.mount(state.board);
+    tutorial.useBoard(state.board);
+  }
+  renderCoach();
+}
+
 function onTutorialChange() {
   refreshHud();
   if (!state.tutorial.checkProgress()) return renderCoach();
@@ -585,8 +601,7 @@ function onTutorialChange() {
   setTimeout(() => {
     $("board").classList.remove("flash");
     state.flashing = false;
-    state.tutorial.advance();
-    renderCoach();
+    advanceTutorial();
   }, FLASH_MS);
 }
 
@@ -594,8 +609,7 @@ ui.coachNext.addEventListener("click", () => {
   // Nút này dùng chung với Apply của gợi ý: chỉ là "Got it!" khi bước hiện tại
   // thật sự có nút, và không có gợi ý nào đang chờ.
   if (!state.tutorial?.step.button || state.offer) return;
-  state.tutorial.advance();
-  renderCoach();
+  advanceTutorial();
 });
 
 // ------------------------------------------------------------ nút trợ giúp
@@ -1207,11 +1221,20 @@ $("btn-tutorial").addEventListener("click", startTutorial);
  * lược, con trỏ kho bàn và ví tiền đều khớp y như chơi tay. Có thế mới thử
  * đúng cái bàn mà người chơi thật sẽ gặp.
  *
- * Chỉ mở khi trang chạy từ máy mình; bản phát hành không có đường tắt này.
+ * Chỉ mở khi trang chạy từ máy mình hoặc từ máy khác trong cùng mạng nhà (để
+ * thử trên điện thoại); tên miền công cộng như crazygames.com không lọt qua,
+ * nên bản phát hành coi như không có đường tắt này.
  * Trả về true nếu đã tự mở một màn — lúc đó khỏi chạy nhịp vào game thường.
  */
+const IS_LAN = (host) =>
+  ["localhost", "127.0.0.1", "[::1]"].includes(host) ||
+  host.endsWith(".local") ||
+  /^10\./.test(host) ||
+  /^192\.168\./.test(host) ||
+  /^172\.(1[6-9]|2\d|3[01])\./.test(host);
+
 function devJump() {
-  if (!["localhost", "127.0.0.1", "[::1]"].includes(location.hostname)) return false;
+  if (!IS_LAN(location.hostname)) return false;
   const params = new URLSearchParams(location.search);
   // `?reset=1`: xoá sạch tiến trình rồi về trang chủ như người mới — nhanh hơn
   // mở Cài đặt → Xoá tiến trình mỗi lần muốn chơi lại từ đầu.

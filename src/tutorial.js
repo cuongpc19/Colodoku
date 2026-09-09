@@ -9,7 +9,13 @@
 //   6. Vùng khác chỉ còn một ô — đặt con thứ ba
 //   7. Vuốt để gạch các ô kề con thứ ba       ← tập vuốt lần 2
 //   8. Tự tìm con cuối
-//   9. "Đủ ba luật rồi"
+//   9. Dọn sạch bàn, kéo trọn một hàng        ← chỉ nhận nét kéo
+//  10. Kéo trọn một cột                        ← chỉ nhận nét kéo
+//  11. "Đủ cả bài rồi"
+//
+// Bước 5 và 7 bảo "kéo qua các ô này" nhưng chỉ kiểm ô đã đánh dấu chưa — bấm
+// lẻ từng ô cũng qua. Hai bước 9-10 mới là chỗ bắt buộc phải kéo thật (xem
+// `drillSteps`): bàn phải dọn vì đến đó nó đã kín, không còn ô trống để gạch.
 //
 // Không toạ độ nào bị ghi cứng: planTutorial() suy ra cả trình tự lẫn từng ô
 // từ chính luật chơi, nên đổi bàn cờ là hướng dẫn tự khớp theo. flow_test.mjs
@@ -131,10 +137,10 @@ export function buildSteps(puzzle) {
   // của `T` bị thay mới, giữ sẵn thì câu chữ sẽ đứng nguyên ở thứ tiếng cũ.
   const { tut } = T;
   const plan = planTutorial(puzzle);
-  if (!plan) throw new Error("bàn hướng dẫn không dạy được theo nhịp 9 bước");
+  if (!plan) throw new Error("bàn hướng dẫn không dạy được theo nhịp này");
   const { first, second, third, lines, swipeOne, swipeTwo } = plan;
 
-  return [
+  const steps = [
     {
       id: "place-first",
       top: tut.placeFirst,
@@ -203,7 +209,54 @@ export function buildSteps(puzzle) {
     },
     { id: "done", done: true },
   ];
+
+  steps.splice(steps.length - 1, 0, ...drillSteps(puzzle, first));
+  return steps;
 }
+
+/**
+ * Hai bước tập vuốt: kéo trọn hàng rồi trọn cột mà con kiến đầu tiên đang canh
+ * — đúng những ô bước 3 bắt bấm lẻ từng cái, giờ làm lại bằng một nét để tự
+ * thấy chênh nhau bao nhiêu.
+ *
+ * `fresh` bảo bên ngoài dọn sạch bàn trước khi vào bước. `dragOnly` khiến bước
+ * chỉ nhận nét kéo: bấm lẻ vẫn qua được thì người ngại đổi thao tác sẽ bấm lẻ
+ * tiếp, và cả bài tập thành công cốc.
+ */
+function drillSteps(puzzle, [r, c]) {
+  const { tut } = T;
+  const n = puzzle.size;
+  const row = Array.from({ length: n }, (_, j) => [r, j]);
+  const col = Array.from({ length: n }, (_, i) => [i, c]);
+  return [
+    {
+      id: "drill-row",
+      title: tut.drillTitle,
+      top: tut.drillWhy,
+      bottom: tut.drillRow,
+      gesture: "swipe",
+      fresh: true,
+      dragOnly: true,
+      focus: row,
+      needs: { cells: row, value: MARK },
+    },
+    {
+      id: "drill-col",
+      top: tut.drillNow,
+      bottom: tut.drillCol,
+      gesture: "swipe",
+      dragOnly: true,
+      focus: col,
+      needs: { cells: col, value: MARK },
+    },
+  ];
+}
+
+// Bấm lẻ chừng này lần vào ô bài tập yêu cầu mà vẫn không kéo được thì nới ra,
+// cho bấm. Máy nào không nhận nét kéo cũng không được nhốt người chơi lại giữa
+// bài hướng dẫn — không có đường nào khác để đi tiếp. Ba lượt bấm hết cả hàng
+// bốn ô: đủ để chắc là kéo không ăn, chưa đủ để ai đó bấm bừa mà thoát.
+const DRILL_PATIENCE = 12;
 
 export class Tutorial {
   constructor(puzzle, board) {
@@ -211,11 +264,18 @@ export class Tutorial {
     this.board = board;
     this.steps = buildSteps(puzzle);
     this.index = 0;
+    this.tapTries = 0;    // số lần bấm lẻ bị bài tập vuốt từ chối
+    this.relaxed = false; // đã nới, thôi không đòi nét kéo nữa
   }
 
   /** Dựng lại câu chữ sau khi đổi ngôn ngữ, giữ nguyên bước đang học. */
   relocalize() {
     this.steps = buildSteps(this.puzzle);
+  }
+
+  /** Bước có cờ `fresh` chạy trên bàn cờ mới dọn — bên ngoài dựng bàn rồi đưa vào đây. */
+  useBoard(board) {
+    this.board = board;
   }
 
   get step() {
@@ -238,13 +298,24 @@ export class Tutorial {
     return needs.cells.filter(([r, c]) => this.board.get(r, c) !== needs.value);
   }
 
-  /** Chỉ nhận đúng ô và đúng thao tác bước hiện tại yêu cầu. */
+  /**
+   * Chỉ nhận đúng ô và đúng thao tác bước hiện tại yêu cầu. `kind` là "cat",
+   * "mark" (bấm lẻ) hoặc "drag" (đang kéo) — hai cái sau đều là đánh dấu, chỉ
+   * bài tập vuốt mới phân biệt.
+   */
   allows(r, c, kind) {
     const step = this.step;
     if (step.free || step.done) return true;
     if (!step.needs) return false;
+    const mine = step.needs.cells.some(([i, j]) => i === r && j === c);
+
+    if (step.dragOnly && !this.relaxed && kind !== "drag") {
+      // Chỉ đếm cú bấm đánh dấu thật; lượt hỏi "cat" của nhịp bấm đúp không tính.
+      if (mine && kind === "mark" && ++this.tapTries >= DRILL_PATIENCE) this.relaxed = true;
+      return false;
+    }
     const wanted = step.needs.value === CAT ? "cat" : "mark";
-    return kind === wanted && step.needs.cells.some(([i, j]) => i === r && j === c);
+    return (kind === "drag" ? "mark" : kind) === wanted && mine;
   }
 
   /** Gọi sau mỗi thay đổi bàn cờ; true nếu bước hiện tại vừa xong. */

@@ -39,6 +39,10 @@ export class BoardView {
     // phải chờ timer của cú bấm đơn chạy xong.
     this.tap = { dragging: false, last: null, lastAt: 0, lastCell: null };
 
+    // Cả màn này người chơi đã vuốt lần nào chưa. Ai chỉ bấm lẻ từng ô là chưa
+    // biết tới thao tác vuốt — hết màn sẽ được chỉ cho một lần.
+    this.dragged = false;
+
     // Bàn tay minh hoạ thao tác trong lúc hướng dẫn. Lớp ngoài lo vị trí, lớp
     // trong lo nhịp nhấn/trượt, để hai transform không giẫm chân nhau.
     this.handEl = document.createElement("div");
@@ -63,6 +67,7 @@ export class BoardView {
     this.el.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
     // CSS lấy --n để tính cỡ mèo/✕ theo cạnh ô thật.
     this.el.style.setProperty("--n", n);
+    this.dragged = false;
     this.hideHand();
     this.el.innerHTML = "";
     this.el.append(this.handEl);
@@ -318,7 +323,11 @@ export class BoardView {
       this.tap.lastCell[0] === r && this.tap.lastCell[1] === c &&
       now - this.tap.lastAt < DOUBLE_TAP_MS;
 
-    if (sameAsLast) { // cú thứ hai vào đúng ô đó — bấm đúp
+    // Cú thứ hai vào đúng ô đó là bấm đúp — nhưng chỉ khi ô ấy đang được phép
+    // đặt kiến. Bước hướng dẫn không cho đặt mà vẫn nuốt cú bấm này rồi xoá
+    // `tap.last` thì người vừa bấm một cái, thấy không ăn, kéo tiếp ngay từ
+    // chính ô đó sẽ chẳng thấy gì xảy ra — đúng cái bẫy bài tập vuốt giăng ra.
+    if (sameAsLast && this.allowMove(r, c, "cat")) {
       this.tap.lastAt = 0;
       this.tap.lastCell = null;
       putCat();
@@ -340,13 +349,16 @@ export class BoardView {
 
     if (!this.tap.dragging) { // vừa rời ô đầu tiên: chuyển hẳn sang chế độ kéo
       this.tap.dragging = true;
+      this.dragged = true;
       // Kéo tiếp thì cú bấm này không còn là nửa đầu của một lần bấm đúp nữa.
       this.tap.lastCell = null;
       const [fr, fc] = this.tap.last;
-      if (this.board.get(fr, fc) === EMPTY && this.allowMove(fr, fc, "mark"))
+      if (this.board.get(fr, fc) === EMPTY && this.allowMove(fr, fc, "drag"))
         this.commit([[fr, fc, MARK]]);
     }
-    if (this.board.get(r, c) === EMPTY && this.editable(r, c) && this.allowMove(r, c, "mark"))
+    // Báo "drag" chứ không phải "mark": ngoài hướng dẫn thì hai cái như nhau,
+    // còn bài tập vuốt phải phân biệt được nét kéo với cú bấm lẻ.
+    if (this.board.get(r, c) === EMPTY && this.editable(r, c) && this.allowMove(r, c, "drag"))
       this.commit([[r, c, MARK]]);
     this.tap.last = at;
   }

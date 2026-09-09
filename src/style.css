@@ -946,6 +946,14 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
 .play.tutorial .chips { display: none; }
 .play.tutorial .bar { row-gap: 0; }
 .play.tutorial .hud { visibility: hidden; }
+/* ⚠ Chữ tuy ẩn nhưng VẪN chiếm chỗ, và chiều cao thanh tiêu đề nằm trong công
+   thức --board — nên nó phải là hàm trơn của cỡ bàn. Tiêu đề tutorial ("How to
+   play") dài hơn số màn của màn chơi thường, mà cỡ chữ lại bám --ui: bàn to lên
+   là chữ to lên, tới ngưỡng thì xuống dòng và thanh cao gấp đôi (đo được 43px
+   -> 94px khi bàn 322 -> 356, đủ để cả cột tràn khỏi màn). Cấm xuống dòng là
+   hết; overflow chỉ để phòng chữ dài hơn cột. */
+.play.tutorial .hud-level { overflow: hidden; }
+.play.tutorial .hud-level strong { white-space: nowrap; }
 .play.tutorial .bar .icon { position: relative; z-index: 4; }
 
 /* Ô cần bấm hai lần: vòng trắng quanh ô, đập chậm. */
@@ -1076,16 +1084,19 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
    dòng vẫn đọc được, còn bàn cờ 4x4 mà teo lại thì bấm trượt ô. */
 .play.tutorial .slot-top { min-height: 150px; min-height: min(150px, 21dvh); }
 .play.tutorial .slot-bottom { min-height: 108px; min-height: min(108px, 15dvh); }
-/* Hai ô chừa ăn mất 258px nên bàn cờ trong tutorial phải chặt tay hơn màn
-   chơi thường: `board <= 50dvh - 125px`. */
-.play.tutorial { --board: min(96vw, 560px, max(155px, 50vh - 125px)); }
+/* Bàn cờ trong tutorial chặt tay hơn màn chơi thường vì hai ô chừa thẻ hướng
+   dẫn ăn mất 258px. Khung = 0,136 x bàn (thanh tiêu đề) + khe 4x12 + ô chừa
+   150 + 108 + dòng trạng thái 21 + đệm đáy 44 — khớp từ 7 điểm đo bằng trang
+   dò iframe. Giải ngược ra `88vh - 358px`; quá 460px thì --ui đứng yên nên
+   thanh tiêu đề thôi lớn, thành `100vh - 470px`. Lấy vế nào cho bàn LỚN hơn. */
+.play.tutorial { --board: min(96vw, 560px, max(155px, 88vh - 358px, 100vh - 470px)); }
 
 /* Biến tuỳ biến không bị loại khi giá trị sai — trình duyệt cứ thay nguyên xi
    vào chỗ dùng rồi mới hỏng ở đó. Nên không thể viết hai dòng vh/dvh chồng
    nhau như với thuộc tính thường; phải hỏi @supports trước. */
 @supports (height: 1dvh) {
   .play { --board: min(96vw, 760px, max(210px, 100dvh - 333px, 71dvh - 106px)); }
-  .play.tutorial { --board: min(96vw, 560px, max(155px, 50dvh - 125px)); }
+  .play.tutorial { --board: min(96vw, 560px, max(155px, 88dvh - 358px, 100dvh - 470px)); }
 }
 
 /* --- thẻ hướng dẫn (trên và dưới bàn cờ) --- */
@@ -1369,7 +1380,10 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
   .coach { padding: 20px 26px; }
   .play.tutorial .slot-top { min-height: 164px; min-height: min(164px, 21dvh); }
   .play.tutorial .slot-bottom { min-height: 118px; min-height: min(118px, 15dvh); }
-  .play.tutorial { --board: min(62vw, 640px, max(200px, 50vh - 165px)); }
+  /* Khung = 0,136 x bàn + khe 4x16 + ô chừa 164 + 118 + trạng thái 21 + đệm 24
+     (đo được 424px khi bàn 307, 421px khi bàn 285). Ra `88vh - 365px`, và
+     `100vh - 478px` cho khúc bàn > 460px lúc thanh tiêu đề thôi lớn. */
+  .play.tutorial { --board: min(62vw, 640px, max(200px, 88vh - 365px, 100vh - 478px)); }
   .coach strong { font-size: 25px; }
   .coach p { font-size: 25px; }
   .coach.tip p { font-size: 19.5px; }
@@ -1404,11 +1418,15 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
      giá trị này rồi mới hỏng ở chỗ `width: var(--board)`, và bàn cờ mất luôn
      bề rộng. */
   .play { --board: min(96vw, 760px, max(120px, 100vh - 245px, 71vh - 70px)); }
-  .play.tutorial { --board: min(96vw, 560px, max(110px, 50vh - 105px)); }
+  /* Dưới 781px thì hai ô chừa co theo màn (21vh và 15vh) chứ không còn cố định,
+     nên vế chiều cao đổi độ dốc: khung = 0,136 x bàn + 0,36 x vh + 64. Giải ra
+     `56vh - 70px`. Trong dải 715-780px ô chừa đã chạm trần 150/108 nên công
+     thức này ước lượng dư — bàn nhỏ hơn mức tối đa một chút, phía an toàn. */
+  .play.tutorial { --board: min(96vw, 560px, max(110px, 56vh - 70px)); }
 
   @supports (height: 1dvh) {
     .play { --board: min(96vw, 760px, max(120px, 100dvh - 245px, 71dvh - 70px)); }
-    .play.tutorial { --board: min(96vw, 560px, max(110px, 50dvh - 105px)); }
+    .play.tutorial { --board: min(96vw, 560px, max(110px, 56dvh - 70px)); }
   }
 }
 
@@ -1423,7 +1441,9 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
      khung 218px → khung ≈ 0,325 x bàn + 68px, đứng yên 218px từ 460px. Cộng
      đệm 10px và 8px thở: `75vh - 65px` và `100vh - 236px`. */
   .play { --board: min(72vw, 860px, max(120px, 100vh - 236px, 75vh - 65px)); }
-  .play.tutorial { --board: min(62vw, 640px, max(110px, 50vh - 165px)); }
+  /* Khung = 0,136 x bàn + 0,36 x vh + 68 (đo: 1280x720 -> 354, 1024x576 -> 293,
+     800x450 -> 246). Ra `56vh - 76px`. */
+  .play.tutorial { --board: min(62vw, 640px, max(110px, 56vh - 76px)); }
 }
 
 /* ================================================== trang chủ: mặt cắt tổ

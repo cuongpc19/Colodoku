@@ -160,8 +160,12 @@ check(board.cats().length === 0, "tutorial mở ra đã có con sẵn — phải
 let handMarks = 0, handCats = 0, guard = 0;
 while (!tutorial.done && guard++ < 60) {
   const step = tutorial.step;
-  // Bài tập vuốt chạy trên bàn mới dọn, y như game.js làm lúc sang bước.
-  if (step.fresh) tutorial.useBoard((board = new Board(puzzle)));
+  // Bài tập vuốt chạy trên bàn riêng có kiến đặt sẵn, y như game.js làm lúc sang bước.
+  if (step.fresh) {
+    board = new Board(step.fresh.puzzle);
+    board.apply(step.fresh.given.map(([r, c]) => [r, c, CAT]));
+    tutorial.useBoard(board);
+  }
   if (step.needs) {
     // Bài tập vuốt chỉ nhận nét kéo; các bước khác nhận cú bấm lẻ.
     const kind = step.needs.value === CAT ? "cat" : step.dragOnly ? "drag" : "mark";
@@ -169,8 +173,8 @@ while (!tutorial.done && guard++ < 60) {
     const [r0, c0] = step.needs.cells[0];
     check(!tutorial.allows(r0, c0, other), `bước "${step.id}" cho bấm sai kiểu thao tác`);
     if (step.dragOnly) check(!tutorial.allows(r0, c0, "mark"), `bước "${step.id}" vẫn cho bấm lẻ`);
-    for (let r = 0; r < puzzle.size; r++)
-      for (let c = 0; c < puzzle.size; c++)
+    for (let r = 0; r < board.size; r++)
+      for (let c = 0; c < board.size; c++)
         if (!step.needs.cells.some(([i, j]) => i === r && j === c))
           check(!tutorial.allows(r, c, kind), `bước "${step.id}" cho bấm ô ngoài yêu cầu`);
     const todo = tutorial.pending();
@@ -199,27 +203,43 @@ while (!tutorial.done && guard++ < 60) {
   }
 }
 check(tutorial.done, "tutorial không đi hết được các bước");
-check(handMarks === 18, `người chơi tự đánh ${handMarks} dấu ✕, cần 18 (6 nhấn + 2 vuốt + 3 vuốt + 4 kéo hàng + 3 kéo cột)`);
+check(handMarks === 19, `người chơi tự đánh ${handMarks} dấu ✕, cần 19 (6 nhấn + 2 vuốt + 3 vuốt + 4 kéo hàng + 4 kéo cột)`);
 check(handCats === 3, `người chơi tự đặt ${handCats} con trong phần dẫn dắt, cần 3`);
 console.log(`tutorial: ${tutorial.steps.length} bước · tự đánh ${handMarks} ✕ · tự đặt ${handCats} con`);
 
-// --- bài tập vuốt: đúng hàng/cột con kiến đầu canh, và van an toàn ----------
+// --- bài tập vuốt: bàn sọc riêng, kiến đứng sẵn đầu dải, và van an toàn ------
 {
-  const [ar, ac] = plan.first;
-  const line = (make) => Array.from({ length: puzzle.size }, make);
   const [row, col] = drills;
-  check(row.fresh && !col.fresh, "chỉ bước đầu của bài tập mới dọn bàn");
-  check(sameCells(row.needs.cells, line((_, j) => [ar, j])), "bài tập hàng không phủ trọn hàng con kiến đầu tiên canh");
-  check(sameCells(col.needs.cells, line((_, i) => [i, ac])), "bài tập cột không phủ trọn cột con kiến đầu tiên canh");
+  for (const [name, step, byRows] of [["hàng", row, true], ["cột", col, false]]) {
+    check(Boolean(step.fresh?.puzzle) && step.fresh.given?.length === 1, `bài tập ${name} thiếu bàn riêng hoặc kiến đặt sẵn`);
+    const { puzzle: p, given } = step.fresh;
+    const [ar, ac] = given[0];
+    const n = p.size;
+    const band = Array.from({ length: n }, (_, i) => (byRows ? [ar, i] : [i, ac]));
+    const region = p.regionAt(ar, ac);
+    // Dải một màu: mọi ô trong dải cùng vùng, và vùng đó không lan ra ngoài dải.
+    check(band.every(([r, c]) => p.regionAt(r, c) === region), `dải ${name} của bài tập không cùng một màu`);
+    check(p.regions.flat().filter((v) => v === region).length === n, `màu của dải ${name} lan ra ngoài dải`);
+    // Kiến đứng ở đầu dải và khớp lời giải; phần còn lại là một mạch n-1 ô.
+    check(byRows ? ac === 0 || ac === n - 1 : ar === 0 || ar === n - 1, `kiến của bài tập ${name} không đứng ở đầu dải`);
+    check(p.solution[ar] === ac, `kiến của bài tập ${name} không khớp lời giải của bàn`);
+    const rest = band.filter(([r, c]) => !(r === ar && c === ac));
+    check(sameCells(step.needs.cells, rest), `bài tập ${name} không bắt kéo đúng phần còn lại của dải`);
+    check(sameCells(step.focus, band), `bài tập ${name} không sáng trọn dải`);
+    check(rest.length >= 4, `bài tập ${name} chỉ kéo ${rest.length} ô`);
+    // Lời giải của bàn phải đúng luật, để bàn tập không phải một thế cờ vô nghĩa.
+    check(new Set(p.solution).size === n && p.solution.every((c, r) => r === 0 || Math.abs(c - p.solution[r - 1]) > 1), `lời giải bàn tập ${name} phạm luật`);
+  }
 
   // Máy nào không nhận nét kéo thì bấm lẻ đủ nhiều lần là được qua, chứ không
   // nhốt người chơi lại giữa bài hướng dẫn.
   const stuck = new Tutorial(puzzle, new Board(puzzle));
   stuck.index = stuck.steps.findIndex((s) => s.id === "drill-row");
+  const [tr, tc] = row.needs.cells[0];
   let tries = 0;
-  while (!stuck.allows(ar, 0, "mark") && tries++ < 20);
+  while (!stuck.allows(tr, tc, "mark") && tries++ < 20);
   check(tries === 12, `bài tập nới ra sau ${tries} lần bấm lẻ, cần 12`);
-  console.log(`bài tập vuốt: hàng ${ar} · cột ${ac} · nới sau ${tries} lần bấm lẻ`);
+  console.log(`bài tập vuốt: bàn ${row.fresh.puzzle.size}×${row.fresh.puzzle.size} · kiến hàng ${row.fresh.given[0]} · kiến cột ${col.fresh.given[0]} · nới sau ${tries} lần bấm lẻ`);
 }
 
 // --- bộ máy chọn màn: đúng luật Meowdoku, và nhỏ hơn họ trước màn 50 ------------

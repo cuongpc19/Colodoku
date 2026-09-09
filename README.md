@@ -68,7 +68,7 @@ Game không đánh ✕ hộ ở màn nào — Meowdoku bắt tự loại ô ngay
 
 ## Hướng dẫn
 
-Nhịp dạy học theo Meowdoku, nhưng **bàn cờ là của mình** và có **hai lượt tập vuốt** thay vì một, rồi khép lại bằng **hai bài tập kéo thật** trên bàn dọn sạch — trọn một hàng, trọn một cột, bấm lẻ không tính. Bàn do [`tools/pick_tutorial.mjs`](tools/pick_tutorial.mjs) chọn từ bộ sinh: 4×4, chỉ cần kỹ thuật cấp 1, và khác bàn của họ kể cả sau tám phép xoay/lật. Người chơi tự đặt cả ba con kiến đầu và tự đánh 11 dấu ✕ trong phần dẫn dắt — game không đặt hộ con nào.
+Nhịp dạy học theo Meowdoku, nhưng **bàn cờ là của mình** và có **hai lượt tập vuốt** thay vì một, rồi khép lại bằng **hai bài tập kéo thật** trên hai bàn 5×5 kẻ sọc riêng — kiến đứng sẵn ở đầu một dải một màu, kéo một nét tắt phần còn lại của dải (ngang rồi dọc), bấm lẻ không tính. Bàn do [`tools/pick_tutorial.mjs`](tools/pick_tutorial.mjs) chọn từ bộ sinh: 4×4, chỉ cần kỹ thuật cấp 1, và khác bàn của họ kể cả sau tám phép xoay/lật. Người chơi tự đặt cả ba con kiến đầu và tự đánh 11 dấu ✕ trong phần dẫn dắt — game không đặt hộ con nào.
 
 | Bước | Lời dẫn | Người chơi làm |
 |---|---|---|

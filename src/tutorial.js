@@ -9,19 +9,19 @@
 //   6. Vùng khác chỉ còn một ô — đặt con thứ ba
 //   7. Vuốt để gạch các ô kề con thứ ba       ← tập vuốt lần 2
 //   8. Tự tìm con cuối
-//   9. Dọn sạch bàn, kéo trọn một hàng        ← chỉ nhận nét kéo
-//  10. Kéo trọn một cột                        ← chỉ nhận nét kéo
+//   9. Bàn sọc ngang: kiến đứng sẵn đầu dải, kéo tắt phần còn lại của hàng ← chỉ nhận nét kéo
+//  10. Bàn sọc dọc: y vậy theo cột                                          ← chỉ nhận nét kéo
 //  11. "Đủ cả bài rồi"
 //
 // Bước 5 và 7 bảo "kéo qua các ô này" nhưng chỉ kiểm ô đã đánh dấu chưa — bấm
-// lẻ từng ô cũng qua. Hai bước 9-10 mới là chỗ bắt buộc phải kéo thật (xem
-// `drillSteps`): bàn phải dọn vì đến đó nó đã kín, không còn ô trống để gạch.
+// lẻ từng ô cũng qua. Hai bước 9-10 mới là chỗ bắt buộc phải kéo thật, trên
+// hai bàn tập riêng (xem `drillSteps`).
 //
 // Không toạ độ nào bị ghi cứng: planTutorial() suy ra cả trình tự lẫn từng ô
 // từ chính luật chơi, nên đổi bàn cờ là hướng dẫn tự khớp theo. flow_test.mjs
 // kiểm lại rằng bàn đang dùng thật sự dạy đủ và đúng nhịp đó.
 
-import { CAT, MARK, Puzzle } from "./puzzle.js";
+import { CAT, MARK, Puzzle, packRegions } from "./puzzle.js";
 import { TUTORIAL, PALETTE } from "./levels.js";
 import { T } from "./strings.js";
 
@@ -210,24 +210,46 @@ export function buildSteps(puzzle) {
     { id: "done", done: true },
   ];
 
-  steps.splice(steps.length - 1, 0, ...drillSteps(puzzle, first));
+  steps.splice(steps.length - 1, 0, ...drillSteps());
   return steps;
 }
 
 /**
- * Hai bước tập vuốt: kéo trọn hàng rồi trọn cột mà con kiến đầu tiên đang canh
- * — đúng những ô bước 3 bắt bấm lẻ từng cái, giờ làm lại bằng một nét để tự
- * thấy chênh nhau bao nhiêu.
- *
- * `fresh` bảo bên ngoài dọn sạch bàn trước khi vào bước. `dragOnly` khiến bước
- * chỉ nhận nét kéo: bấm lẻ vẫn qua được thì người ngại đổi thao tác sẽ bấm lẻ
- * tiếp, và cả bài tập thành công cốc.
+ * Bàn tập vuốt: 5×5 kẻ sọc, mỗi dải một màu — sọc ngang cho bài tập hàng, sọc
+ * dọc cho bài tập cột. Lời giải là một hoán vị hợp lệ (không hai con nào kề
+ * nhau) chỉ để bàn đúng luật; bài tập không bắt giải, chỉ bắt kéo.
  */
-function drillSteps(puzzle, [r, c]) {
+const DRILL_SIZE = 5;
+const DRILL_BAND = 2; // dải giữa là dải tập
+
+// Lời giải của hai bàn (solution[hàng] = cột). Chọn sao cho con kiến của dải
+// giữa đứng ở ĐẦU dải — mép trái với hàng, mép trên với cột — để phần còn lại
+// là một mạch liền, kéo từ cạnh con kiến tới hết dải.
+const ROW_BOARD_S = [2, 4, 0, 3, 1]; // hàng 2 → cột 0
+const COL_BOARD_S = [2, 0, 3, 1, 4]; // hàng 0 → cột 2
+
+function stripedPuzzle(byRows, solution) {
+  const n = DRILL_SIZE;
+  const grid = Array.from({ length: n }, (_, r) => Array.from({ length: n }, (_, c) => (byRows ? r : c)));
+  return new Puzzle({ m: packRegions(grid), s: solution, r: 1 }, n);
+}
+
+/**
+ * Hai bước tập vuốt, mỗi bước trên bàn riêng: một con kiến đứng sẵn trong dải
+ * một màu, người chơi kéo một nét tắt hết phần còn lại của dải — đúng việc sẽ
+ * làm suốt các đêm sau, chỉ khác là ở đây bấm lẻ không tính.
+ *
+ * `fresh` mang bàn và con kiến đặt sẵn; game.js dựng bàn lúc sang bước.
+ * `dragOnly` khiến bước chỉ nhận nét kéo: bấm lẻ vẫn qua được thì người ngại
+ * đổi thao tác sẽ bấm lẻ tiếp, và cả bài tập thành công cốc.
+ */
+function drillSteps() {
   const { tut } = T;
-  const n = puzzle.size;
-  const row = Array.from({ length: n }, (_, j) => [r, j]);
-  const col = Array.from({ length: n }, (_, i) => [i, c]);
+  const n = DRILL_SIZE;
+  const rowAnt = [DRILL_BAND, ROW_BOARD_S[DRILL_BAND]];
+  const rowRest = Array.from({ length: n }, (_, c) => [DRILL_BAND, c]).filter(([, c]) => c !== rowAnt[1]);
+  const colAnt = [COL_BOARD_S.indexOf(DRILL_BAND), DRILL_BAND];
+  const colRest = Array.from({ length: n }, (_, r) => [r, DRILL_BAND]).filter(([r]) => r !== colAnt[0]);
   return [
     {
       id: "drill-row",
@@ -235,19 +257,20 @@ function drillSteps(puzzle, [r, c]) {
       top: tut.drillWhy,
       bottom: tut.drillRow,
       gesture: "swipe",
-      fresh: true,
+      fresh: { puzzle: stripedPuzzle(true, ROW_BOARD_S), given: [rowAnt] },
       dragOnly: true,
-      focus: row,
-      needs: { cells: row, value: MARK },
+      focus: [rowAnt, ...rowRest],
+      needs: { cells: rowRest, value: MARK },
     },
     {
       id: "drill-col",
       top: tut.drillNow,
       bottom: tut.drillCol,
       gesture: "swipe",
+      fresh: { puzzle: stripedPuzzle(false, COL_BOARD_S), given: [colAnt] },
       dragOnly: true,
-      focus: col,
-      needs: { cells: col, value: MARK },
+      focus: [colAnt, ...colRest],
+      needs: { cells: colRest, value: MARK },
     },
   ];
 }
@@ -273,7 +296,7 @@ export class Tutorial {
     this.steps = buildSteps(this.puzzle);
   }
 
-  /** Bước có cờ `fresh` chạy trên bàn cờ mới dọn — bên ngoài dựng bàn rồi đưa vào đây. */
+  /** Bước có `fresh` chạy trên bàn riêng — bên ngoài dựng bàn, đặt kiến rồi đưa vào đây. */
   useBoard(board) {
     this.board = board;
   }

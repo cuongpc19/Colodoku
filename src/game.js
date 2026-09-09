@@ -572,16 +572,20 @@ function renderCoach() {
 }
 
 /**
- * Sang bước kế của hướng dẫn. Bước nào đòi bàn sạch (bài tập vuốt trọn hàng,
- * trọn cột — lúc đó bàn đã kín, không còn ô trống để gạch) thì dựng bàn mới
- * rồi đưa cho hướng dẫn, trước khi vẽ.
+ * Sang bước kế của hướng dẫn. Bước nào mang bàn riêng (hai bài tập vuốt) thì
+ * dựng bàn đó, đặt sẵn kiến và khoá nó như con mở màn — xoá lịch sử để Hoàn
+ * tác không gỡ được — rồi đưa cho hướng dẫn, trước khi vẽ.
  */
 function advanceTutorial() {
   const tutorial = state.tutorial;
   tutorial.advance();
-  if (tutorial.step.fresh) {
-    state.board = new Board(state.puzzle);
-    view.mount(state.board);
+  const fresh = tutorial.step.fresh;
+  if (fresh) {
+    state.puzzle = fresh.puzzle;
+    state.board = new Board(fresh.puzzle);
+    state.board.apply(fresh.given.map(([r, c]) => [r, c, CAT]));
+    state.board.history.length = 0;
+    view.mount(state.board, fresh.given);
     tutorial.useBoard(state.board);
   }
   renderCoach();

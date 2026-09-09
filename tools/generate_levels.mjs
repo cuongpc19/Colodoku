@@ -46,14 +46,56 @@ export function loadProfile() {
   return profileCache;
 }
 
+// Hai chỉ số quyết định bàn chơi *cảm thấy* khó hay dễ — thang 5 cấp trong
+// solver.js mù với cả hai: số vùng ≤2 ô (mỗi vùng như vậy tặng không một con)
+// và tỉ lệ ô mà vùng lớn nhất chiếm (vùng nền càng phình thì càng ít ràng buộc
+// thật). Kho được dựng theo đúng tỉ lệ hai chỉ số này của bản gốc, xem
+// tools/build_pools.mjs.
+const SHARE_BUCKETS = [25, 40, 55, 70];
+
+/** Tầng của một khuôn: "số vùng ≤2 ô | bậc phình của vùng lớn nhất". */
+export function shapeKey(sizes) {
+  const total = sizes.reduce((a, b) => a + b, 0);
+  const share = (sizes[sizes.length - 1] / total) * 100;
+  const bucket = SHARE_BUCKETS.findIndex((limit) => share < limit);
+  return `${sizes.filter((s) => s <= 2).length}|${bucket === -1 ? SHARE_BUCKETS.length : bucket}`;
+}
+
+/**
+ * Khuôn mà máy chọn màn có thể phục vụ thật. Bản gốc chốt tối đa 2 vùng 1 ô
+ * (xem singleLimit trong src/progression.js) nên khuôn nhiều hơn thế có nằm
+ * trong bank cũng không bao giờ tới tay người chơi — không tính vào tỉ lệ đích,
+ * và cũng không sinh làm gì.
+ */
+export const servable = (sizes) => sizes.filter((s) => s === 1).length <= 2;
+
+/** Tần suất từng tầng trong bản gốc, giảm dần. */
+export function shapeStrata(size, rating) {
+  const entry = loadProfile().profile[`${size}x${rating}`];
+  if (!entry) throw new Error(`hồ sơ hình dạng không có tổ hợp ${size}x${rating}`);
+  const weight = new Map();
+  for (const [sig, n] of Object.entries(entry.shapes)) {
+    const sizes = sig.split(",").map(Number);
+    if (!servable(sizes)) continue;
+    const key = shapeKey(sizes);
+    weight.set(key, (weight.get(key) || 0) + n);
+  }
+  return [...weight].sort((a, b) => b[1] - a[1]);
+}
+
 /**
  * Rút một "khuôn" cho cỡ lưới và bậc khó này theo đúng tần suất bản gốc dùng:
  * danh sách cỡ vùng (tăng dần) và xác suất ô đơn nằm ở cạnh / ở góc.
  */
-export function pickShape(size, rating, rand) {
+export function pickShape(size, rating, rand, stratum = null) {
   const entry = loadProfile().profile[`${size}x${rating}`];
   if (!entry) throw new Error(`hồ sơ hình dạng không có tổ hợp ${size}x${rating}`);
-  const shapes = Object.entries(entry.shapes);
+  const shapes = Object.entries(entry.shapes).filter(([sig]) => {
+    if (!stratum) return true;
+    const sizes = sig.split(",").map(Number);
+    return servable(sizes) && shapeKey(sizes) === stratum;
+  });
+  if (!shapes.length) throw new Error(`hồ sơ ${size}x${rating} không có tầng ${stratum}`);
   const total = shapes.reduce((a, [, n]) => a + n, 0);
   let pick = rand() * total;
   let signature = shapes[shapes.length - 1][0];
@@ -377,9 +419,16 @@ export function finish(size, regions, solution, rand, mustMatch = null, locked =
   let scored = rate(new Puzzle(pack(regions, solution), size));
   if (!scored) {
     if (!forceUnique(size, regions, solution, rand, locked)) return null;
-    if (mustMatch && !closeEnough(shapeOf(regions), mustMatch)) return null; // vá xong lệch cỡ đích
     scored = rate(new Puzzle(pack(regions, solution), size));
     if (!scored) return null; // duy nhất nhưng khó quá thang kỹ thuật của mình
+  }
+  // Nghiệm thu cỡ vùng ở cả hai nhánh. Đường nhanh thì fitTargets đã khớp sẵn,
+  // nhưng vá cho duy nhất có thể đẩy bàn lệch khuôn — mà lệch khuôn nghĩa là
+  // lệch tầng, tức lệch đúng cái quyết định độ khó cảm nhận.
+  if (mustMatch) {
+    const actual = shapeOf(regions);
+    if (!closeEnough(actual, mustMatch)) return null;
+    if (shapeKey(actual) !== shapeKey(mustMatch)) return null;
   }
   return { ...pack(regions, solution), r: scored.rating, st: scored.steps, rk: scored.techniques, ch: 0 };
 }

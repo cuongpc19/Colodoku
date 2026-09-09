@@ -4,47 +4,97 @@
 //
 // Câu chuyện: mỗi màn là một ĐÊM GÁC, năm đêm là một CHƯƠNG, mỗi chương giữ
 // an toàn cho một BUỒNG. Hết năm buồng là xong một TẦNG, tổ đào xuống tầng mới
-// với lại năm buồng đó.
+// — và tầng mới có năm buồng KHÁC, không lặp lại tên cũ.
+//
+// Ba tầng đầu có tên và hình riêng; từ tầng 4 thì quay vòng lại, nhưng số tầng
+// vẫn tăng nên vẫn phân biệt được. Muốn thêm tầng thì nối một mảng khoá vào
+// FLOORS và năm tên vào `rooms` trong data/i18n/*.json, đúng thứ tự.
 
 export const CHAPTER_LEN = 5;
-export const ROOMS = ["gate", "eggs", "fungus", "candy", "queen"];
+
+/** Khoá buồng theo tầng. Mỗi tầng đúng CHAPTER_LEN buồng. */
+export const FLOORS = [
+  ["gate", "eggs", "fungus", "candy", "queen"],
+  ["nursery", "well", "granary", "aphids", "winter"],
+  ["roots", "spring", "crystal", "vault", "heart"],
+];
 
 /** Chương chứa màn n (từ 1). */
 export const chapterOf = (n) => Math.ceil(n / CHAPTER_LEN);
-/** Đêm thứ mấy trong chương (1..5). */
+/** Đêm thứ mấy trong chương (1..CHAPTER_LEN). */
 export const nightOf = (n) => ((n - 1) % CHAPTER_LEN) + 1;
 /** Tầng chứa chương (từ 1). */
-export const floorOf = (chapter) => Math.ceil(chapter / ROOMS.length);
-/** Khoá buồng của một chương. */
-export const roomOf = (chapter) => ROOMS[(chapter - 1) % ROOMS.length];
+export const floorOf = (chapter) => Math.ceil(chapter / CHAPTER_LEN);
 /** Màn n có phải đêm cuối của chương không. */
 export const endsChapter = (n) => n % CHAPTER_LEN === 0;
+
+/** Buồng thứ mấy trong tầng (0..CHAPTER_LEN-1). */
+const slotOf = (chapter) => (chapter - 1) % CHAPTER_LEN;
+/** Mảng khoá buồng của tầng đó — quay vòng khi hết FLOORS. */
+const keysOfFloor = (floor) => FLOORS[(floor - 1) % FLOORS.length];
+
+/**
+ * Chỗ của tên buồng trong mảng `rooms` của bảng chữ: mảng đó phẳng, xếp theo
+ * tầng rồi tới buồng, nên tầng 2 buồng 1 nằm ở vị trí 5.
+ */
+export function roomNameIndex(chapter) {
+  return (((floorOf(chapter) - 1) % FLOORS.length) * CHAPTER_LEN) + slotOf(chapter);
+}
 
 /**
  * Trạng thái năm buồng của tầng chứa màn `current` (màn sắp chơi):
  *   done   — chương đã xong
- *   now    — chương đang gác, kèm số đêm đã xong
+ *   now    — chương đang gác
  *   locked — chưa tới
  */
 export function floorRooms(current) {
   const chapter = chapterOf(current);
   const floor = floorOf(chapter);
-  const firstChapter = (floor - 1) * ROOMS.length + 1;
-  return ROOMS.map((key, i) => {
-    const c = firstChapter + i;
-    const state = c < chapter ? "done" : c === chapter ? "now" : "locked";
-    return { key, chapter: c, state, nights: state === "now" ? nightOf(current) - 1 : state === "done" ? CHAPTER_LEN : 0 };
+  const first = (floor - 1) * CHAPTER_LEN + 1;
+  return keysOfFloor(floor).map((key, i) => {
+    const c = first + i;
+    return {
+      key,
+      chapter: c,
+      nameIndex: roomNameIndex(c),
+      state: c < chapter ? "done" : c === chapter ? "now" : "locked",
+    };
   });
 }
 
 // --------------------------------------------------------------- vẽ
 
 const ICONS = {
+  // --- tầng 1: mặt đất ---
   gate: `<path d="M-16 14 V-2 a16 16 0 0 1 32 0 V14 Z" fill="#8a5a3c" stroke="#0f1526" stroke-width="2"/><path d="M-8 14 V2 a8 8 0 0 1 16 0 V14 Z" fill="#141826"/>`,
   eggs: `<ellipse cx="-12" cy="4" rx="9" ry="12" fill="#fff4d6" stroke="#0f1526" stroke-width="2"/><ellipse cx="6" cy="0" rx="9" ry="12" fill="#fff4d6" stroke="#0f1526" stroke-width="2"/><ellipse cx="18" cy="10" rx="8" ry="11" fill="#fff4d6" stroke="#0f1526" stroke-width="2"/>`,
   fungus: `<rect x="-5" y="0" width="10" height="14" rx="3" fill="#e9dcc3" stroke="#0f1526" stroke-width="2"/><path d="M-16 2 a16 12 0 0 1 32 0 z" fill="#ff7b6b" stroke="#0f1526" stroke-width="2"/><circle cx="-6" cy="-4" r="2.5" fill="#fff"/><circle cx="6" cy="-6" r="2" fill="#fff"/>`,
   candy: `<g transform="rotate(-20)"><rect x="-13" y="-8" width="26" height="16" rx="8" fill="#ff8fc6" stroke="#0f1526" stroke-width="2"/><path d="M-13 -8 L-22 -14 L-19 0 L-22 14 L-13 8 Z M13 -8 L22 -14 L19 0 L22 14 L13 8 Z" fill="#ffc46b" stroke="#0f1526" stroke-width="2" stroke-linejoin="round"/><path d="M-6 -6 q6 6 0 12 M4 -6 q6 6 0 12" fill="none" stroke="#fff" stroke-width="2" opacity=".8"/></g>`,
   queen: `<path d="M-18 10 L-14 -8 L-5 2 L0 -12 L5 2 L14 -8 L18 10 Z" fill="#ffc46b" stroke="#0f1526" stroke-width="2"/><rect x="-18" y="10" width="36" height="6" fill="#ffc46b" stroke="#0f1526" stroke-width="2"/>`,
+
+  // --- tầng 2: sâu hơn, chỗ nuôi và tích trữ ---
+  // Ấu trùng cuộn tròn, ba con nằm cạnh nhau.
+  nursery: `<g fill="#fff0d0" stroke="#0f1526" stroke-width="2" stroke-linejoin="round"><path d="M-18 8 a9 9 0 0 1 0 -14 a7 7 0 0 1 8 8 a5 5 0 0 1 -6 2 z"/><path d="M2 12 a9 9 0 0 1 0 -14 a7 7 0 0 1 8 8 a5 5 0 0 1 -6 2 z"/><path d="M14 -2 a7 7 0 0 1 0 -11 a5 5 0 0 1 6 6 a4 4 0 0 1 -5 2 z"/></g>`,
+  // Giếng: thành giếng xây đá, mặt nước sáng bên trong.
+  well: `<path d="M-16 14 V-4 h32 V14 Z" fill="#6b5a4a" stroke="#0f1526" stroke-width="2"/><ellipse cx="0" cy="-4" rx="16" ry="6" fill="#5fd4e8" stroke="#0f1526" stroke-width="2"/><path d="M-8 -4 a8 3 0 0 0 16 0" fill="none" stroke="#fff" stroke-width="1.6" opacity=".7"/><path d="M-14 4 h28 M-14 9 h28" stroke="#0f1526" stroke-width="1.4" opacity=".5"/>`,
+  // Kho hạt: đống hạt xếp thành tháp.
+  granary: `<g fill="#d8b48a" stroke="#0f1526" stroke-width="2"><ellipse cx="-11" cy="9" rx="8" ry="6"/><ellipse cx="6" cy="10" rx="8" ry="6"/><ellipse cx="-3" cy="0" rx="8" ry="6"/><ellipse cx="12" cy="0" rx="7" ry="5"/><ellipse cx="3" cy="-9" rx="7" ry="5"/></g>`,
+  // Chuồng rệp: con rệp tròn trên một chiếc lá — kiến nuôi rệp lấy mật.
+  aphids: `<path d="M-22 12 q10 -14 26 -12 q12 2 16 10 q-16 8 -30 6 z" fill="#6ea34a" stroke="#0f1526" stroke-width="2" stroke-linejoin="round"/><ellipse cx="2" cy="-6" rx="11" ry="9" fill="#b9e06a" stroke="#0f1526" stroke-width="2"/><circle cx="-2" cy="-8" r="2" fill="#0f1526"/><path d="M-6 -14 l-4 -6 M6 -14 l5 -6" stroke="#0f1526" stroke-width="2" stroke-linecap="round"/>`,
+  // Buồng trú đông: bông tuyết sáu cánh.
+  winter: `<g stroke="#7ab5ff" stroke-width="3" stroke-linecap="round"><path d="M0 -15 V15 M-13 -8 L13 8 M-13 8 L13 -8"/><path d="M0 -15 l-4 5 M0 -15 l4 5 M0 15 l-4 -5 M0 15 l4 -5" stroke-width="2.4"/></g><circle cx="0" cy="0" r="3" fill="#e8f4ff"/>`,
+
+  // --- tầng 3: tận đáy ---
+  // Rễ cây đâm xuống, ba nhánh.
+  roots: `<g fill="none" stroke="#a06a3c" stroke-width="4" stroke-linecap="round"><path d="M0 -14 V14"/><path d="M0 -2 q-10 4 -13 14"/><path d="M0 2 q11 3 14 12"/><path d="M0 -10 q-8 1 -10 7"/></g>`,
+  // Mạch nước ấm: giọt nước và hai vòng sóng.
+  spring: `<path d="M0 -14 q10 12 10 18 a10 10 0 0 1 -20 0 q0 -6 10 -18 z" fill="#5fd4e8" stroke="#0f1526" stroke-width="2" stroke-linejoin="round"/><path d="M-4 4 a5 5 0 0 0 6 5" fill="none" stroke="#fff" stroke-width="2" opacity=".8"/><path d="M-18 12 q6 4 12 0 M8 14 q6 4 12 0" fill="none" stroke="#5fd4e8" stroke-width="2" opacity=".6"/>`,
+  // Hang lấp lánh: một viên đá quý cắt mặt.
+  crystal: `<path d="M0 -15 L13 -5 L8 14 H-8 L-13 -5 Z" fill="#9d8cff" stroke="#0f1526" stroke-width="2" stroke-linejoin="round"/><path d="M0 -15 L0 14 M-13 -5 H13" stroke="#0f1526" stroke-width="1.6" opacity=".55"/><path d="M-6 -8 L-2 -2" stroke="#fff" stroke-width="2" opacity=".8" stroke-linecap="round"/>`,
+  // Kho lớn: ba bao tải xếp chồng.
+  vault: `<g fill="#c9a86b" stroke="#0f1526" stroke-width="2" stroke-linejoin="round"><path d="M-18 14 v-9 a8 8 0 0 1 5 -7 l-2 -3 h8 l-2 3 a8 8 0 0 1 5 7 v9 z"/><path d="M2 14 v-9 a8 8 0 0 1 5 -7 l-2 -3 h8 l-2 3 a8 8 0 0 1 5 7 v9 z"/><path d="M-8 -2 v-6 a7 7 0 0 1 4 -6 l-2 -3 h7 l-2 3 a7 7 0 0 1 4 6 v6 z" fill="#d8b48a"/></g>`,
+  // Tim tổ: trái tim ấm, chỗ sâu nhất.
+  heart: `<path d="M0 14 C-16 4 -18 -6 -11 -11 C-5 -15 0 -10 0 -6 C0 -10 5 -15 11 -11 C18 -6 16 4 0 14 Z" fill="#ff7b6b" stroke="#0f1526" stroke-width="2" stroke-linejoin="round"/><path d="M-6 -6 q2 -4 5 -3" fill="none" stroke="#fff" stroke-width="2" opacity=".75" stroke-linecap="round"/>`,
 };
 
 const ROOM_Y = [52, 132, 212, 292, 372];
@@ -57,8 +107,8 @@ function lantern(x, y, lit) {
 }
 
 /**
- * Vẽ mặt cắt tổ vào `container`. `names` là tên buồng theo ngôn ngữ đang chọn,
- * cùng thứ tự ROOMS. Kiến gác đứng ở buồng đang gác, dùng ảnh trong `antUrl`.
+ * Vẽ mặt cắt tổ vào `container`. `names` là tên năm buồng theo ngôn ngữ đang
+ * chọn, cùng thứ tự `rooms`. Kiến gác đứng ở buồng đang gác.
  */
 export function renderNest(container, rooms, names, antUrl) {
   const out = [];

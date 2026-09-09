@@ -6,7 +6,7 @@ import { nextDeduction, stateFromBoard, placementRank, EASY_RANKS } from "./solv
 import { Tutorial, tutorialPuzzle } from "./tutorial.js";
 import { T, explain, applyStatic, LANGUAGES, getLocale, setLocale } from "./strings.js";
 import { sound } from "./sound.js";
-import { chapterOf, nightOf, floorOf, roomOf, endsChapter, floorRooms, renderNest, CHAPTER_LEN, ROOMS } from "./nest.js";
+import { chapterOf, nightOf, floorOf, roomNameIndex, endsChapter, floorRooms, renderNest, CHAPTER_LEN } from "./nest.js";
 import {
   levelRecord, autoMarksFor, onLevelWon, onLevelFailed, onLevelRestarted, markDirty,
   loadProgress, markCleared, clearProgress, currentLevel, starsFor,
@@ -117,10 +117,12 @@ function refreshHome() {
   const current = currentLevel(state.progress);
   const chapter = chapterOf(current);
   const rooms = floorRooms(current);
-  const names = rooms.map((room) => T.rooms[ROOMS.indexOf(room.key)]);
+  const names = rooms.map((room) => T.rooms[room.nameIndex]);
 
-  ui.homeKicker.textContent = T.homeKicker(floorOf(chapter), chapter);
-  ui.homeRoom.textContent = T.rooms[ROOMS.indexOf(roomOf(chapter))];
+  // Nhãn nói hai điều người chơi cần: đang ở tầng nào, và còn mấy đêm nữa thì
+  // buồng này an toàn. Số chương thì bỏ — tên buồng ngay dưới đã là nó rồi.
+  ui.homeKicker.textContent = T.homeKicker(floorOf(chapter), nightOf(current), CHAPTER_LEN);
+  ui.homeRoom.textContent = T.rooms[roomNameIndex(chapter)];
   const done = nightOf(current) - 1;
   ui.homeDots.innerHTML = Array.from({ length: CHAPTER_LEN }, (_, i) =>
     `<i class="${i < done ? "on" : i === done ? "now" : ""}"></i>`).join("");
@@ -833,7 +835,7 @@ function showWin(earned) {
   if (master) {
     // Đêm cuối chương: nói rõ buồng nào vừa được giữ, rồi nút Tiếp đưa về tổ.
     ui.winTitle.textContent = state.chapterOver
-      ? T.chapterDone(T.rooms[ROOMS.indexOf(roomOf(chapterOf(state.level)))])
+      ? T.chapterDone(T.rooms[roomNameIndex(chapterOf(state.level))])
       : T.masterTitle;
     ui.winNote.textContent = T.masterNote(state.progress.ants || 0, state.progress.candy || 0);
   } else {

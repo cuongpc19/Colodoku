@@ -147,9 +147,19 @@
     "Buồng trứng",
     "Vườn nấm",
     "Kho kẹo",
-    "Buồng chúa"
+    "Buồng chúa",
+    "Nhà trẻ",
+    "Giếng nước",
+    "Kho hạt",
+    "Chuồng rệp",
+    "Buồng trú đông",
+    "Tầng rễ",
+    "Mạch nước ấm",
+    "Hang lấp lánh",
+    "Kho lớn",
+    "Tim tổ"
   ],
-  "homeKicker": "Tầng {0} · Chương {1}",
+  "homeKicker": "Tầng {0} · Đêm {1}/{2}",
   "chapterDone": "{0} đã an toàn!",
   "backToNest": "Về tổ",
   "notEnoughCandy": "Không đủ kẹo — cần {0} viên."

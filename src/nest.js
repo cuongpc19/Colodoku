@@ -64,48 +64,40 @@ export function floorRooms(current) {
 
 // --------------------------------------------------------------- vẽ
 
-const ICONS = {
-  // --- tầng 1: mặt đất ---
-  gate: `<path d="M-16 14 V-2 a16 16 0 0 1 32 0 V14 Z" fill="#8a5a3c" stroke="#0f1526" stroke-width="2"/><path d="M-8 14 V2 a8 8 0 0 1 16 0 V14 Z" fill="#141826"/>`,
-  eggs: `<ellipse cx="-12" cy="4" rx="9" ry="12" fill="#fff4d6" stroke="#0f1526" stroke-width="2"/><ellipse cx="6" cy="0" rx="9" ry="12" fill="#fff4d6" stroke="#0f1526" stroke-width="2"/><ellipse cx="18" cy="10" rx="8" ry="11" fill="#fff4d6" stroke="#0f1526" stroke-width="2"/>`,
-  fungus: `<rect x="-5" y="0" width="10" height="14" rx="3" fill="#e9dcc3" stroke="#0f1526" stroke-width="2"/><path d="M-16 2 a16 12 0 0 1 32 0 z" fill="#ff7b6b" stroke="#0f1526" stroke-width="2"/><circle cx="-6" cy="-4" r="2.5" fill="#fff"/><circle cx="6" cy="-6" r="2" fill="#fff"/>`,
-  candy: `<g transform="rotate(-20)"><rect x="-13" y="-8" width="26" height="16" rx="8" fill="#ff8fc6" stroke="#0f1526" stroke-width="2"/><path d="M-13 -8 L-22 -14 L-19 0 L-22 14 L-13 8 Z M13 -8 L22 -14 L19 0 L22 14 L13 8 Z" fill="#ffc46b" stroke="#0f1526" stroke-width="2" stroke-linejoin="round"/><path d="M-6 -6 q6 6 0 12 M4 -6 q6 6 0 12" fill="none" stroke="#fff" stroke-width="2" opacity=".8"/></g>`,
-  queen: `<path d="M-18 10 L-14 -8 L-5 2 L0 -12 L5 2 L14 -8 L18 10 Z" fill="#ffc46b" stroke="#0f1526" stroke-width="2"/><rect x="-18" y="10" width="36" height="6" fill="#ffc46b" stroke="#0f1526" stroke-width="2"/>`,
-
-  // --- tầng 2: sâu hơn, chỗ nuôi và tích trữ ---
-  // Ấu trùng cuộn tròn, ba con nằm cạnh nhau.
-  nursery: `<g fill="#fff0d0" stroke="#0f1526" stroke-width="2" stroke-linejoin="round"><path d="M-18 8 a9 9 0 0 1 0 -14 a7 7 0 0 1 8 8 a5 5 0 0 1 -6 2 z"/><path d="M2 12 a9 9 0 0 1 0 -14 a7 7 0 0 1 8 8 a5 5 0 0 1 -6 2 z"/><path d="M14 -2 a7 7 0 0 1 0 -11 a5 5 0 0 1 6 6 a4 4 0 0 1 -5 2 z"/></g>`,
-  // Giếng: thành giếng xây đá, mặt nước sáng bên trong.
-  well: `<path d="M-16 14 V-4 h32 V14 Z" fill="#6b5a4a" stroke="#0f1526" stroke-width="2"/><ellipse cx="0" cy="-4" rx="16" ry="6" fill="#5fd4e8" stroke="#0f1526" stroke-width="2"/><path d="M-8 -4 a8 3 0 0 0 16 0" fill="none" stroke="#fff" stroke-width="1.6" opacity=".7"/><path d="M-14 4 h28 M-14 9 h28" stroke="#0f1526" stroke-width="1.4" opacity=".5"/>`,
-  // Kho hạt: đống hạt xếp thành tháp.
-  granary: `<g fill="#d8b48a" stroke="#0f1526" stroke-width="2"><ellipse cx="-11" cy="9" rx="8" ry="6"/><ellipse cx="6" cy="10" rx="8" ry="6"/><ellipse cx="-3" cy="0" rx="8" ry="6"/><ellipse cx="12" cy="0" rx="7" ry="5"/><ellipse cx="3" cy="-9" rx="7" ry="5"/></g>`,
-  // Chuồng rệp: con rệp tròn trên một chiếc lá — kiến nuôi rệp lấy mật.
-  aphids: `<path d="M-22 12 q10 -14 26 -12 q12 2 16 10 q-16 8 -30 6 z" fill="#6ea34a" stroke="#0f1526" stroke-width="2" stroke-linejoin="round"/><ellipse cx="2" cy="-6" rx="11" ry="9" fill="#b9e06a" stroke="#0f1526" stroke-width="2"/><circle cx="-2" cy="-8" r="2" fill="#0f1526"/><path d="M-6 -14 l-4 -6 M6 -14 l5 -6" stroke="#0f1526" stroke-width="2" stroke-linecap="round"/>`,
-  // Buồng trú đông: bông tuyết sáu cánh.
-  winter: `<g stroke="#7ab5ff" stroke-width="3" stroke-linecap="round"><path d="M0 -15 V15 M-13 -8 L13 8 M-13 8 L13 -8"/><path d="M0 -15 l-4 5 M0 -15 l4 5 M0 15 l-4 -5 M0 15 l4 -5" stroke-width="2.4"/></g><circle cx="0" cy="0" r="3" fill="#e8f4ff"/>`,
-
-  // --- tầng 3: tận đáy ---
-  // Rễ cây đâm xuống, ba nhánh.
-  roots: `<g fill="none" stroke="#a06a3c" stroke-width="4" stroke-linecap="round"><path d="M0 -14 V14"/><path d="M0 -2 q-10 4 -13 14"/><path d="M0 2 q11 3 14 12"/><path d="M0 -10 q-8 1 -10 7"/></g>`,
-  // Mạch nước ấm: giọt nước và hai vòng sóng.
-  spring: `<path d="M0 -14 q10 12 10 18 a10 10 0 0 1 -20 0 q0 -6 10 -18 z" fill="#5fd4e8" stroke="#0f1526" stroke-width="2" stroke-linejoin="round"/><path d="M-4 4 a5 5 0 0 0 6 5" fill="none" stroke="#fff" stroke-width="2" opacity=".8"/><path d="M-18 12 q6 4 12 0 M8 14 q6 4 12 0" fill="none" stroke="#5fd4e8" stroke-width="2" opacity=".6"/>`,
-  // Hang lấp lánh: một viên đá quý cắt mặt.
-  crystal: `<path d="M0 -15 L13 -5 L8 14 H-8 L-13 -5 Z" fill="#9d8cff" stroke="#0f1526" stroke-width="2" stroke-linejoin="round"/><path d="M0 -15 L0 14 M-13 -5 H13" stroke="#0f1526" stroke-width="1.6" opacity=".55"/><path d="M-6 -8 L-2 -2" stroke="#fff" stroke-width="2" opacity=".8" stroke-linecap="round"/>`,
-  // Kho lớn: ba bao tải xếp chồng.
-  vault: `<g fill="#c9a86b" stroke="#0f1526" stroke-width="2" stroke-linejoin="round"><path d="M-18 14 v-9 a8 8 0 0 1 5 -7 l-2 -3 h8 l-2 3 a8 8 0 0 1 5 7 v9 z"/><path d="M2 14 v-9 a8 8 0 0 1 5 -7 l-2 -3 h8 l-2 3 a8 8 0 0 1 5 7 v9 z"/><path d="M-8 -2 v-6 a7 7 0 0 1 4 -6 l-2 -3 h7 l-2 3 a7 7 0 0 1 4 6 v6 z" fill="#d8b48a"/></g>`,
-  // Tim tổ: trái tim ấm, chỗ sâu nhất.
-  heart: `<path d="M0 14 C-16 4 -18 -6 -11 -11 C-5 -15 0 -10 0 -6 C0 -10 5 -15 11 -11 C18 -6 16 4 0 14 Z" fill="#ff7b6b" stroke="#0f1526" stroke-width="2" stroke-linejoin="round"/><path d="M-6 -6 q2 -4 5 -3" fill="none" stroke="#fff" stroke-width="2" opacity=".75" stroke-linecap="round"/>`,
+/* Hình từng buồng — tranh vẽ, cắt từ một tấm 4x4 bằng tools/slice_rooms.py.
+   Đường dẫn viết thẳng từng cái chứ KHÔNG ghép tên file lúc
+   chạy: tools/build_single.mjs nhúng ảnh bằng cách dò chuỗi trong mã nguồn,
+   mà chuỗi ghép thì nó không thấy — bản một file sẽ mất sạch hình. */
+const ICON_URL = {
+  gate: "assets/room-gate.png",
+  eggs: "assets/room-eggs.png",
+  fungus: "assets/room-fungus.png",
+  candy: "assets/room-candy.png",
+  queen: "assets/room-queen.png",
+  nursery: "assets/room-nursery.png",
+  well: "assets/room-well.png",
+  granary: "assets/room-granary.png",
+  aphids: "assets/room-aphids.png",
+  winter: "assets/room-winter.png",
+  roots: "assets/room-roots.png",
+  spring: "assets/room-spring.png",
+  crystal: "assets/room-crystal.png",
+  vault: "assets/room-vault.png",
+  heart: "assets/room-heart.png",
 };
+const ICON = 62; // bề ngang hình trong hệ toạ độ của viewBox
 
 const ROOM_Y = [52, 132, 212, 292, 372];
 const SIDE = [-1, 1, -1, 1, 0];
 const RX = 58;
 const RY = 40;
 
-function lantern(x, y, lit) {
-  const glow = lit ? `<circle cx="${x}" cy="${y}" r="26" fill="url(#lampglow)"/>` : "";
-  const col = lit ? "#ffc46b" : "#3a4260";
-  return `${glow}<rect x="${x - 6}" y="${y - 9}" width="12" height="16" rx="3" fill="${col}" stroke="#0f1526" stroke-width="2"/><rect x="${x - 3}" y="${y - 13}" width="6" height="4" fill="#0f1526"/>`;
+/** Đèn treo ở buồng đã gác xong — dấu hiệu buồng an toàn. */
+function lantern(x, y) {
+  return (
+    `<circle cx="${x}" cy="${y}" r="30" fill="url(#lampglow)"/>` +
+    `<image href="assets/room-lantern.png" x="${x - 16}" y="${y - 20}" width="32" height="40"/>`
+  );
 }
 
 /**
@@ -128,12 +120,14 @@ export function renderNest(container, rooms, names) {
       `<ellipse cx="${cx}" cy="${y}" rx="${RX}" ry="${RY}" fill="${fill}"` +
         ` stroke="${stroke}" stroke-width="${room.state === "now" ? 5 : 3}"/>`,
     );
-    if (room.state === "locked") out.push(`<text x="${cx}" y="${y + 7}" text-anchor="middle" font-size="22" fill="#3a4260">?</text>`);
-    else out.push(`<g transform="translate(${cx} ${y - 6})">${ICONS[room.key]}</g>`);
-    out.push(lantern(cx + 40, y - 30, room.state === "done"));
+    // Buồng chưa tới vẫn thấy hình, chỉ mờ đi — tên nó đã ghi ngay dưới rồi nên
+    // giấu hình cũng chẳng giữ được bí mật nào, mà dấu "?" thì trống trải.
+    out.push(
+      `<image href="${ICON_URL[room.key]}" x="${cx - ICON / 2}" y="${y - ICON / 2}"` +
+        ` width="${ICON}" height="${ICON}"${room.state === "locked" ? ' opacity="0.3"' : ""}/>`,
+    );
+    if (room.state === "done") out.push(lantern(cx + 42, y - 28));
     out.push(`<text x="${cx}" y="${y + 66}" text-anchor="middle" font-size="12" font-weight="700" fill="${room.state === "locked" ? "#8b93a8" : "#eef0f7"}">${names[i]}</text>`);
-    if (room.state === "done")
-      out.push(`<g transform="translate(${cx - 40} ${y - 38})"><circle r="11" fill="#6ee0b1"/><path d="M-5 0 l3 4 l7 -8" stroke="#141826" stroke-width="2.5" fill="none"/></g>`);
   });
   container.innerHTML = `<svg viewBox="0 -24 360 480" aria-hidden="true">
 <defs><radialGradient id="lampglow"><stop offset="0" stop-color="#ffc46b" stop-opacity=".55"/><stop offset="1" stop-color="#ffc46b" stop-opacity="0"/></radialGradient></defs>

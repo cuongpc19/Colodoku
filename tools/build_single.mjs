@@ -35,25 +35,34 @@ const i18n = { en: readJson("data/i18n/en.json"), vi: readJson("data/i18n/vi.jso
 
 // --- nhúng tài nguyên ----------------------------------------------------
 
-// Nhúng MỌI ảnh mà style.css trỏ tới, không chỉ một cái tên viết cứng: bản một
-// file mà còn đường dẫn `../assets/...` thì mở lên chẳng thấy con kiến nào —
-// mà tên file thì đổi theo thời gian, nên dò thẳng trong CSS mới chắc.
+// Nhúng MỌI ảnh, không chỉ một cái tên viết cứng: bản một file mà còn đường
+// dẫn `assets/...` thì mở lên chẳng thấy con kiến nào — mà tên file thì đổi
+// theo thời gian, nên dò thẳng trong mã nguồn mới chắc.
+//
+// Hai chỗ trỏ tới ảnh, hai cú pháp khác nhau: CSS viết `url("../assets/x.png")`,
+// còn src/nest.js dựng thẻ <image> nên viết `assets/x.png` trong chuỗi JS.
 let embedded = 0;
+const inline = (file) => {
+  const data = readFileSync(new URL(`assets/${file}`, root)).toString("base64");
+  embedded += data.length;
+  return `data:image/png;base64,${data}`;
+};
+
 const css = read("src/style.css").replace(
   /url\("\.\.\/assets\/([\w.-]+\.png)"\)/g,
-  (_, file) => {
-    const data = readFileSync(new URL(`assets/${file}`, root)).toString("base64");
-    embedded += data.length;
-    return `url("data:image/png;base64,${data}")`;
-  },
+  (_, file) => `url("${inline(file)}")`,
 );
 if (!embedded) throw new Error("không nhúng được ảnh nào — kiểm lại đường dẫn trong style.css");
+
+/** Đổi mọi chuỗi `assets/<tên>.png` trong mã JS thành data URI. */
+const inlineJsAssets = (source) =>
+  source.replace(/assets\/([\w.-]+\.png)/g, (_, file) => inline(file));
 
 const script = [
   `globalThis.__COLODOKU_POOLS = ${JSON.stringify(pools)};`,
   `globalThis.__COLODOKU_SPECIALS = ${JSON.stringify(specials)};`,
   `globalThis.__COLODOKU_I18N = ${JSON.stringify(i18n)};`,
-  ...MODULES.map((path) => `// ---- ${path} ----\n${flatten(read(path))}`),
+  ...MODULES.map((path) => `// ---- ${path} ----\n${inlineJsAssets(flatten(read(path)))}`),
 ].join("\n\n");
 
 // --- ghép vào index.html -------------------------------------------------

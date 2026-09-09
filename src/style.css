@@ -811,7 +811,11 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
      hai nút trợ giúp, các khe hở) — giải ra `board <= 72dvh - 145px`. Thiếu vế
      này thì trên máy màn hình ngắn bàn cờ vẫn lấy 88vw và đẩy nút trợ giúp
      xuống dưới mép màn hình. */
-  --board: min(88vw, 460px, max(210px, 72vh - 148px));
+  --board: min(96vw, 560px, max(210px, 72vh - 148px));
+  /* Chỗ thừa theo chiều dọc chia đều trên dưới. Trên máy bề ngang hẹp, bàn cờ
+     bị 96vw chặn trước nên gần như luôn còn dư chiều cao — dồn hết xuống đáy
+     thì cả màn hình lệch lên trên. */
+  justify-content: center;
   --hud-label: calc(var(--board) * 0.042);
   --hud-value: calc(var(--board) * 0.055);
   --chip-h: calc(var(--board) * 0.094);
@@ -1004,14 +1008,14 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
 .play.tutorial .slot-bottom { min-height: 108px; min-height: min(108px, 15dvh); }
 /* Hai ô chừa ăn mất 258px nên bàn cờ trong tutorial phải chặt tay hơn màn
    chơi thường: `board <= 50dvh - 125px`. */
-.play.tutorial { --board: min(88vw, 460px, max(155px, 50vh - 125px)); }
+.play.tutorial { --board: min(96vw, 560px, max(155px, 50vh - 125px)); }
 
 /* Biến tuỳ biến không bị loại khi giá trị sai — trình duyệt cứ thay nguyên xi
    vào chỗ dùng rồi mới hỏng ở đó. Nên không thể viết hai dòng vh/dvh chồng
    nhau như với thuộc tính thường; phải hỏi @supports trước. */
 @supports (height: 1dvh) {
-  .play { --board: min(88vw, 460px, max(210px, 72dvh - 148px)); }
-  .play.tutorial { --board: min(88vw, 460px, max(155px, 50dvh - 125px)); }
+  .play { --board: min(96vw, 560px, max(210px, 72dvh - 148px)); }
+  .play.tutorial { --board: min(96vw, 560px, max(155px, 50dvh - 125px)); }
 }
 
 /* --- thẻ hướng dẫn (trên và dưới bàn cờ) --- */

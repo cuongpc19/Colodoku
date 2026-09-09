@@ -245,6 +245,15 @@ export class BoardView {
     node.happyTimer = setTimeout(() => node.classList.remove("happy"), HAPPY_MS);
   }
 
+  /** Giữ mặt vui lâu hơn thường lệ — dùng khi người chơi vừa gỡ được ngách khó. */
+  holdHappy(r, c, ms) {
+    const node = this.cells[r]?.[c];
+    if (!node || this.board.get(r, c) !== CAT) return;
+    node.classList.add("happy");
+    clearTimeout(node.happyTimer);
+    node.happyTimer = setTimeout(() => node.classList.remove("happy"), ms);
+  }
+
   /** Ghi một ô là đặt sai: ✕ đỏ, khoá lại, không hoàn tác được. */
   markWrong(r, c) {
     this.wrong.add(`${r},${c}`);

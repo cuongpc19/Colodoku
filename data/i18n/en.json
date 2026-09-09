@@ -18,8 +18,8 @@
   "counter": "{0}/{1}",
   "clash": "That ant breaks a rule — see the red tiles",
   "loadFailed": "Could not load this level.",
-  "outOfLives": "Out of tries!",
-  "outOfLivesNote": "Three wrong placements — give this level another go.",
+  "outOfLives": "The candy is gone!",
+  "outOfLivesNote": "Three wrong ants ate all three candies — give this level another go.",
   "tryAgain": "Try Again",
   "undo": "Undo",
   "restart": "Restart level",
@@ -114,7 +114,7 @@
   "cancel": "Cancel",
   "wipeTitle": "Delete all your data?",
   "wipeWarn": "This erases everything saved on this device and starts the game over from the tutorial. It cannot be undone.",
-  "wipeLosing": "You will lose: {0} levels cleared · {1} coins · {2}-day streak",
+  "wipeLosing": "You will lose: {0} levels cleared · {1} coins · {2} candy · {3}-day streak",
   "wipeYes": "Delete everything",
   "thisColour": "this colour",
   "sound": "Sound",
@@ -124,5 +124,32 @@
     "Amazing!",
     "Awesome!",
     "Perfect!"
-  ]
+  ],
+  "eureka": [
+    "Breakthrough!",
+    "Brilliant!",
+    "You saw it!",
+    "Sharp eye!",
+    "Genius!",
+    "Cracked it!"
+  ],
+  "candy": "Candy",
+  "candyTip": "Candy left this level — a wrong ant eats one",
+  "candyBankTip": "Candy carried home to the colony",
+  "candySaved": "+{0} candy for the colony",
+  "candyNone": "Not a crumb left this time — the ants forgive you.",
+  "winTitles": [
+    "Well played!",
+    "Nailed it!",
+    "Clean solve!",
+    "That's the one!",
+    "Sweet work!",
+    "Colony's proud!"
+  ],
+  "winFlawless": "Flawless!",
+  "winFlawlessNote": "No hints, no mistakes, all three candies saved.",
+  "winStreakTitle": "{0} in a row!",
+  "masterTitle": "The colony salutes you!",
+  "masterBadge": "MASTER",
+  "masterNote": "You have brought home {0} ants and {1} candy for us. Thank you, Master!"
 }

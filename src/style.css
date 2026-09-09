@@ -341,6 +341,51 @@ main {
 .combo.tier-3 { color: #ff9ad0; }
 .combo.tier-4 { color: #ffb347; font-size: clamp(20px, calc(var(--board) * 0.085), 36px); }
 
+/* Gỡ được một ngách khó: to hơn hẳn bậc combo cao nhất, nảy hai nhịp rồi mới
+   bay lên, và ở lại lâu gần gấp đôi. Người chơi vừa ngồi nghĩ cả phút thì phải
+   thấy rõ là game biết điều đó. */
+.combo.eureka {
+  color: #fff36b;
+  font-size: clamp(23px, calc(var(--board) * 0.108), 44px);
+  -webkit-text-stroke: 2px rgba(70, 40, 20, 0.9);
+  text-shadow: 0 3px 0 rgba(70, 40, 20, 0.35), 0 0 22px rgba(255, 220, 90, 0.85);
+  animation: eurekafloat 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes eurekafloat {
+  0% { opacity: 0; transform: translate(-50%, -25%) scale(0.35) rotate(-9deg); }
+  12% { opacity: 1; transform: translate(-50%, -78%) scale(1.4) rotate(4deg); }
+  22% { transform: translate(-50%, -86%) scale(1.02) rotate(-3deg); }
+  32% { transform: translate(-50%, -80%) scale(1.2) rotate(1deg); }
+  42% { transform: translate(-50%, -86%) scale(1.08) rotate(0deg); }
+  70% { opacity: 1; transform: translate(-50%, -96%) scale(1.08); }
+  100% { opacity: 0; transform: translate(-50%, -170%) scale(1.02); }
+}
+
+/* Pháo giấy bung ra từ chính ô vừa đặt. Khác pháo giấy màn thắng ở chỗ nó toả
+   từ một điểm và chạy đúng một lần — JS gỡ cả lớp đi khi mảnh cuối rơi xong. */
+.sparks { position: absolute; z-index: 6; pointer-events: none; }
+.sparks i {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--w);
+  height: calc(var(--w) * 1.5);
+  /* Kéo lùi nửa mảnh để tâm mảnh trùng tâm ô, không thì cả chùm lệch xuống phải. */
+  margin: calc(var(--w) * -0.75) 0 0 calc(var(--w) * -0.5);
+  background: var(--tone);
+  border-radius: 2px;
+  animation: sparkfly var(--dur) cubic-bezier(0.16, 0.85, 0.4, 1) forwards;
+}
+
+/* Bung ra rồi rơi: `--dy` là hướng toả, cộng thêm 46px kéo xuống ở cuối để
+   chùm pháo có trọng lượng chứ không nở đều như một vòng tròn. */
+@keyframes sparkfly {
+  from { opacity: 1; transform: translate3d(0, 0, 0) rotate(0deg) scale(0.55); }
+  70% { opacity: 1; }
+  to { opacity: 0; transform: translate3d(var(--dx), calc(var(--dy) + 46px), 0) rotate(var(--spin)) scale(1); }
+}
+
 @keyframes combofloat {
   0% { opacity: 0; transform: translate(-50%, -30%) scale(0.5); }
   18% { opacity: 1; transform: translate(-50%, -70%) scale(1.15); }

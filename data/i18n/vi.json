@@ -18,8 +18,8 @@
   "counter": "{0}/{1}",
   "clash": "Con kiến đó phạm luật — xem các ô đỏ",
   "loadFailed": "Không tải được màn này.",
-  "outOfLives": "Hết lượt!",
-  "outOfLivesNote": "Ba lần đặt sai — thử lại màn này nhé.",
+  "outOfLives": "Hết kẹo mất rồi!",
+  "outOfLivesNote": "Ba con kiến đặt sai đã ăn hết ba viên kẹo — chơi lại màn này nhé.",
   "tryAgain": "Thử Lại",
   "undo": "Hoàn tác",
   "restart": "Chơi lại màn",
@@ -114,7 +114,7 @@
   "cancel": "Hủy",
   "wipeTitle": "Xoá toàn bộ dữ liệu?",
   "wipeWarn": "Thao tác này xoá sạch mọi thứ đã lưu trên thiết bị này và chơi lại từ phần hướng dẫn. Không khôi phục được.",
-  "wipeLosing": "Bạn sẽ mất: {0} màn đã qua · {1} xu · chuỗi {2} ngày",
+  "wipeLosing": "Bạn sẽ mất: {0} màn đã qua · {1} xu · {2} viên kẹo · chuỗi {3} ngày",
   "wipeYes": "Xoá tất cả",
   "thisColour": "này",
   "sound": "Âm thanh",
@@ -124,5 +124,32 @@
     "Amazing!",
     "Awesome!",
     "Perfect!"
-  ]
+  ],
+  "eureka": [
+    "Breakthrough!",
+    "Brilliant!",
+    "You saw it!",
+    "Sharp eye!",
+    "Genius!",
+    "Cracked it!"
+  ],
+  "candy": "Kẹo",
+  "candyTip": "Kẹo còn lại trong màn này — đặt sai một con là mất một viên",
+  "candyBankTip": "Kẹo đã mang về tổ",
+  "candySaved": "+{0} viên kẹo mang về tổ",
+  "candyNone": "Lần này không còn viên nào — đàn kiến vẫn thương bạn.",
+  "winTitles": [
+    "Well played!",
+    "Nailed it!",
+    "Clean solve!",
+    "That's the one!",
+    "Sweet work!",
+    "Colony's proud!"
+  ],
+  "winFlawless": "Flawless!",
+  "winFlawlessNote": "Không gợi ý, không sai nước nào, giữ trọn ba viên kẹo.",
+  "winStreakTitle": "Thắng liền {0} ván!",
+  "masterTitle": "Cả đàn kiến cảm ơn bạn!",
+  "masterBadge": "MASTER",
+  "masterNote": "Bạn đã mang về {0} con kiến và {1} viên kẹo cho chúng tôi. Cảm ơn Master!"
 }

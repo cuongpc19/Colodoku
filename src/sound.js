@@ -95,4 +95,17 @@ export const sound = {
     for (let i = 0; i < count; i++)
       tone({ type: "triangle", from: notes[i], duration: 0.16, gain: 0.14, at: i * 0.055 });
   },
+  /**
+   * Gỡ được một ngách khó: cùng hợp âm đi lên nhưng rải chậm hơn cho nghe ra
+   * từng nốt, rồi đọng lại ở quãng tám trên — nghe như một câu kết chứ không
+   * phải một tiếng "tinh" như combo.
+   */
+  eureka() {
+    if (!enabled) return;
+    const notes = [523, 659, 784, 1047, 1319]; // C5 E5 G5 C6 E6
+    for (let i = 0; i < notes.length; i++)
+      tone({ type: "triangle", from: notes[i], duration: 0.22, gain: 0.15, at: i * 0.075 });
+    tone({ type: "triangle", from: 1568, duration: 0.55, gain: 0.13, at: 0.36 }); // G6 ngân
+    tone({ type: "sine", from: 2093, duration: 0.45, gain: 0.06, at: 0.39 });     // C7 lấp lánh, rất nhẹ
+  },
 };

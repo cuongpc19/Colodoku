@@ -76,6 +76,10 @@ const state = {
   tutorial: null,
   flashing: false,
   shownStep: null, // id bước đang hiện, để biết lúc nào cần chạy lại hiệu ứng
+  thinkStart: 0,   // mốc bắt đầu nghĩ nước hiện tại
+  thinkHints: 0,   // số lượt trợ giúp tính tới lúc bắt đầu nghĩ, để biết có được chỉ chỗ không
+  gaps: [],        // các quãng nghĩ đã đo trong màn — nhịp riêng của người chơi hôm nay
+  sinceHard: 99,   // bao nhiêu nước kể từ lần ăn mừng lớn gần nhất
 };
 
 const view = new BoardView($("board"), {
@@ -123,6 +127,9 @@ function mountPlay({ puzzle, kicker, title, autoMark, given = [], note = "" }) {
   state.lives = LIVES;
   state.hintsUsed = 0;
   state.flashing = false;
+  state.gaps = [];
+  state.sinceHard = 99;
+  resetThink();
 
   // Con vật game đặt sẵn: ghi thẳng vào bàn cờ rồi xoá lịch sử, để Hoàn tác
   // không gỡ được nó ra — bản gốc cũng khoá cứng con mở màn.
@@ -259,7 +266,10 @@ function onBoardChange() {
   if (placed > state.scored) {
     state.score += SCORE_BASE + SCORE_STEP * state.chain;
     state.chain++;
-    if (state.chain >= 2) praise(state.chain - 1);
+    // Gỡ được ngách khó thì ăn mừng riêng, không chồng thêm lời khen chuỗi:
+    // hai dòng chữ cùng bay lên từ một ô thì đè lên nhau, đọc không ra chữ nào.
+    if (brokeThrough()) eureka();
+    else if (state.chain >= 2) praise(state.chain - 1);
   }
   state.scored = placed;
   refreshHud();
@@ -275,12 +285,17 @@ function onBoardChange() {
 function praise(tier) {
   const words = T.combo;
   const index = Math.min(tier - 1, words.length - 1);
+  if (shout(words[index], `tier-${index}`)) sound.combo(index);
+}
+
+/** Thả một dòng chữ bay lên từ ô vừa đặt. Trả về chính ô đó, hoặc null. */
+function shout(text, variant) {
   const [r, c] = state.lastPlaced || [0, 0];
   const cell = view.cells[r]?.[c];
-  if (!cell) return;
+  if (!cell) return null;
   const node = document.createElement("div");
-  node.className = `combo tier-${index}`;
-  node.textContent = words[index];
+  node.className = `combo ${variant}`;
+  node.textContent = text;
   const board = view.el.getBoundingClientRect();
   const box = cell.getBoundingClientRect();
   // Kẹp vào trong bàn để chữ ở cột biên không văng ra ngoài màn hình.
@@ -289,7 +304,112 @@ function praise(tier) {
   node.style.top = `${box.top - board.top}px`;
   view.el.appendChild(node);
   node.addEventListener("animationend", () => node.remove(), { once: true });
-  sound.combo(index);
+  return cell;
+}
+
+// ------------------------------------------- gỡ được một ngách khó
+
+/* Chuỗi đặt đúng thưởng cho tốc độ. Nhưng cái đáng thưởng hơn trong trò này là
+   lúc người chơi bí, ngồi soi mãi một góc bàn rồi bật ra được một nước — nên
+   nước đó được ăn mừng to hơn hẳn: chữ riêng, cỡ lớn hơn, pháo giấy bung ra từ
+   chính ô vừa đặt, hợp âm dài hơn, và con kiến giữ mặt vui lâu hơn.
+
+   "Bí" đo theo nhịp của chính người chơi chứ không theo một con số cứng: người
+   chơi nhanh thì 15 giây đã là bí, người chơi thong thả thì 15 giây là bình
+   thường. Mốc lấy trung vị sáu nước gần nhất — trung vị chứ không phải trung
+   bình, để một lần bí ba phút không kéo lệch cả cái thước; sáu nước gần nhất
+   chứ không phải cả màn, để thước bám theo được màn mỗi lúc một khó. */
+const HARD_FLOOR_MS = 12_000;  // dưới ngần này thì chưa gọi là bí, dù nhịp có nhanh tới đâu
+const HARD_CEIL_MS = 240_000;  // quá ngần này là đứng dậy đi làm việc khác, không phải nghĩ
+const HARD_RATIO = 2.2;        // chậm gấp ngần này so với nhịp thường của chính họ
+const HARD_WINDOW = 6;         // chỉ so với 6 nước gần nhất, để thước bám theo màn khó dần
+const HARD_COOLDOWN = 1;       // hai nước liền nhau cùng bí thì chỉ khen nước đầu
+const SPARK_PIECES = 18;
+const EUREKA_HAPPY_MS = 2200; // kiến giữ mặt vui lâu hơn hẳn 900ms thường lệ
+
+const median = (list) => {
+  const sorted = [...list].sort((a, b) => a - b);
+  const mid = sorted.length >> 1;
+  return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+};
+
+/** Bấm giờ lại từ bây giờ cho nước tiếp theo. */
+function resetThink() {
+  state.thinkStart = performance.now();
+  state.thinkHints = state.hintsUsed;
+}
+
+// Chuyển tab đi rồi quay lại thì quãng vừa rồi không phải thời gian nghĩ. Thà
+// bỏ sót một lần đáng khen còn hơn khen nhầm lúc người ta đi pha cà phê.
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) resetThink();
+});
+
+/** Đo quãng vừa nghĩ, và trả lời: nước này có phải là gỡ được một ngách khó không? */
+function brokeThrough() {
+  const gap = performance.now() - state.thinkStart;
+  const helped = state.hintsUsed > state.thinkHints;
+  const recent = state.gaps.slice(-HARD_WINDOW);
+  const since = state.sinceHard;
+  resetThink();
+  state.sinceHard++;
+  // Quãng bỏ đi làm việc khác không được tính vào nhịp thường, không thì thước
+  // đo trôi theo và lần bí thật sau đó lại thành "bình thường".
+  if (gap <= HARD_CEIL_MS) state.gaps.push(gap);
+
+  if (helped) return false;         // gợi ý chỉ tận nơi thì không phải họ tự tìm ra
+  if (!recent.length) return false; // nước đầu màn phần lớn là thời gian đọc bàn
+  if (gap < HARD_FLOOR_MS || gap > HARD_CEIL_MS) return false;
+  if (since < HARD_COOLDOWN) return false;
+  // Chưa đủ ba mẫu thì lấy quãng dài nhất làm mốc chứ không lấy trung vị: với
+  // một hai mẫu, trung vị dễ khiến người chơi vốn thong thả bị khen oan ngay
+  // nước thứ hai. Lấy mốc cao là chịu bỏ sót, chứ không khen nhầm.
+  const usual = recent.length >= 3 ? median(recent) : Math.max(...recent);
+  const hard = gap >= usual * HARD_RATIO;
+  if (hard) state.sinceHard = 0;
+  return hard;
+}
+
+/** Ăn mừng lớn: chữ to, pháo giấy bung từ ô vừa đặt, hợp âm dài, kiến vui lâu. */
+function eureka() {
+  const words = T.eureka;
+  const cell = shout(words[Math.floor(Math.random() * words.length)], "eureka");
+  if (!cell) return;
+  sparkle(cell);
+  sound.eureka();
+  const [r, c] = state.lastPlaced;
+  view.holdHappy(r, c, EUREKA_HAPPY_MS);
+}
+
+/** Chùm pháo giấy bung ra từ ô vừa đặt, chạy một lần rồi tự dọn. */
+function sparkle(cell) {
+  const board = view.el.getBoundingClientRect();
+  const box = cell.getBoundingClientRect();
+  const layer = document.createElement("div");
+  layer.className = "sparks";
+  layer.style.left = `${box.left - board.left + box.width / 2}px`;
+  layer.style.top = `${box.top - board.top + box.height / 2}px`;
+  let longest = 0;
+  for (let i = 0; i < SPARK_PIECES; i++) {
+    // Rải đều quanh vòng tròn rồi xô lệch mỗi mảnh một chút — ngẫu nhiên thuần
+    // thì có lúc dồn cả chùm về một phía, nhìn như lỗi vẽ chứ không như pháo.
+    const angle = ((i + Math.random() * 0.7) / SPARK_PIECES) * Math.PI * 2;
+    const reach = box.width * (1.3 + Math.random() * 1.9);
+    const life = 0.7 + Math.random() * 0.5;
+    longest = Math.max(longest, life);
+    const piece = document.createElement("i");
+    piece.style.cssText = [
+      `--dx:${Math.cos(angle) * reach}px`,
+      `--dy:${Math.sin(angle) * reach}px`,
+      `--spin:${Math.random() * 720 - 360}deg`,
+      `--dur:${life}s`,
+      `--tone:var(--g${Math.floor(Math.random() * 12)})`,
+      `--w:${5 + Math.random() * 5}px`,
+    ].join(";");
+    layer.append(piece);
+  }
+  view.el.append(layer);
+  setTimeout(() => layer.remove(), longest * 1000 + 100);
 }
 
 /** Đặt sai chỗ: ✕ đỏ vĩnh viễn trên ô đó, mất một mạng, chuỗi điểm về 0. */

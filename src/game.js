@@ -10,8 +10,8 @@ import { chapterOf, nightOf, floorOf, roomOf, endsChapter, floorRooms, renderNes
 import {
   levelRecord, autoMarksFor, onLevelWon, onLevelFailed, onLevelRestarted, markDirty,
   loadProgress, markCleared, clearProgress, currentLevel, starsFor,
-  touchStreak, addCoins, spendCoins, useFree,
-  bankSpoils, CANDY_PER_LEVEL, COIN_REWARD, COIN_COST,
+  touchStreak, useFree,
+  bankSpoils, spendCandy, CANDY_PER_LEVEL, CANDY_COST, WELCOME_CANDY,
 } from "./progression.js";
 
 // Nhịp nháy sáng cả bàn cờ sau khi làm xong một bước hướng dẫn, trước khi sang
@@ -26,10 +26,10 @@ function replay(node, className) {
   node.classList.add(className);
 }
 
-// Mỗi màn phát ba viên kẹo — đúng chỗ Meowdoku để ba cái mạng. Đặt sai một con
-// kiến là mất một viên; hết kẹo thì thua màn. Còn dư bao nhiêu thì mang về tổ
-// bấy nhiêu, nên chơi cẩn thận có thưởng thật chứ không chỉ "đừng thua".
-// Hai nút trợ giúp thì không giới hạn lượt, trả bằng tiền (COIN_COST).
+// Mỗi màn phát ba viên kẹo. Đặt sai một con kiến là mất một viên; hết kẹo thì
+// thua màn. Còn dư bao nhiêu thì mang về kho bấy nhiêu, nên chơi cẩn thận có
+// thưởng thật chứ không chỉ "đừng thua". Hai nút trợ giúp cũng trả bằng kẹo
+// lấy từ chính kho đó (CANDY_COST) — một đơn vị duy nhất cho cả game.
 
 // Điểm mỗi lần đặt đúng, đọc ngược từ video: 576 cho con đầu, mỗi con đúng liên
 // tiếp sau đó cộng thêm 96, đặt sai thì chuỗi về 0.
@@ -54,10 +54,9 @@ const ui = {
   coachNext: $("btn-apply"), apply: $("btn-apply"),
   boosters: $("boosters"), reveal: $("btn-reveal"), revealLeft: $("reveal-left"),
   hint: $("btn-hint"), hintLeft: $("hint-left"),
-  playCoins: $("play-coins"), homeCoins: $("home-coins"),
   win: $("win"), winTitle: $("win-title"), winNote: $("win-note"),
   winArt: $("win-art"), winBadge: $("win-badge"), winReward: $("win-reward"),
-  winCoins: $("win-coins"), winCandy: $("win-candy"), winCandyRow: $("win-candy-row"),
+  winCandy: $("win-candy"),
   confetti: $("confetti"),
   next: $("btn-next"), replay: $("btn-replay"),
   settings: $("settings"), settingsNote: $("settings-note"), language: $("opt-language"),
@@ -128,8 +127,7 @@ function refreshHome() {
   renderNest(ui.nest, rooms, names, "assets/ant-256.png");
 
   ui.playLabel.textContent = state.progress.cleared ? T.playOn(current) : T.play;
-  ui.homeBank.textContent = state.progress.candy || 0;
-  refreshCoins();
+  refreshBank();
 }
 
 for (const button of document.querySelectorAll("[data-goto]"))
@@ -227,7 +225,7 @@ function refreshHud() {
   paintCandy();
   refreshBooster(ui.reveal, ui.revealLeft, "reveal");
   refreshBooster(ui.hint, ui.hintLeft, "hint");
-  refreshCoins();
+  refreshBank();
 }
 
 /**
@@ -242,33 +240,32 @@ function buildCandyChip() {
   ).join("");
 }
 
-/** Tô lại ba viên kẹo theo số còn lại, và con số trong kho trên HUD. */
+/** Tô lại ba viên kẹo trên chip theo số còn lại trong đêm nay. */
 function paintCandy() {
   for (const [i, node] of [...ui.candies.children].entries())
     node.classList.toggle("gone", i >= state.candy);
-  ui.bank.textContent = state.progress.candy || 0;
 }
 
-/** Số tiền hiện có, vẽ ở cả trang chủ lẫn màn chơi. */
-function refreshCoins() {
-  const coins = state.progress.coins || 0;
-  ui.playCoins.textContent = coins;
-  ui.homeCoins.textContent = coins;
+/** Kho kẹo hiện có, vẽ ở cả trang chủ lẫn màn chơi. */
+function refreshBank() {
+  const candy = state.progress.candy || 0;
+  ui.bank.textContent = candy;
+  ui.homeBank.textContent = candy;
 }
 
 const freeLeft = (kind) => state.progress.free?.[kind] || 0;
-const canAfford = (price) => (state.progress.coins || 0) >= price;
-const canUse = (kind) => freeLeft(kind) > 0 || canAfford(COIN_COST[kind]);
+const canAfford = (price) => (state.progress.candy || 0) >= price;
+const canUse = (kind) => freeLeft(kind) > 0 || canAfford(CANDY_COST[kind]);
 
 /**
  * Badge trên nút trợ giúp có hai vai: còn lượt miễn phí thì nó đếm lượt (viên
- * đỏ, như bản gốc), hết rồi mới thành **giá tiền** (viên vàng).
+ * đỏ), hết rồi mới thành **giá kẹo** (viên vàng, có hình viên kẹo).
  */
 function refreshBooster(button, badge, kind) {
   const free = freeLeft(kind);
-  // Còn lượt free thì chỉ là con số; hết rồi thì kèm đồng xu cho khỏi đọc nhầm
-  // "20" thành "còn 20 lượt".
-  badge.innerHTML = free ? String(free) : `<i class="coin"></i>${COIN_COST[kind]}`;
+  // Còn lượt free thì chỉ là con số; hết rồi thì kèm viên kẹo cho khỏi đọc nhầm
+  // "2" thành "còn 2 lượt".
+  badge.innerHTML = free ? String(free) : `<i class="candy"></i>${CANDY_COST[kind]}`;
   badge.classList.toggle("price", free === 0);
   button.disabled = Boolean(state.offer);
   // Không đủ tiền thì làm mờ nhưng vẫn bấm được, để còn báo được lý do.
@@ -276,8 +273,8 @@ function refreshBooster(button, badge, kind) {
 }
 
 /**
- * Thanh toán một lượt trợ giúp: tiêu lượt miễn phí trước, hết rồi mới trừ xu.
- * Gọi hàm này **sau** khi đã chắc chắn có gợi ý để đưa, không thì mất công vô ích.
+ * Thanh toán một lượt trợ giúp: tiêu lượt miễn phí trước, hết rồi mới trừ kẹo
+ * trong kho. Gọi hàm này **sau** khi đã chắc chắn có gợi ý để đưa.
  */
 function spend(kind) {
   const free = useFree(state.progress, kind);
@@ -285,17 +282,17 @@ function spend(kind) {
     state.progress = free;
     return true;
   }
-  const price = COIN_COST[kind];
-  const next = spendCoins(state.progress, price);
+  const price = CANDY_COST[kind];
+  const next = spendCandy(state.progress, price);
   if (!next) {
-    ui.hintText.textContent = T.notEnoughCoins(price);
+    ui.hintText.textContent = T.notEnoughCandy(price);
     ui.chips.classList.remove("nudge");
     void ui.chips.offsetWidth;
     ui.chips.classList.add("nudge");
     return false;
   }
   state.progress = next;
-  refreshCoins();
+  refreshBank();
   return true;
 }
 
@@ -523,18 +520,17 @@ function renderCoach() {
     ui.coachBottom.hidden = true;
     ui.apply.hidden = true;
     view.locked = true;
-    // Thưởng cả buổi hướng dẫn, nhưng chỉ LẦN ĐẦU: không thì người mới vào
-    // màn 1 với ví rỗng, mà mở lại từ Cài đặt thì lại thành máy in tiền.
+    // Quà nhập môn, nhưng chỉ LẦN ĐẦU: không thì người mới vào đêm 1 với kho
+    // rỗng, mà mở lại từ Cài đặt thì lại thành máy in kẹo.
     const firstTime = !state.progress.tutorialDone;
     state.progress = markCleared({ ...state.progress, tutorialDone: true }, 0, 0);
-    if (firstTime) state.progress = addCoins(state.progress, COIN_REWARD);
-    refreshCoins();
+    if (firstTime) state.progress = bankSpoils(state.progress, { candy: WELCOME_CANDY });
+    refreshBank();
     cheer();
     ui.winTitle.textContent = T.tut.mastered;
     ui.winBadge.hidden = true;
     ui.winReward.hidden = !firstTime;
-    ui.winCoins.textContent = `+${COIN_REWARD}`;
-    ui.winCandyRow.hidden = true; // buổi hướng dẫn không phát kẹo
+    ui.winCandy.textContent = `+${WELCOME_CANDY}`;
     ui.winNote.textContent = "";
     ui.next.textContent = T.tut.startGame;
     ui.replay.hidden = true;
@@ -744,11 +740,9 @@ function finishLevel() {
   const earned = Math.max(0, state.candy); // kẹo chưa bị kiến ăn — cái mang về được
   const ants = state.board.size;
   const stars = starsFor(state.hintsUsed);
-  state.progress = addCoins(
-    touchStreak(onLevelWon(markCleared(state.progress, state.level, stars), state.level)),
-    COIN_REWARD,
+  state.progress = touchStreak(
+    onLevelWon(markCleared(state.progress, state.level, stars), state.level),
   );
-  refreshCoins();
   refreshHud(); // chuỗi thắng vừa +1, đừng để HUD sau lưng hộp thoại còn số cũ
 
   // Kẹo bay vào kho TRƯỚC khi hộp thoại mở ra. Mở hộp thoại trước là nó che
@@ -757,8 +751,8 @@ function finishLevel() {
     state.progress = bankSpoils(state.progress, { ants, candy: earned });
     // Chỉ cập nhật con số trong kho, KHÔNG gọi refreshHud: nó vẽ lại chip theo
     // state.candy nên ba viên vừa bay đi lại hiện về chỗ cũ. Mà state.candy thì
-    // phải giữ nguyên — nút "Next level" đọc nó để biết vừa thắng hay vừa thua.
-    ui.bank.textContent = state.progress.candy || 0;
+    // phải giữ nguyên — nút "Đêm tiếp theo" đọc nó để biết vừa thắng hay thua.
+    refreshBank();
     showWin(earned);
   });
 }
@@ -863,7 +857,7 @@ function showWin(earned) {
   ui.next.textContent = state.chapterOver ? T.backToNest : T.nextLevel;
   ui.replay.hidden = false;
   ui.win.hidden = false;
-  celebrate(COIN_REWARD, earned, master);
+  celebrate(earned, master);
 }
 
 // ------------------------------------------------------------- ăn mừng
@@ -874,16 +868,14 @@ const CONFETTI_PIECES = 26;
  * Kiến reo mừng bung vào, rồi tới dòng tiền thưởng, pháo giấy rơi suốt phía sau.
  * Nhịp lấy theo màn thắng của Marble Sort.
  */
-function celebrate(coins, candy = 0, master = false) {
+function celebrate(candy = 0, master = false) {
   if (master) {
     parade();
     sound.fanfare();
   } else {
     cheer();
   }
-  ui.winReward.hidden = false;
-  ui.winCoins.textContent = `+${coins}`;
-  ui.winCandyRow.hidden = !candy;
+  ui.winReward.hidden = !candy;
   ui.winCandy.textContent = `+${candy}`;
 
   // Mốc đáng nhớ thì pháo giấy dày gấp đôi — cùng một hộp thoại, nhưng nhìn là
@@ -1083,7 +1075,7 @@ function relocalize() {
 // nói rõ mất những gì — thay cho confirm() của trình duyệt.
 $("btn-wipe").addEventListener("click", () => {
   const p = state.progress;
-  ui.wipeLosing.textContent = T.wipeLosing(p.cleared || 0, p.coins || 0, p.candy || 0, p.streak || 0);
+  ui.wipeLosing.textContent = T.wipeLosing(p.cleared || 0, p.candy || 0, p.streak || 0);
   ui.confirm.hidden = false;
 });
 
@@ -1113,9 +1105,10 @@ $("btn-tutorial").addEventListener("click", startTutorial);
  * đúng cái bàn mà người chơi thật sẽ gặp.
  *
  * Chỉ mở khi trang chạy từ máy mình; bản phát hành không có đường tắt này.
+ * Trả về true nếu đã tự mở một màn — lúc đó khỏi chạy nhịp vào game thường.
  */
 function devJump() {
-  if (!["localhost", "127.0.0.1", "[::1]"].includes(location.hostname)) return;
+  if (!["localhost", "127.0.0.1", "[::1]"].includes(location.hostname)) return false;
   const params = new URLSearchParams(location.search);
   // `?reset=1`: xoá sạch tiến trình rồi về trang chủ như người mới — nhanh hơn
   // mở Cài đặt → Xoá tiến trình mỗi lần muốn chơi lại từ đầu.
@@ -1124,14 +1117,18 @@ function devJump() {
     show("home");
   }
   const wanted = Number(params.get("level"));
-  if (!Number.isInteger(wanted) || wanted < 1) return;
+  if (!Number.isInteger(wanted) || wanted < 1) return false;
 
   let progress = { ...clearProgress(), tutorialDone: true };
   for (let n = 1; n < wanted; n++) progress = onLevelWon(markCleared(progress, n, 3), n);
-  state.progress = addCoins(progress, COIN_REWARD * wanted);
+  state.progress = bankSpoils(progress, { candy: CANDY_PER_LEVEL * wanted });
   startLevel(wanted);
+  return true;
 }
 
 applyStatic();
 show("home");
-devJump();
+// Người mới vào thẳng bài hướng dẫn, không dừng ở trang chủ: lúc đó tổ chưa có
+// buồng nào sáng đèn nên trang chủ chẳng có gì để xem. Họ gặp nó lần đầu sau
+// đêm thứ 5, khi nút "Về tổ" đưa sang — và buồng đầu tiên đã an toàn.
+if (!devJump() && !state.progress.tutorialDone && !state.progress.cleared) startTutorial();

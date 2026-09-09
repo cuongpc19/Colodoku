@@ -721,7 +721,6 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
   font-variant-numeric: tabular-nums;
 }
 .pill-stat .candy.tiny { width: 1.3em; height: 1.3em; }
-.pill-stat.coins b { color: var(--accent); }
 /* Kẹo vừa rơi vào kho: viên thuốc nảy một cái rồi về — đủ để mắt bắt được nó đã tăng. */
 .pill-stat.bump { animation: candybump 0.42s cubic-bezier(0.34, 1.56, 0.64, 1); }
 @keyframes candybump {
@@ -753,20 +752,6 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
 .chip small { font-size: 0.8em; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
 
 .chip.candies { gap: calc(var(--chip-h) * 0.1); }
-
-/* Đồng xu vẽ bằng CSS: đĩa vàng, viền sẫm, một vệt sáng chếch trên trái. */
-.coin {
-  display: inline-block;
-  flex: none;
-  width: 1.25em;
-  height: 1.25em;
-  background:
-    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.85) 0 14%, transparent 42%),
-    radial-gradient(circle at 50% 50%, #ffd964 0 52%, #f0b429 53% 100%);
-  border: 0.09em solid #c8951f;
-  border-radius: 50%;
-  vertical-align: -0.2em;
-}
 
 /* Chip nảy một cái khi bấm trợ giúp mà không đủ tiền. */
 .chips.nudge { animation: shake 0.3s; }
@@ -956,19 +941,14 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
 /* Thiếu tiền thì mờ đi nhưng KHÔNG khoá: bấm vào còn báo được lý do. */
 .booster.broke { opacity: 0.5; }
 
-/* Hết lượt miễn phí thì badge đổi vai thành **giá tiền**. Chỉ đổi màu thì vẫn
-   dễ đọc nhầm thành "còn 20 lượt", nên nhét luôn đồng xu vào cạnh con số —
+/* Hết lượt miễn phí thì badge đổi vai thành **giá kẹo**. Chỉ đổi màu thì vẫn
+   dễ đọc nhầm thành "còn 2 lượt", nên nhét luôn viên kẹo vào cạnh con số —
    nhìn là biết đang trả gì, không phải suy từ màu. */
 .booster .badge.price {
   color: #7a5510;
   background: linear-gradient(#ffd964, #f0b429);
 }
-.booster .badge .coin {
-  width: 0.95em;
-  height: 0.95em;
-  vertical-align: 0;
-  border-width: 0.08em;
-}
+.booster .badge .candy { width: 1.1em; height: 1.1em; }
 
 .booster .badge {
   position: absolute;
@@ -1103,7 +1083,7 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
 
 /* ------------------------------------------------------------- ăn mừng */
 
-/* Dòng tiền thưởng. */
+/* Dòng kẹo mang về được. */
 .reward {
   display: flex;
   gap: 8px;
@@ -1117,12 +1097,7 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
   animation: rewardpop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   animation-delay: 0.35s;
 }
-/* Hai phần thưởng đứng cạnh nhau: xu, và kẹo mang về tổ. Kẹo đổi màu chữ để
-   không đọc nhầm hai con số thành một. */
-.reward span { display: flex; gap: 0.28em; align-items: center; }
-.reward .coin { width: 1.05em; height: 1.05em; vertical-align: 0; }
 .reward .candy { width: 1.5em; height: 1.5em; background-image: var(--candy-spark); }
-#win-candy-row { color: var(--k3); }
 @keyframes rewardpop {
   0% { transform: scale(0.5); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }

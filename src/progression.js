@@ -315,18 +315,22 @@ const withLabel = (spec) => ({ ...spec, label: `R${spec.rank} ${T.ratings[spec.r
 
 const PROGRESS_KEY = "colodoku.progress.v2";
 
-// Ví tiền: thắng một màn được COIN_REWARD, mỗi lượt bấm trợ giúp trừ đi
-// COIN_COST tương ứng. Cả ba con số để chung một chỗ vì chúng cân bằng lẫn
-// nhau — một màn thắng đúng bằng một lần Chỉ chỗ, hoặc hai lần Gợi ý.
-export const COIN_REWARD = 100;
-export const COIN_COST = { reveal: 100, hint: 50 };
+// Kẹo là đơn vị duy nhất: vừa là mạng trong màn, vừa là tiền mua trợ giúp.
+// Mỗi màn phát ba viên, còn dư bao nhiêu mang về kho bấy nhiêu; trợ giúp trừ
+// thẳng vào kho đó. Nên mọi lựa chọn quy về một câu hỏi: tiêu viên kẹo này bây
+// giờ, hay để dành mang về tổ?
+export const CANDY_COST = { reveal: 2, hint: 1 };
+
+// Quà nhập môn, trao khi học xong bài hướng dẫn: đủ để thử cả hai nút trợ giúp
+// mà không phải nhịn kẹo của đêm đầu tiên.
+export const WELCOME_CANDY = 3;
 
 // Vốn mở màn: ngần này lượt miễn phí cho mỗi nút, tiêu hết mới phải trả xu.
 // Đây là kho dùng chung cả game chứ không phải hạn mức mỗi màn.
 export const FREE_USES = 10;
 
 const BLANK = {
-  cleared: 0, tutorialDone: false, stars: {}, streak: 0, lastPlayed: null, best: 0, coins: 0,
+  cleared: 0, tutorialDone: false, stars: {}, streak: 0, lastPlayed: null, best: 0,
   free: { reveal: FREE_USES, hint: FREE_USES },
   // máy chiến lược
   strategy: 1, cleanWins: 0, fails: 0, retryLevels: 0, retryStrategy: 0,
@@ -386,13 +390,6 @@ export function useFree(progress, kind) {
   return next;
 }
 
-/** Cộng tiền thưởng vào ví và ghi đĩa ngay — thắng màn xong là tiền có thật. */
-export function addCoins(progress, amount) {
-  const next = { ...progress, coins: (progress.coins || 0) + amount };
-  saveProgress(next);
-  return next;
-}
-
 /**
  * Mỗi màn phát ngần này viên kẹo. Đặt sai một con kiến là mất một viên; hết
  * kẹo thì thua màn. Còn dư bao nhiêu thì mang về tổ bấy nhiêu — thua thì không
@@ -411,10 +408,10 @@ export function bankSpoils(progress, { ants = 0, candy = 0 }) {
   return next;
 }
 
-/** Trừ tiền. Không đủ thì trả về null và ví giữ nguyên — bên gọi tự báo người chơi. */
-export function spendCoins(progress, amount) {
-  if ((progress.coins || 0) < amount) return null;
-  const next = { ...progress, coins: progress.coins - amount };
+/** Lấy kẹo trong kho ra tiêu. Không đủ thì trả null, kho giữ nguyên. */
+export function spendCandy(progress, amount) {
+  if ((progress.candy || 0) < amount) return null;
+  const next = { ...progress, candy: progress.candy - amount };
   saveProgress(next);
   return next;
 }

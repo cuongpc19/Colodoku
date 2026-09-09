@@ -43,7 +43,7 @@ const screens = { home: $("screen-home"), play: $("screen-play") };
 const ui = {
   homeKicker: $("home-kicker"), homeRoom: $("home-room"), homeDots: $("home-dots"),
   nest: $("nest"), homeBank: $("home-bank"), playLabel: $("play-label"),
-  kicker: $("play-kicker"), title: $("play-title"), best: $("play-best"),
+  kicker: $("play-kicker"), title: $("play-title"),
   chips: $("chips"), count: $("play-count"), candies: $("play-candy"),
   bank: $("play-bank"), candyFly: $("candy-fly"),
   status: $("play-status"), hintText: $("hint-text"),
@@ -219,9 +219,6 @@ function startTutorial() {
 function refreshHud() {
   const board = state.board;
   ui.count.textContent = T.counter(board.cats().length, board.size);
-  // Ô bên phải HUD là kỷ lục **chuỗi thắng liên tiếp**, không phải chuỗi ngày
-  // điểm danh (`progress.streak`) — cái đó cả ngày chơi bao nhiêu ván vẫn là 1.
-  ui.best.textContent = state.progress.bestWin || 0;
   paintCandy();
   refreshBooster(ui.reveal, ui.revealLeft, "reveal");
   refreshBooster(ui.hint, ui.hintLeft, "hint");

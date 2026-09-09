@@ -55,8 +55,12 @@ function tone({ type = "sine", from, to = from, duration, gain = 0.2, at = 0 }) 
  * chói: một nốt trầm tụt xuống, tắt rất nhanh, nghe như ngón tay chạm mặt trống.
  */
 function click() {
-  tone({ from: 190, to: 130, duration: 0.07, gain: 0.09 });
-  tone({ from: 380, duration: 0.045, gain: 0.028 }); // hoạ âm khẽ cho có hình tiếng
+  // Đừng hạ xuống dưới ~350 Hz: loa laptop và loa điện thoại cắt gần hết dải
+  // trầm, để 190 Hz thì tiếng biến mất hẳn (đúng lỗi đã gặp) — trong khi tiếng
+  // đặt kiến ở 520-880 Hz vẫn nghe rõ. Nốt chính đặt quanh 500 Hz là chỗ loa
+  // nhỏ kêu tốt nhất, mà sine thì không có hoạ âm nên vẫn không thể chói.
+  tone({ from: 500, to: 380, duration: 0.07, gain: 0.2 });
+  tone({ from: 250, duration: 0.05, gain: 0.07 }); // thân tiếng, nghe được trên loa rời
 }
 
 export const sound = {

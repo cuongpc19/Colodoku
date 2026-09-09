@@ -122,6 +122,18 @@ Bốn chỗ dễ làm sai, đều đã xử lý:
   ghi đè tham số địa chỉ; bộ thử bắt được ngay: SDK cục bộ báo "không tắt tiếng"
   là cờ trên địa chỉ bị bỏ qua, đúng vào trường hợp người kiểm mở tay bằng URL.
 
+**Bài hướng dẫn tính là lối chơi, và đó là chỗ mốc đầu tiên rơi vào.** Người
+mới mở game là vào thẳng bài hướng dẫn (coi như màn 0), không dừng ở trang chủ.
+⚠ Nếu để mốc `gameplayStart` rơi vào màn 1 thì CrazyGames tính cả quãng học
+hướng dẫn vào "thời gian tới lối chơi", con số sẽ rất xấu. Đo bằng dấu thời gian
+trong log Chrome: bốn sự kiện `SDK initialized`, `loading start`, `loading stop`,
+`gameplay start` đóng dấu **cùng một mili-giây** — game dựng xong bài hướng dẫn
+từ trước khi SDK kịp tới, nên SDK vừa sẵn sàng là nhận đủ cả chuỗi.
+
+Người chơi cũ có tiến trình thì mở ra ở trang chủ, và `gameplayStart` chỉ nổ khi
+họ bấm vào chơi. Đó là chủ ý: trang chủ là menu, phải nằm ngoài cặp mốc thì
+quảng cáo mới được phép chen vào đấy.
+
 **Mốc gameplay không gọi tay ở từng chỗ.** `game.js` gắn một `MutationObserver`
 lên thuộc tính `hidden` của hai màn hình và bốn lớp phủ, rồi suy ra "đang chơi
 hay không". ⚠ Cặp mốc này là cách chủ nhà biết lúc nào được chen quảng cáo; gọi
@@ -161,6 +173,18 @@ Mở Cài Đặt phải thấy thêm `Requesting gameplay stop`, đóng lại th
 
 ⚠ **Đừng bọc `sdk.game.gameplayStop` để đếm.** Cách ấy đo hụt — dòng console của
 chính SDK mới là nguồn sự thật.
+
+**Kiểm tràn trang ở mọi cỡ khung.** Đo `scrollWidth - clientWidth` trong iframe,
+và ⚠ **nhớ ép animation về khung cuối trước khi đo** (`d.getAnimations().forEach(a => a.finish())`)
+— headless không chạy animation CSS nên phần tử đứng ở khung hình đầu, chỗ thẻ
+hướng dẫn còn đang dịch ngang, và số đo sẽ sai. Hiện cả sáu cỡ 360×780, 390×844,
+461×896, 800×450, 1280×720, 1920×1080 đều tràn 0px.
+
+⚠ Từng có hai lỗi tràn ngang thật ở đây, đều do **cùng một con số ghi ở hai
+chỗ**: `.slot` rộng bằng bàn cờ còn thẻ hướng dẫn bên trong rộng hơn thế, mà thẻ
+định vị `left: 0` nên tràn sang phải thay vì nằm giữa; rồi màn hình rộng đổi thẻ
+lên 640px mà quên đổi khung chứa. Nay bề ngang thẻ khai một chỗ duy nhất là biến
+`--coach-w`, và `.slot` lấy `max(var(--board), var(--coach-w))`.
 
 **Rồi kiểm bốn cỡ khung nhúng.** ⚠ **800×450 là cỡ phải soi kỹ.** Game xếp dọc
 nên chiều cao là thứ hiếm; ở đây từng tràn 170px và hai nút trợ giúp rơi ra ngoài

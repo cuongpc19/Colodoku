@@ -812,6 +812,10 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
      này thì trên máy màn hình ngắn bàn cờ vẫn lấy 88vw và đẩy nút trợ giúp
      xuống dưới mép màn hình. */
   --board: min(96vw, 560px, max(210px, 72vh - 148px));
+  /* Bề ngang thẻ hướng dẫn — KHAI MỘT CHỖ, vì .slot phải rộng ít nhất bằng nó.
+     Trước đây hai bên ghi cứng hai con số, và màn hình rộng đổi thẻ lên 640px
+     mà quên đổi khung chứa: thẻ tràn khỏi màn hình 18px. */
+  --coach-w: min(460px, 92vw);
   /* Chỗ thừa theo chiều dọc chia đều trên dưới. Trên máy bề ngang hẹp, bàn cờ
      bị 96vw chặn trước nên gần như luôn còn dư chiều cao — dồn hết xuống đáy
      thì cả màn hình lệch lên trên. */
@@ -985,7 +989,12 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
    (đã bị phủ tối), đúng như bản gốc. */
 /* Rộng đúng bằng bàn cờ: chữ xuống dòng thành một khối đặc, thay vì trải
    một dòng mỏng rộng hơn cả bàn cờ. */
-.slot { position: relative; width: var(--board); }
+/* Khung chứa thẻ hướng dẫn phải rộng ÍT NHẤT bằng chính thẻ đó. Thẻ nằm
+   `position: absolute; left: 0; right: 0; margin: 0 auto` — cách ấy chỉ canh
+   giữa được khi thẻ hẹp hơn khung; rộng hơn thì nó bám mép trái rồi tràn sang
+   phải, và cả trang sinh thanh cuộn ngang. Bàn cờ hẹp (màn hướng dẫn, hay khung
+   nhúng thấp) là dính ngay: đo được tràn 23px ở 390px và 193px ở 800x450. */
+.slot { position: relative; width: max(var(--board), var(--coach-w)); }
 /* Canh giữa bằng left/right + margin auto, KHÔNG dùng transform: luật
    `button.pill:active` đặt transform riêng và thắng về độ ưu tiên — nếu định vị
    bằng translateX thì lúc đè chuột nút văng sang một bên, mouseup rơi ra ngoài
@@ -1020,7 +1029,7 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
 
 /* --- thẻ hướng dẫn (trên và dưới bàn cờ) --- */
 .coach {
-  width: min(460px, 92vw);
+  width: var(--coach-w);
   padding: 14px 20px;
   text-align: center;
   /* Sáng hơn thẻ thường một bậc và có viền: thẻ này nằm TRÊN lớp phủ tối của
@@ -1241,7 +1250,8 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
   .bar { width: min(760px, 94vw); }
   .status { font-size: 15px; }
 
-  .coach { width: min(640px, 92vw); padding: 20px 26px; }
+  .play { --coach-w: min(640px, 92vw); }
+  .coach { padding: 20px 26px; }
   .play.tutorial .slot-top { min-height: 164px; min-height: min(164px, 21dvh); }
   .play.tutorial .slot-bottom { min-height: 118px; min-height: min(118px, 15dvh); }
   .play.tutorial { --board: min(62vw, 640px, max(200px, 50vh - 165px)); }

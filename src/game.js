@@ -1171,6 +1171,11 @@ show("home");
 // đêm thứ 5, khi nút "Về tổ" đưa sang — và buồng đầu tiên đã an toàn.
 if (!devJump() && !state.progress.tutorialDone && !state.progress.cleared) startTutorial();
 
-// Bàn đầu tiên đã dựng xong: chủ nhà có thể hạ vòng quay chờ của họ xuống.
+// Bàn đầu tiên đã dựng xong: chủ nhà có thể hạ vòng quay chờ của họ xuống, và
+// mốc "đang chơi" nổ ngay tại đây.
+//
+// ⚠ Người mới vào là đang ở BÀI HƯỚNG DẪN, và bài hướng dẫn tính là lối chơi.
+// Để mốc này rơi vào màn 1 thì CrazyGames tính cả quãng học hướng dẫn vào
+// "thời gian tới lối chơi" — con số họ dùng để chấm, và sẽ rất xấu.
 crazy.loadingStop();
 syncGameplay();

@@ -1116,7 +1116,14 @@ $("btn-tutorial").addEventListener("click", startTutorial);
  */
 function devJump() {
   if (!["localhost", "127.0.0.1", "[::1]"].includes(location.hostname)) return;
-  const wanted = Number(new URLSearchParams(location.search).get("level"));
+  const params = new URLSearchParams(location.search);
+  // `?reset=1`: xoá sạch tiến trình rồi về trang chủ như người mới — nhanh hơn
+  // mở Cài đặt → Xoá tiến trình mỗi lần muốn chơi lại từ đầu.
+  if (params.has("reset")) {
+    state.progress = clearProgress();
+    show("home");
+  }
+  const wanted = Number(params.get("level"));
   if (!Number.isInteger(wanted) || wanted < 1) return;
 
   let progress = { ...clearProgress(), tutorialDone: true };

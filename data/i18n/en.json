@@ -141,7 +141,6 @@
   "masterBadge": "MASTER",
   "masterNote": "You have brought home {0} ants and {1} candy for us. Thank you, Master!",
   "reveal": "Place",
-  "rulesLine": "One guard per <b>colour</b>. Each guards a whole <b>row</b> and <b>column</b>. Guards never stand side by side.",
   "rooms": [
     "Nest gate",
     "Egg chamber",

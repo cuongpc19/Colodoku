@@ -146,11 +146,10 @@ check(
 );
 
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
-// Ba thẻ minh hoạ luật đã thay bằng một dòng; bài hướng dẫn vẫn phải dạy đủ
-// ba luật (vùng, hàng/cột, chạm nhau), và mở lại được từ Cài đặt.
+// Màn chơi không nhắc luật nữa; bài hướng dẫn phải dạy đủ ba luật (vùng,
+// hàng/cột, chạm nhau) và mở lại được từ Cài đặt.
 const used = new Set(buildSteps(puzzle).map((step) => step.rule).filter(Boolean));
 check(used.size === 3, `hướng dẫn chỉ nhắc ${used.size}/3 luật`);
-check(html.includes('id="rules"'), "màn chơi thiếu dòng nhắc luật");
 check(html.includes('id="btn-howto"'), "Cài đặt thiếu nút Cách chơi");
 check(!html.includes('id="screen-map"'), "màn chọn level cũ vẫn còn trong index.html");
 check(board.cats().length === 0, "tutorial mở ra đã có con sẵn — phải để người chơi tự đặt con đầu");

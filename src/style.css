@@ -1297,7 +1297,7 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
   font-size: calc(var(--chip-h) * 0.5);
 }
 
-/* Khối đất chứa năm buồng. SVG do src/nest.js dựng; tỉ lệ 360:460 của viewBox
+/* Khối đất chứa năm buồng. SVG do src/nest.js dựng; tỉ lệ 360:480 của viewBox
    quyết định chiều cao của hình, nên chỉ cần đặt bề ngang.
    `flex: 1` để khối đất nuốt hết chỗ thừa theo chiều dọc: trên máy màn hình cao
    mà hẹp, bề ngang đã kịch 92vw nên hình không to thêm được — thà cho nền đất

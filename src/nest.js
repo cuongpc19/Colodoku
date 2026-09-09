@@ -118,14 +118,18 @@ const RING = (() => {
  * Vòng quanh buồng đang gác chính là thanh tiến độ: mỗi đêm gác xong tô thêm
  * một phần năm vòng, đủ năm đêm là vòng khép kín và buồng an toàn. Vẽ từ đỉnh
  * đi theo chiều kim đồng hồ.
+ *
+ * Đây là thứ sáng nhất trên trang chủ — dày hơn và có quầng — vì nó là chỗ
+ * người chơi đang đứng. Buồng đã xong thì vòng khép kín nhưng vẽ mảnh và trầm
+ * hơn: việc xong rồi thì không cần giành lấy con mắt nữa.
  */
 function progressRing(cx, cy, done, total) {
   const filled = (RING * Math.min(done, total)) / total;
   return (
-    `<ellipse cx="${cx}" cy="${cy}" rx="${RX}" ry="${RY}" fill="none" stroke="#8a7150" stroke-width="4"/>` +
-    `<ellipse cx="${cx}" cy="${cy}" rx="${RX}" ry="${RY}" fill="none" stroke="#ffc46b" stroke-width="5"` +
+    `<ellipse cx="${cx}" cy="${cy}" rx="${RX}" ry="${RY}" fill="none" stroke="#6b5a42" stroke-width="5"/>` +
+    `<ellipse cx="${cx}" cy="${cy}" rx="${RX}" ry="${RY}" fill="none" stroke="#ffc46b" stroke-width="7"` +
     ` stroke-linecap="round" stroke-dasharray="${filled.toFixed(2)} ${RING.toFixed(2)}"` +
-    ` transform="rotate(-90 ${cx} ${cy})"/>`
+    ` transform="rotate(-90 ${cx} ${cy})" filter="url(#ringglow)"/>`
   );
 }
 
@@ -154,19 +158,20 @@ export function renderNest(container, rooms, names, antUrl) {
     if (room.state === "now") out.push(progressRing(cx, y, room.nights, CHAPTER_LEN));
     else
       out.push(
-        `<ellipse cx="${cx}" cy="${y}" rx="${RX}" ry="${RY}" fill="none" stroke="${room.state === "done" ? "#ffc46b" : "#2a1a12"}" stroke-width="${room.state === "done" ? 5 : 3}"/>`,
+        `<ellipse cx="${cx}" cy="${y}" rx="${RX}" ry="${RY}" fill="none" stroke="${room.state === "done" ? "#9a7a45" : "#2a1a12"}" stroke-width="3"/>`,
       );
     if (room.state === "locked") out.push(`<text x="${cx}" y="${y + 7}" text-anchor="middle" font-size="22" fill="#3a4260">?</text>`);
     else out.push(`<g transform="translate(${cx} ${y - 6})">${ICONS[room.key]}</g>`);
     out.push(lantern(cx + 40, y - 30, room.state === "done"));
-    out.push(`<text x="${cx}" y="${y + 62}" text-anchor="middle" font-size="12" font-weight="700" fill="${room.state === "locked" ? "#8b93a8" : "#eef0f7"}">${names[i]}</text>`);
+    out.push(`<text x="${cx}" y="${y + 66}" text-anchor="middle" font-size="12" font-weight="700" fill="${room.state === "locked" ? "#8b93a8" : "#eef0f7"}">${names[i]}</text>`);
     if (room.state === "done")
       out.push(`<g transform="translate(${cx - 40} ${y - 38})"><circle r="11" fill="#6ee0b1"/><path d="M-5 0 l3 4 l7 -8" stroke="#141826" stroke-width="2.5" fill="none"/></g>`);
     if (room.state === "now")
       out.push(`<image href="${antUrl}" x="${cx - 82}" y="${y - 46}" width="46" height="46"/>`);
   });
-  container.innerHTML = `<svg viewBox="0 -24 360 460" aria-hidden="true">
-<defs><radialGradient id="lampglow"><stop offset="0" stop-color="#ffc46b" stop-opacity=".55"/><stop offset="1" stop-color="#ffc46b" stop-opacity="0"/></radialGradient></defs>
+  container.innerHTML = `<svg viewBox="0 -24 360 480" aria-hidden="true">
+<defs><radialGradient id="lampglow"><stop offset="0" stop-color="#ffc46b" stop-opacity=".55"/><stop offset="1" stop-color="#ffc46b" stop-opacity="0"/></radialGradient>
+<filter id="ringglow" x="-30%" y="-40%" width="160%" height="180%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
 <rect x="-10" y="-20" width="380" height="14" fill="#5e8f35"/>
 <path d="M120 -6 q60 -70 120 0 z" fill="#8a5a3c"/><rect x="168" y="-30" width="24" height="26" rx="12" fill="#2a1a12"/>
 ${out.join("")}</svg>`;

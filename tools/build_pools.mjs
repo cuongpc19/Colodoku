@@ -62,6 +62,44 @@ function sizesOf(m) {
   return [...count.values()].sort((a, b) => a - b);
 }
 
+/**
+ * Xếp kho sao cho mấy màn liền nhau không cùng một kiểu bàn.
+ *
+ * Kho dựng xong là xếp lần lượt từng tầng, mà máy chọn màn rút tuần tự — để
+ * nguyên thì người chơi gặp cả cụm bàn giống hệt nhau. Trộn ngẫu nhiên thì vẫn
+ * vón cục: kho đúng tỉ lệ bản gốc mà mười màn 10×10 đầu vẫn có thể ra liền sáu
+ * bàn vùng nền phình. Nên chia bàn theo bậc phình rồi rải vòng tròn có trọng
+ * số — mỗi lượt lấy từ nhóm đang tụt xa tỉ lệ của nó nhất. Tỉ lệ cả kho không
+ * đổi một li, chỉ nhịp gặp là đều ra.
+ */
+function spread(list, seed) {
+  const rand = rng(seed);
+  const groups = new Map();
+  for (const level of list) {
+    const bucket = shapeKey(sizesOf(level.m)).split("|").pop();
+    if (!groups.has(bucket)) groups.set(bucket, []);
+    groups.get(bucket).push(level);
+  }
+  for (const items of groups.values())
+    for (let i = items.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      [items[i], items[j]] = [items[j], items[i]];
+    }
+
+  const lanes = [...groups.values()].map((items) => ({ items, taken: 0, share: items.length / list.length }));
+  const out = [];
+  while (out.length < list.length) {
+    let best = null, most = -Infinity;
+    for (const lane of lanes) {
+      if (lane.taken >= lane.items.length) continue;
+      const debt = lane.share * (out.length + 1) - lane.taken;
+      if (debt > most) { most = debt; best = lane; }
+    }
+    out.push(best.items[best.taken++]);
+  }
+  return out;
+}
+
 const file = new URL("../data/pools.json", import.meta.url);
 const pools = existsSync(file) ? JSON.parse(readFileSync(file, "utf8")) : {};
 
@@ -74,7 +112,13 @@ for (const [sizeKey, byRank] of Object.entries(WANT)) {
     const key = `${size}x${rating}`;
     const quota = allocate(shapeStrata(size, rating), want);
     const found = fresh ? [] : (pools[key] || []);
-    if (found.length >= want) { console.log(`bỏ qua ${key}: đã có ${found.length}`); continue; }
+    if (found.length >= want) {
+      // Kho đã đủ: không sinh thêm, nhưng vẫn xếp lại cho đúng nhịp.
+      pools[key] = spread(found, size * 7919 + rating);
+      writeFileSync(file, JSON.stringify(pools));
+      console.log(`bỏ qua ${key}: đã có ${found.length} (xếp lại)`);
+      continue;
+    }
 
     const seen = new Set(found.map((l) => l.m));
     const have = new Map();
@@ -103,15 +147,7 @@ for (const [sizeKey, byRank] of Object.entries(WANT)) {
       if (Date.now() - started > 25 * 60_000) break; // chốt chặn, đừng treo cả đêm
     }
     if (short.length) console.log(`   tầng thiếu: ${short.join(", ")}`);
-    // Kho dựng xong lần lượt từng tầng, mà máy chọn màn rút tuần tự — không trộn
-    // thì mấy màn liền nhau sẽ cùng một tầng. Trộn có hạt giống nên chạy lại vẫn
-    // ra đúng thứ tự cũ.
-    const mix = rng(size * 7919 + rating);
-    for (let i = found.length - 1; i > 0; i--) {
-      const j = Math.floor(mix() * (i + 1));
-      [found[i], found[j]] = [found[j], found[i]];
-    }
-    pools[key] = found;
+    pools[key] = spread(found, size * 7919 + rating);
     writeFileSync(file, JSON.stringify(pools));
     const status = found.length === want ? "ok " : "THIEU";
     console.log(`${status} ${key.padEnd(6)} ${String(found.length).padStart(2)}/${want}  · ${tries} lần thử · ${((Date.now() - started) / 1000).toFixed(1)}s`);

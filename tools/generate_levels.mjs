@@ -53,12 +53,21 @@ export function loadProfile() {
 // tools/build_pools.mjs.
 const SHARE_BUCKETS = [25, 40, 55, 70];
 
-/** Tầng của một khuôn: "số vùng ≤2 ô | bậc phình của vùng lớn nhất". */
+/**
+ * Tầng của một khuôn: "số vùng 1 ô | số vùng ≤2 ô | bậc phình của vùng lớn nhất".
+ *
+ * Vùng 1 ô phải là chiều riêng chứ không gộp vào "≤2 ô": nó tặng thẳng một con,
+ * còn vùng 2 ô mới chỉ thu hẹp lựa chọn. Gộp chung thì trong cùng một tầng bộ
+ * sinh vẫn nghiêng về bàn nhiều vùng đơn — đo được ở kho 10x1 dựng lần trước,
+ * bản gốc 64% bàn có một vùng đơn mà kho chỉ còn 40%.
+ */
 export function shapeKey(sizes) {
   const total = sizes.reduce((a, b) => a + b, 0);
   const share = (sizes[sizes.length - 1] / total) * 100;
   const bucket = SHARE_BUCKETS.findIndex((limit) => share < limit);
-  return `${sizes.filter((s) => s <= 2).length}|${bucket === -1 ? SHARE_BUCKETS.length : bucket}`;
+  const singles = sizes.filter((s) => s === 1).length;
+  const tiny = sizes.filter((s) => s <= 2).length;
+  return `${singles}|${tiny}|${bucket === -1 ? SHARE_BUCKETS.length : bucket}`;
 }
 
 /**

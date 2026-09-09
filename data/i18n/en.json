@@ -159,7 +159,6 @@
     "Great vault",
     "Heart of the nest"
   ],
-  "homeKicker": "Floor {0} · Night {1}/{2}",
   "chapterDone": "{0} is safe!",
   "backToNest": "Back to the nest",
   "notEnoughCandy": "Not enough candy — {0} needed."

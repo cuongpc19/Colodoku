@@ -1299,17 +1299,8 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
 
 /* Tầng · chương, tên buồng đang gác, năm chấm — mỗi chấm một đêm. */
 .chapter { width: var(--home); margin-top: calc(var(--home) * 0.055); text-align: left; }
-.chapter small {
-  display: block;
-  font-size: calc(var(--home) * 0.031);
-  font-weight: 700;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
 .chapter b {
   display: block;
-  margin-top: 2px;
   font-size: calc(var(--home) * 0.073);
   font-weight: 800;
   letter-spacing: -0.02em;

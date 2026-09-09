@@ -6,7 +6,7 @@ import { nextDeduction, stateFromBoard, placementRank, EASY_RANKS } from "./solv
 import { Tutorial, tutorialPuzzle } from "./tutorial.js";
 import { T, explain, applyStatic, LANGUAGES, getLocale, setLocale } from "./strings.js";
 import { sound } from "./sound.js";
-import { chapterOf, nightOf, floorOf, roomNameIndex, endsChapter, floorRooms, renderNest, CHAPTER_LEN } from "./nest.js";
+import { chapterOf, nightOf, roomNameIndex, endsChapter, floorRooms, renderNest, CHAPTER_LEN } from "./nest.js";
 import {
   levelRecord, autoMarksFor, onLevelWon, onLevelFailed, onLevelRestarted, markDirty,
   loadProgress, markCleared, clearProgress, currentLevel, starsFor,
@@ -41,7 +41,7 @@ const $ = (id) => document.getElementById(id);
 const screens = { home: $("screen-home"), play: $("screen-play") };
 
 const ui = {
-  homeKicker: $("home-kicker"), homeRoom: $("home-room"), homeDots: $("home-dots"),
+  homeRoom: $("home-room"), homeDots: $("home-dots"),
   nest: $("nest"), homeBank: $("home-bank"), playLabel: $("play-label"),
   kicker: $("play-kicker"), title: $("play-title"),
   chips: $("chips"), count: $("play-count"), candies: $("play-candy"),
@@ -119,9 +119,8 @@ function refreshHome() {
   const rooms = floorRooms(current);
   const names = rooms.map((room) => T.rooms[room.nameIndex]);
 
-  // Nhãn nói hai điều người chơi cần: đang ở tầng nào, và còn mấy đêm nữa thì
-  // buồng này an toàn. Số chương thì bỏ — tên buồng ngay dưới đã là nó rồi.
-  ui.homeKicker.textContent = T.homeKicker(floorOf(chapter), nightOf(current), CHAPTER_LEN);
+  // Chỉ tên buồng đang gác. Số tầng và số đêm đã bỏ: năm chấm ngay dưới đã
+  // đếm đêm rồi, còn số tầng thì mặt cắt tổ nói bằng hình.
   ui.homeRoom.textContent = T.rooms[roomNameIndex(chapter)];
   const done = nightOf(current) - 1;
   ui.homeDots.innerHTML = Array.from({ length: CHAPTER_LEN }, (_, i) =>

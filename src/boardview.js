@@ -39,6 +39,10 @@ export class BoardView {
     // phải chờ timer của cú bấm đơn chạy xong.
     this.tap = { dragging: false, last: null, lastAt: 0, lastCell: null };
 
+    // Cả màn này người chơi đã vuốt lần nào chưa. Ai chỉ bấm lẻ từng ô là chưa
+    // biết tới thao tác vuốt — hết màn sẽ được chỉ cho một lần.
+    this.dragged = false;
+
     // Bàn tay minh hoạ thao tác trong lúc hướng dẫn. Lớp ngoài lo vị trí, lớp
     // trong lo nhịp nhấn/trượt, để hai transform không giẫm chân nhau.
     this.handEl = document.createElement("div");
@@ -63,6 +67,7 @@ export class BoardView {
     this.el.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
     // CSS lấy --n để tính cỡ mèo/✕ theo cạnh ô thật.
     this.el.style.setProperty("--n", n);
+    this.dragged = false;
     this.hideHand();
     this.el.innerHTML = "";
     this.el.append(this.handEl);
@@ -338,6 +343,7 @@ export class BoardView {
 
     if (!this.tap.dragging) { // vừa rời ô đầu tiên: chuyển hẳn sang chế độ kéo
       this.tap.dragging = true;
+      this.dragged = true;
       // Kéo tiếp thì cú bấm này không còn là nửa đầu của một lần bấm đúp nữa.
       this.tap.lastCell = null;
       const [fr, fc] = this.tap.last;

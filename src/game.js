@@ -10,7 +10,7 @@ import { crazy } from "./crazy.js";
 import { chapterOf, roomNameIndex, endsChapter, floorRooms, renderNest } from "./nest.js";
 import {
   levelRecord, autoMarksFor, onLevelWon, onLevelFailed, onLevelRestarted, markDirty,
-  loadProgress, markCleared, clearProgress, currentLevel, starsFor,
+  loadProgress, saveProgress, markCleared, clearProgress, currentLevel, starsFor,
   touchStreak, useFree,
   bankSpoils, spendCandy, CANDY_PER_LEVEL, CANDY_COST, WELCOME_CANDY,
 } from "./progression.js";
@@ -59,6 +59,8 @@ const ui = {
   winCandy: $("win-candy"),
   confetti: $("confetti"),
   next: $("btn-next"), replay: $("btn-replay"),
+  tip: $("win-tip"), tipRow: $("win-tip-row"), tipHand: $("win-tip-hand"),
+  tipText: $("win-tip-text"),
   settings: $("settings"), settingsNote: $("settings-note"), language: $("opt-language"),
   soundToggle: $("opt-sound"),
   confirm: $("confirm"), wipeLosing: $("wipe-losing"),
@@ -848,10 +850,97 @@ function showWin(earned) {
 
   ui.winBadge.hidden = !master;
   if (master) ui.winBadge.textContent = T.masterBadge;
+  const tipOn = maybeSwipeTip();
   ui.next.textContent = state.chapterOver ? T.backToNest : T.nextLevel;
   ui.replay.hidden = false;
   ui.win.hidden = false;
+  // Chỉ đo được bề ngang dãy ô sau khi hộp thoại đã hiện ra.
+  if (tipOn) playSwipeTip();
   celebrate(earned, master);
+}
+
+// ------------------------------------------------------------- mẹo vuốt
+
+// Một vòng minh hoạ: ngón tay hiện ra ở ô đầu, trượt hết dãy, đứng lại một nhịp
+// cho người xem kịp hiểu, rồi mờ đi và quay về đầu dãy.
+const TIP_CYCLE_MS = 3200;
+const TIP_START = 0.06; // ngón tay hiện đủ rõ, bắt đầu trượt
+const TIP_END = 0.46;   // chạm ô cuối
+const TIP_HOLD = 0.86;  // đứng yên tới đây rồi mờ đi
+let tipAnims = [];
+
+/**
+ * Mẹo vuốt sau đêm 1, chỉ cho người chưa vuốt lần nào trong cả màn vừa rồi —
+ * dấu hiệu rõ nhất của việc chưa biết có thao tác đó. Kéo một mạch qua cả dãy
+ * là thao tác chính của trò này; ai không biết thì mỗi màn tốn gấp mấy lần số
+ * cú chạm, và thường bỏ game vì thấy nó nhọc chứ không phải vì thấy nó khó.
+ *
+ * Dạy ngay ở màn thắng, lúc họ còn đang vui, chứ không chen vào giữa ván. Và
+ * chỉ đúng một lần trong đời: đã xem rồi thì hoặc đã hiểu, hoặc không muốn
+ * dùng — nhắc lại chỉ thành phiền.
+ *
+ * Trả về true nếu có hiện, để bên gọi biết lúc nào cần chạy hình động.
+ */
+function maybeSwipeTip() {
+  if (state.level !== 1 || view.dragged || state.progress.swipeTipSeen) return false;
+  state.progress = { ...state.progress, swipeTipSeen: true };
+  saveProgress(state.progress);
+  ui.tipText.innerHTML = T.swipeTip;
+  ui.tip.hidden = false;
+  return true;
+}
+
+/**
+ * Nhịp minh hoạ. Cả bảy phần tử chạy CHUNG một vòng, chỗ khác nhau nằm ở mốc
+ * trong khung hình chứ không ở độ trễ: lệch pha bằng animation-delay thì ô cuối
+ * còn tối trong khi ô đầu đã sáng lại, nhìn không ra hướng trượt nữa.
+ */
+function playSwipeTip() {
+  stopSwipeTip();
+  const cells = [...ui.tipRow.children];
+  if (cells.length < 2) return;
+  // Đo tại chỗ: cỡ ô co theo bề rộng hộp thoại nên không tính sẵn được.
+  const span = cells[cells.length - 1].offsetLeft - cells[0].offsetLeft;
+
+  // Ai tắt hiệu ứng chuyển động thì dựng sẵn một khung nói đủ ý: nửa dãy đã
+  // tắt đèn, ngón tay đang dở đường.
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    cells.forEach((cell, i) => (cell.style.opacity = i < cells.length / 2 ? "0.28" : "1"));
+    ui.tipHand.style.transform = `translateX(${span * 0.4}px)`;
+    return;
+  }
+
+  const at = (i) => TIP_START + (TIP_END - TIP_START) * (i / (cells.length - 1));
+  tipAnims = cells.map((cell, i) =>
+    cell.animate(
+      [
+        { opacity: 1, offset: 0 },
+        { opacity: 1, offset: at(i) },
+        { opacity: 0.28, offset: at(i) + 0.05 },
+        { opacity: 0.28, offset: TIP_HOLD },
+        { opacity: 1, offset: 0.97 },
+      ],
+      { duration: TIP_CYCLE_MS, iterations: Infinity },
+    ),
+  );
+  tipAnims.push(
+    ui.tipHand.animate(
+      [
+        { transform: "translateX(0)", opacity: 0, offset: 0 },
+        { transform: "translateX(0)", opacity: 1, offset: TIP_START },
+        { transform: `translateX(${span}px)`, opacity: 1, offset: TIP_END },
+        { transform: `translateX(${span}px)`, opacity: 1, offset: TIP_HOLD },
+        { transform: `translateX(${span}px)`, opacity: 0, offset: 0.97 },
+        { transform: "translateX(0)", opacity: 0, offset: 1 },
+      ],
+      { duration: TIP_CYCLE_MS, iterations: Infinity, easing: "ease-in-out" },
+    ),
+  );
+}
+
+function stopSwipeTip() {
+  for (const anim of tipAnims) anim.cancel();
+  tipAnims = [];
 }
 
 // ------------------------------------------------------------- ăn mừng
@@ -923,6 +1012,8 @@ function stopCelebration() {
   ui.confetti.innerHTML = "";
   ui.winReward.hidden = true;
   ui.winBadge.hidden = true;
+  ui.tip.hidden = true;
+  stopSwipeTip();
 }
 
 function gameOver() {

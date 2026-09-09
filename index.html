@@ -115,6 +115,22 @@
           <i class="candy"></i><b id="win-candy">+0</b>
         </p>
         <p id="win-note" class="win-note"></p>
+
+        <!-- Mẹo vuốt. Chỉ hiện sau đêm 1, và chỉ với người vừa chơi hết màn mà
+             chưa vuốt lần nào — sáu ô kề nhau tắt đèn dần dưới một ngón tay
+             trượt qua, để thấy ngay là làm được cả dãy trong một nhịp. -->
+        <div id="win-tip" class="tip" hidden>
+          <div class="tip-demo" aria-hidden="true">
+            <div id="win-tip-row" class="tip-row">
+              <i style="background: var(--g4)"></i><i style="background: var(--g0)"></i>
+              <i style="background: var(--g6)"></i><i style="background: var(--g2)"></i>
+              <i style="background: var(--g1)"></i><i style="background: var(--g7)"></i>
+            </div>
+            <i id="win-tip-hand" class="tip-hand">&#128070;</i>
+          </div>
+          <p id="win-tip-text" class="tip-text"></p>
+        </div>
+
         <button id="btn-next" class="primary big">Next night</button>
         <button id="btn-replay" class="ghost" data-i18n="replay">Replay this night</button>
       </div>

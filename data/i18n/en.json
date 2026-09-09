@@ -121,6 +121,7 @@
     "Genius!",
     "Cracked it!"
   ],
+  "swipeTip": "Faster next time: <b>drag</b> across a row to switch off several cells in one stroke.",
   "candy": "Candy",
   "candyTip": "Candy left this level — a wrong ant eats one",
   "candyBankTip": "Candy in the store — spent on hints, earned by guarding well",

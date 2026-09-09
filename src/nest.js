@@ -115,22 +115,29 @@ const RING = (() => {
 })();
 
 /**
- * Vòng quanh buồng đang gác chính là thanh tiến độ: mỗi đêm gác xong tô thêm
- * một phần năm vòng, đủ năm đêm là vòng khép kín và buồng an toàn. Vẽ từ đỉnh
- * đi theo chiều kim đồng hồ.
+ * Vòng quanh buồng đang gác là thanh tiến độ, chia thành đúng CHAPTER_LEN đoạn
+ * rời — đếm được bằng mắt, không phải ước theo độ dài cung. Đoạn đã gác xong
+ * sáng màu đèn, đoạn còn lại để màu đất. Bắt đầu từ đỉnh, đi theo chiều kim
+ * đồng hồ.
  *
- * Đây là thứ sáng nhất trên trang chủ — dày hơn và có quầng — vì nó là chỗ
- * người chơi đang đứng. Buồng đã xong thì vòng khép kín nhưng vẽ mảnh và trầm
- * hơn: việc xong rồi thì không cần giành lấy con mắt nữa.
+ * Mỗi đoạn là một ellipse riêng: dasharray cắt ra đúng một đoạn, dashoffset
+ * đẩy nó về chỗ của mình. Vẽ một lượt bằng dasharray lặp thì nhanh hơn nhưng
+ * không tô riêng từng đoạn theo trạng thái được.
  */
 function progressRing(cx, cy, done, total) {
-  const filled = (RING * Math.min(done, total)) / total;
-  return (
-    `<ellipse cx="${cx}" cy="${cy}" rx="${RX}" ry="${RY}" fill="none" stroke="#6b5a42" stroke-width="5"/>` +
-    `<ellipse cx="${cx}" cy="${cy}" rx="${RX}" ry="${RY}" fill="none" stroke="#ffc46b" stroke-width="7"` +
-    ` stroke-linecap="round" stroke-dasharray="${filled.toFixed(2)} ${RING.toFixed(2)}"` +
-    ` transform="rotate(-90 ${cx} ${cy})" filter="url(#ringglow)"/>`
-  );
+  const unit = RING / total;
+  const gap = 12;
+  const seg = unit - gap;
+  return Array.from({ length: total }, (_, i) => {
+    const lit = i < done;
+    return (
+      `<ellipse cx="${cx}" cy="${cy}" rx="${RX}" ry="${RY}" fill="none"` +
+      ` stroke="${lit ? "#ffc46b" : "#7d6a52"}" stroke-width="${lit ? 6 : 5}" stroke-linecap="round"` +
+      ` stroke-dasharray="${seg.toFixed(2)} ${RING.toFixed(2)}"` +
+      ` stroke-dashoffset="${(-i * unit - gap / 2).toFixed(2)}"` +
+      ` transform="rotate(-90 ${cx} ${cy})"/>`
+    );
+  }).join("");
 }
 
 function lantern(x, y, lit) {
@@ -170,8 +177,7 @@ export function renderNest(container, rooms, names, antUrl) {
       out.push(`<image href="${antUrl}" x="${cx - 82}" y="${y - 46}" width="46" height="46"/>`);
   });
   container.innerHTML = `<svg viewBox="0 -24 360 480" aria-hidden="true">
-<defs><radialGradient id="lampglow"><stop offset="0" stop-color="#ffc46b" stop-opacity=".55"/><stop offset="1" stop-color="#ffc46b" stop-opacity="0"/></radialGradient>
-<filter id="ringglow" x="-30%" y="-40%" width="160%" height="180%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+<defs><radialGradient id="lampglow"><stop offset="0" stop-color="#ffc46b" stop-opacity=".55"/><stop offset="1" stop-color="#ffc46b" stop-opacity="0"/></radialGradient></defs>
 <rect x="-10" y="-20" width="380" height="14" fill="#5e8f35"/>
 <path d="M120 -6 q60 -70 120 0 z" fill="#8a5a3c"/><rect x="168" y="-30" width="24" height="26" rx="12" fill="#2a1a12"/>
 ${out.join("")}</svg>`;

@@ -124,7 +124,7 @@ Thao tác: bấm một lần đánh ✕ (kéo để đánh hàng loạt), bấm 
 
 Thứ tự ưu tiên khi chọn ngôn ngữ mở màn:
 
-1. **Thứ tiếng người chơi tự chọn** trong Cài đặt — đã chọn rồi thì không bao giờ đè lên. Lưu ở `localStorage` (`colodoku.locale.v1`).
+1. **Thứ tiếng người chơi tự chọn** trong Cài đặt — đã chọn rồi thì không bao giờ đè lên. Lưu ở `localStorage` (`antguard.locale.v1`).
 2. **`locale` của CrazyGames SDK** — `window.CrazyGames.SDK.user.systemInfo.locale`, dạng `"en-US"`. Đây là field chính họ bảo dùng, và yêu cầu duyệt game cũng bắt phải theo. Chỉ đọc được nếu trang nhúng đã gọi `SDK.init()` **trước** khi nạp `src/game.js`. (SDK v2 không có `locale`, chỉ có `countryCode` — nhánh này sẽ bỏ qua.)
 3. **Ngôn ngữ trình duyệt** — `navigator.languages`, duyệt theo đúng thứ tự người dùng đặt.
 4. **Tiếng Anh.**

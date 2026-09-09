@@ -6,7 +6,7 @@ import { nextDeduction, stateFromBoard, placementRank, EASY_RANKS } from "./solv
 import { Tutorial, tutorialPuzzle } from "./tutorial.js";
 import { T, explain, applyStatic, LANGUAGES, getLocale, setLocale } from "./strings.js";
 import { sound } from "./sound.js";
-import { chapterOf, nightOf, roomNameIndex, endsChapter, floorRooms, renderNest, CHAPTER_LEN } from "./nest.js";
+import { chapterOf, roomNameIndex, endsChapter, floorRooms, renderNest } from "./nest.js";
 import {
   levelRecord, autoMarksFor, onLevelWon, onLevelFailed, onLevelRestarted, markDirty,
   loadProgress, markCleared, clearProgress, currentLevel, starsFor,
@@ -41,7 +41,6 @@ const $ = (id) => document.getElementById(id);
 const screens = { home: $("screen-home"), play: $("screen-play") };
 
 const ui = {
-  homeRoom: $("home-room"), homeDots: $("home-dots"),
   nest: $("nest"), homeBank: $("home-bank"), playLabel: $("play-label"),
   kicker: $("play-kicker"), title: $("play-title"),
   chips: $("chips"), count: $("play-count"), candies: $("play-candy"),
@@ -119,12 +118,8 @@ function refreshHome() {
   const rooms = floorRooms(current);
   const names = rooms.map((room) => T.rooms[room.nameIndex]);
 
-  // Chỉ tên buồng đang gác. Số tầng và số đêm đã bỏ: năm chấm ngay dưới đã
-  // đếm đêm rồi, còn số tầng thì mặt cắt tổ nói bằng hình.
-  ui.homeRoom.textContent = T.rooms[roomNameIndex(chapter)];
-  const done = nightOf(current) - 1;
-  ui.homeDots.innerHTML = Array.from({ length: CHAPTER_LEN }, (_, i) =>
-    `<i class="${i < done ? "on" : i === done ? "now" : ""}"></i>`).join("");
+  // Không còn dòng chữ nào ở đây: tên buồng đã nằm ngay dưới mỗi buồng trong
+  // hình, còn tiến độ năm đêm thì chính vòng quanh buồng đang gác vẽ ra.
   renderNest(ui.nest, rooms, names, "assets/ant-256.png");
 
   ui.playLabel.textContent = state.progress.cleared ? T.playOn(current) : T.play;

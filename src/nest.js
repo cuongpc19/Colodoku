@@ -53,11 +53,14 @@ export function floorRooms(current) {
   const first = (floor - 1) * CHAPTER_LEN + 1;
   return keysOfFloor(floor).map((key, i) => {
     const c = first + i;
+    const state = c < chapter ? "done" : c === chapter ? "now" : "locked";
     return {
       key,
       chapter: c,
       nameIndex: roomNameIndex(c),
-      state: c < chapter ? "done" : c === chapter ? "now" : "locked",
+      state,
+      // Đêm đã gác xong trong buồng này — vòng quanh buồng đang gác vẽ theo nó.
+      nights: state === "now" ? nightOf(current) - 1 : state === "done" ? CHAPTER_LEN : 0,
     };
   });
 }
@@ -99,6 +102,32 @@ const ICONS = {
 
 const ROOM_Y = [52, 132, 212, 292, 372];
 const SIDE = [-1, 1, -1, 1, 0];
+const RX = 58;
+const RY = 40;
+
+/* Chu vi hình bầu dục, xấp xỉ Ramanujan — sai số dưới 1‰ ở tỉ lệ này. Cần con
+   số thật vì thanh tiến độ vẽ bằng stroke-dasharray, mà dasharray tính theo
+   đơn vị chiều dài chứ không theo phần trăm. (`pathLength` thì gọn hơn nhưng
+   Safari cũ không nhận nó trên hình cơ bản.) */
+const RING = (() => {
+  const h = ((RX - RY) / (RX + RY)) ** 2;
+  return Math.PI * (RX + RY) * (1 + (3 * h) / (10 + Math.sqrt(4 - 3 * h)));
+})();
+
+/**
+ * Vòng quanh buồng đang gác chính là thanh tiến độ: mỗi đêm gác xong tô thêm
+ * một phần năm vòng, đủ năm đêm là vòng khép kín và buồng an toàn. Vẽ từ đỉnh
+ * đi theo chiều kim đồng hồ.
+ */
+function progressRing(cx, cy, done, total) {
+  const filled = (RING * Math.min(done, total)) / total;
+  return (
+    `<ellipse cx="${cx}" cy="${cy}" rx="${RX}" ry="${RY}" fill="none" stroke="#8a7150" stroke-width="4"/>` +
+    `<ellipse cx="${cx}" cy="${cy}" rx="${RX}" ry="${RY}" fill="none" stroke="#ffc46b" stroke-width="5"` +
+    ` stroke-linecap="round" stroke-dasharray="${filled.toFixed(2)} ${RING.toFixed(2)}"` +
+    ` transform="rotate(-90 ${cx} ${cy})"/>`
+  );
+}
 
 function lantern(x, y, lit) {
   const glow = lit ? `<circle cx="${x}" cy="${y}" r="26" fill="url(#lampglow)"/>` : "";
@@ -119,13 +148,18 @@ export function renderNest(container, rooms, names, antUrl) {
     const cx = 180 + side * 105;
     if (side) out.push(`<path d="M180 ${y} H${cx}" stroke="#2a1a12" stroke-width="22" stroke-linecap="round"/>`);
     const fill = { done: "#3d2a1e", now: "#4a3324", locked: "#1c1410" }[room.state];
-    const stroke = room.state === "locked" ? "#2a1a12" : "#ffc46b";
-    const dash = room.state === "now" ? ' stroke-dasharray="6 6"' : "";
-    out.push(`<ellipse cx="${cx}" cy="${y}" rx="58" ry="40" fill="${fill}" stroke="${stroke}" stroke-width="3"${dash}/>`);
+    out.push(`<ellipse cx="${cx}" cy="${y}" rx="${RX}" ry="${RY}" fill="${fill}"/>`);
+    // Buồng đang gác đeo vòng tiến độ; buồng đã xong thì vòng khép kín, buồng
+    // chưa tới chỉ có nét viền mờ.
+    if (room.state === "now") out.push(progressRing(cx, y, room.nights, CHAPTER_LEN));
+    else
+      out.push(
+        `<ellipse cx="${cx}" cy="${y}" rx="${RX}" ry="${RY}" fill="none" stroke="${room.state === "done" ? "#ffc46b" : "#2a1a12"}" stroke-width="${room.state === "done" ? 5 : 3}"/>`,
+      );
     if (room.state === "locked") out.push(`<text x="${cx}" y="${y + 7}" text-anchor="middle" font-size="22" fill="#3a4260">?</text>`);
     else out.push(`<g transform="translate(${cx} ${y - 6})">${ICONS[room.key]}</g>`);
     out.push(lantern(cx + 40, y - 30, room.state === "done"));
-    out.push(`<text x="${cx}" y="${y + 56}" text-anchor="middle" font-size="12" font-weight="700" fill="${room.state === "locked" ? "#8b93a8" : "#eef0f7"}">${names[i]}</text>`);
+    out.push(`<text x="${cx}" y="${y + 62}" text-anchor="middle" font-size="12" font-weight="700" fill="${room.state === "locked" ? "#8b93a8" : "#eef0f7"}">${names[i]}</text>`);
     if (room.state === "done")
       out.push(`<g transform="translate(${cx - 40} ${y - 38})"><circle r="11" fill="#6ee0b1"/><path d="M-5 0 l3 4 l7 -8" stroke="#141826" stroke-width="2.5" fill="none"/></g>`);
     if (room.state === "now")

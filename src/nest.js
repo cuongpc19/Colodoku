@@ -110,9 +110,9 @@ function lantern(x, y, lit) {
 
 /**
  * Vẽ mặt cắt tổ vào `container`. `names` là tên năm buồng theo ngôn ngữ đang
- * chọn, cùng thứ tự `rooms`. Kiến gác đứng ở buồng đang gác.
+ * chọn, cùng thứ tự `rooms`.
  */
-export function renderNest(container, rooms, names, antUrl) {
+export function renderNest(container, rooms, names) {
   const out = [];
   out.push(`<path d="M180 -10 V372" stroke="#2a1a12" stroke-width="26" stroke-linecap="round"/>`);
   rooms.forEach((room, i) => {
@@ -134,8 +134,6 @@ export function renderNest(container, rooms, names, antUrl) {
     out.push(`<text x="${cx}" y="${y + 66}" text-anchor="middle" font-size="12" font-weight="700" fill="${room.state === "locked" ? "#8b93a8" : "#eef0f7"}">${names[i]}</text>`);
     if (room.state === "done")
       out.push(`<g transform="translate(${cx - 40} ${y - 38})"><circle r="11" fill="#6ee0b1"/><path d="M-5 0 l3 4 l7 -8" stroke="#141826" stroke-width="2.5" fill="none"/></g>`);
-    if (room.state === "now")
-      out.push(`<image href="${antUrl}" x="${cx - 82}" y="${y - 46}" width="46" height="46"/>`);
   });
   container.innerHTML = `<svg viewBox="0 -24 360 480" aria-hidden="true">
 <defs><radialGradient id="lampglow"><stop offset="0" stop-color="#ffc46b" stop-opacity=".55"/><stop offset="1" stop-color="#ffc46b" stop-opacity="0"/></radialGradient></defs>

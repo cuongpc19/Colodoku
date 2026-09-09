@@ -120,7 +120,7 @@ function refreshHome() {
 
   // Không còn dòng chữ nào ở đây: tên buồng đã nằm ngay dưới mỗi buồng trong
   // hình, còn tiến độ năm đêm thì chính vòng quanh buồng đang gác vẽ ra.
-  renderNest(ui.nest, rooms, names, "assets/ant-256.png");
+  renderNest(ui.nest, rooms, names);
 
   ui.playLabel.textContent = state.progress.cleared ? T.playOn(current) : T.play;
   refreshBank();

@@ -313,7 +313,9 @@ const withLabel = (spec) => ({ ...spec, label: `R${spec.rank} ${T.ratings[spec.r
 
 // ------------------------------------------------------------- tiến trình
 
-const PROGRESS_KEY = "colodoku.progress.v2";
+// ⚠ Tên khoá này không được đổi sau khi phát hành — xem chú thích ở
+// src/sound.js và CRAZYGAMES.md.
+const PROGRESS_KEY = "antguard.progress.v2";
 
 // Kẹo là đơn vị duy nhất: vừa là mạng trong màn, vừa là tiền mua trợ giúp.
 // Mỗi màn phát ba viên, còn dư bao nhiêu mang về kho bấy nhiêu; trợ giúp trừ

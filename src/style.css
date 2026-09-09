@@ -1066,6 +1066,18 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
   background: rgba(5, 8, 16, 0.62);
 }
 .overlay[hidden] { display: none; }
+
+/* Hộp thoại chứa cả một trang: rộng hơn hộp thường và cao gần hết màn hình,
+   nhưng vẫn chừa chỗ cho nút Đóng nằm dưới. */
+.dialog.wide { width: min(640px, 94vw); height: min(88dvh, 900px); }
+.dialog.wide iframe {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  border: 0;
+  border-radius: 12px;
+  background: #141826;
+}
 .dialog {
   position: relative;
   z-index: 1;
@@ -1241,6 +1253,25 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
   .controls button { padding: 10px 18px; font-size: 15px; }
   .toggle { font-size: 14px; }
   .hint-text { max-width: 620px; font-size: 14px; }
+}
+
+/* ------------------------------------------- khung nhúng thấp (cổng game)
+   CrazyGames nhúng game vào khung của họ, nhỏ nhất là 800x450. Ở chiều cao
+   ấy, sàn cứng 300px của công thức trên làm bàn cờ không chịu co, và cả cột
+   tràn xuống dưới mép khung: hai nút trợ giúp rơi ra ngoài, phải cuộn mới
+   bấm được — đo được 620px nội dung trong khung 450px.
+
+   Nên ở đây hạ sàn xuống mức chỉ vừa đủ đọc. Bàn nhỏ đi thì chữ và nút nhỏ
+   theo, vì mọi thứ đều đo bằng --board; thà bàn bé mà bấm được còn hơn bàn to
+   mà nửa giao diện nằm ngoài màn hình. */
+@media (max-height: 560px) {
+  /* Khoảng đệm co lại trước, rồi mới tới bàn cờ. Phần khung cố định chiếm 221px
+     dù bàn to hay nhỏ — đo được bằng hai điểm: bàn 300px thì cột cao 604px, bàn
+     152px thì cao 415px. Cắt đệm đi ~56px là bàn to thêm được gần một nửa. */
+  .play { gap: 8px; padding-bottom: 10px; }
+  .bar { padding: 6px 4px; }
+  .play { --board: min(62vw, 640px, max(120px, 84vh - 152px)); }
+  .play.tutorial { --board: min(62vw, 640px, max(110px, 50vh - 165px)); }
 }
 
 /* ================================================== trang chủ: mặt cắt tổ

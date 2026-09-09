@@ -21,7 +21,7 @@ export const LANGUAGES = [
   { code: "vi", name: "Tiếng Việt" },
 ];
 
-const STORE_KEY = "colodoku.locale.v1";
+const STORE_KEY = "antguard.locale.v1";
 
 /**
  * Bảng chữ đang dùng. Luôn là **cùng một object** từ đầu đến cuối phiên chơi —

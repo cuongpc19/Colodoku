@@ -138,8 +138,22 @@
         <!-- Trong màn chơi không còn thẻ luật, nên bài hướng dẫn mở lại từ đây. -->
         <button id="btn-howto" class="ghost" data-i18n="howToPlay">How to play</button>
         <button id="btn-restart" class="ghost" data-i18n="restart" hidden>Restart level</button>
+        <!-- Cổng game cấm link ra ngoài trong giao diện, nên nút này mở bản
+             privacy.html đi kèm trong chính gói nộp, cùng một origin. -->
+        <button id="btn-privacy" class="ghost" data-i18n="privacy">Privacy</button>
         <button id="btn-wipe" class="ghost" data-i18n="wipe">Reset progress</button>
         <button id="btn-close-settings" class="primary big" data-i18n="close">Close</button>
+      </div>
+    </div>
+
+    <!-- ------------------------------------------------ chính sách riêng tư
+         Mở ngay trong game bằng iframe cùng origin, không rời trang: cổng game
+         nhúng game trong khung của họ, điều hướng đi là người chơi mất ván đang
+         chơi và không có nút quay lại. Link ra ngoài thì họ cấm hẳn. -->
+    <div id="privacy" class="overlay" hidden>
+      <div class="dialog wide">
+        <iframe id="privacy-frame" title="Privacy Policy" loading="lazy"></iframe>
+        <button id="btn-close-privacy" class="primary big" data-i18n="close">Close</button>
       </div>
     </div>
 

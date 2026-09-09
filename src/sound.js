@@ -8,7 +8,13 @@
 // Trình duyệt chỉ cho mở AudioContext sau một cử chỉ của người dùng, nên
 // context được tạo lười ở lần phát đầu tiên (luôn nằm trong một sự kiện bấm).
 
-const SOUND_KEY = "colodoku.sound.v1";
+import { crazy } from "./crazy.js";
+
+// ⚠ Đổi tên khoá SAU khi phát hành là xoá sạch dữ liệu người chơi: Automatic
+// Progress Save của CrazyGames sao lưu localStorage nguyên văn, nên khôi phục
+// sẽ trả về tên cũ cho một game đang đọc tên mới. Đổi trước lúc phát hành là
+// miễn phí, sau thì không. Xem CRAZYGAMES.md.
+const SOUND_KEY = "antguard.sound.v1";
 
 let context = null;
 let enabled = true;
@@ -63,7 +69,14 @@ function click() {
   tone({ from: 250, duration: 0.05, gain: 0.07 }); // thân tiếng, nghe được trên loa rời
 }
 
+/**
+ * ⚠ Lệnh tắt tiếng của chủ nhà ĐÈ LÊN nút trong game: bật nút trong game không
+ * được phép làm game kêu lại khi trang chủ nhà đã tắt tiếng.
+ */
+const audible = () => enabled && !crazy.hostMuted();
+
 export const sound = {
+  /** Nút trong Cài đặt phản ánh lựa chọn của người chơi, không phải của chủ nhà. */
   get enabled() {
     return enabled;
   },
@@ -76,20 +89,20 @@ export const sound = {
     }
   },
   tick() {
-    if (enabled) click();
+    if (audible()) click();
   },
   pop() {
-    if (!enabled) return;
+    if (!audible()) return;
     tone({ from: 520, to: 660, duration: 0.09, gain: 0.18 });
     tone({ from: 780, to: 880, duration: 0.14, gain: 0.16, at: 0.07 });
   },
   buzz() {
-    if (!enabled) return;
+    if (!audible()) return;
     tone({ type: "sawtooth", from: 170, to: 120, duration: 0.2, gain: 0.12 });
   },
   /** Chuỗi đặt đúng: rải hợp âm đi lên, bậc càng cao càng nhiều nốt. */
   combo(tier) {
-    if (!enabled) return;
+    if (!audible()) return;
     const notes = [523, 659, 784, 1047, 1319, 1568]; // C5 E5 G5 C6 E6 G6
     const count = Math.min(notes.length, tier + 1);
     for (let i = 0; i < count; i++)
@@ -101,7 +114,7 @@ export const sound = {
    * phải một tiếng "tinh" như combo.
    */
   eureka() {
-    if (!enabled) return;
+    if (!audible()) return;
     const notes = [523, 659, 784, 1047, 1319]; // C5 E5 G5 C6 E6
     for (let i = 0; i < notes.length; i++)
       tone({ type: "triangle", from: notes[i], duration: 0.22, gain: 0.15, at: i * 0.075 });
@@ -114,7 +127,7 @@ export const sound = {
    * giống hệt nhau.
    */
   candy(index = 0) {
-    if (!enabled) return;
+    if (!audible()) return;
     const notes = [988, 1175, 1397, 1568]; // B5 D6 F6 G6
     tone({ type: "triangle", from: notes[Math.min(index, notes.length - 1)], duration: 0.16, gain: 0.12 });
   },
@@ -124,7 +137,7 @@ export const sound = {
    * phải một nước đi.
    */
   fanfare() {
-    if (!enabled) return;
+    if (!audible()) return;
     const lead = [784, 784, 1047]; // G5 G5 C6, nhịp kèn hiệu
     lead.forEach((hz, i) =>
       tone({ type: "triangle", from: hz, duration: 0.14, gain: 0.16, at: i * 0.13 }));

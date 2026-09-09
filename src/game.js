@@ -6,6 +6,7 @@ import { nextDeduction, stateFromBoard, placementRank, EASY_RANKS } from "./solv
 import { Tutorial, tutorialPuzzle } from "./tutorial.js";
 import { T, explain, applyStatic, LANGUAGES, getLocale, setLocale } from "./strings.js";
 import { sound } from "./sound.js";
+import { crazy } from "./crazy.js";
 import { chapterOf, roomNameIndex, endsChapter, floorRooms, renderNest } from "./nest.js";
 import {
   levelRecord, autoMarksFor, onLevelWon, onLevelFailed, onLevelRestarted, markDirty,
@@ -1005,6 +1006,10 @@ ui.soundToggle.addEventListener("change", () => {
 
 function refreshSettings() {
   ui.soundToggle.checked = sound.enabled;
+  // Chủ nhà tắt tiếng thì nút này khoá lại: bật nó cũng không kêu được, để nó
+  // bấm được là nói dối người chơi. Kiểm mỗi lần mở chứ không chỉ khi giá trị
+  // đổi — mở game bằng ?muteAudio=true thì chẳng có lần đổi nào cả.
+  ui.soundToggle.disabled = crazy.hostMuted();
   ui.settingsNote.textContent = T.settingsNote(state.progress.streak || 0, state.progress.best || 0);
   // Chỉ chơi lại được khi đang ở trong một màn thật — không phải trang chủ, không phải hướng dẫn.
   ui.restart.hidden = screens.play.hidden || Boolean(state.tutorial);
@@ -1018,6 +1023,20 @@ for (const button of document.querySelectorAll("[data-settings]"))
   });
 
 $("btn-close-settings").addEventListener("click", () => (ui.settings.hidden = true));
+
+// Chính sách riêng tư: mở bản đi kèm trong chính gói nộp, cùng origin, ngay
+// trong game. Cổng game cấm link trỏ ra ngoài, mà điều hướng cả trang thì người
+// chơi mất ván đang dở — nên nạp vào iframe và chỉ nạp lần đầu cần tới.
+$("btn-privacy").addEventListener("click", () => {
+  const frame = $("privacy-frame");
+  if (!frame.getAttribute("src")) frame.setAttribute("src", "privacy.html");
+  ui.settings.hidden = true;
+  $("privacy").hidden = false;
+});
+$("btn-close-privacy").addEventListener("click", () => {
+  $("privacy").hidden = true;
+  ui.settings.hidden = false;
+});
 
 ui.howto.addEventListener("click", () => {
   ui.settings.hidden = true;
@@ -1119,9 +1138,39 @@ function devJump() {
   return true;
 }
 
+// ------------------------------------------------------- nối với CrazyGames
+
+crazy.init();
+crazy.loadingStart();
+
+/**
+ * Mốc "đang chơi" bám thẳng vào trạng thái ẩn/hiện của màn chơi và ba lớp phủ,
+ * chứ không gọi tay ở từng chỗ đổi màn hình.
+ *
+ * ⚠ Chủ nhà dùng cặp mốc này để biết lúc nào được chen quảng cáo. Gọi tay thì
+ * chỗ nào quên là quảng cáo nhảy vào giữa ván; theo dõi thuộc tính `hidden` thì
+ * không thể quên, kể cả khi sau này thêm hộp thoại mới.
+ */
+const overlays = ["win", "settings", "confirm", "privacy"].map($).filter(Boolean);
+const syncGameplay = () =>
+  crazy.setPlaying(!screens.play.hidden && overlays.every((node) => node.hidden));
+const watcher = new MutationObserver(syncGameplay);
+for (const node of [screens.home, screens.play, ...overlays])
+  watcher.observe(node, { attributes: true, attributeFilter: ["hidden"] });
+
+// Nút tiếng trong Cài đặt phải nhả ra khi chủ nhà tắt tiếng, không thì người
+// chơi thấy nút bật mà không nghe gì.
+crazy.onHostMuteChange(() => {
+  if (!ui.settings.hidden) refreshSettings();
+});
+
 applyStatic();
 show("home");
 // Người mới vào thẳng bài hướng dẫn, không dừng ở trang chủ: lúc đó tổ chưa có
 // buồng nào sáng đèn nên trang chủ chẳng có gì để xem. Họ gặp nó lần đầu sau
 // đêm thứ 5, khi nút "Về tổ" đưa sang — và buồng đầu tiên đã an toàn.
 if (!devJump() && !state.progress.tutorialDone && !state.progress.cleared) startTutorial();
+
+// Bàn đầu tiên đã dựng xong: chủ nhà có thể hạ vòng quay chờ của họ xuống.
+crazy.loadingStop();
+syncGameplay();

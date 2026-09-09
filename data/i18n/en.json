@@ -160,5 +160,6 @@
   ],
   "chapterDone": "{0} is safe!",
   "backToNest": "Back to the nest",
-  "notEnoughCandy": "Not enough candy — {0} needed."
+  "notEnoughCandy": "Not enough candy — {0} needed.",
+  "privacy": "Privacy"
 }

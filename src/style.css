@@ -1247,19 +1247,20 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
 
    Mọi thứ trên trang chủ đo theo --home, đúng cách màn chơi đo theo --board:
    trên điện thoại bề ngang là thứ hiếm, trên desktop thì chiều cao mới hiếm.
-   Cả cột cao khoảng 1,53 x --home + 29px — đo thẳng trên hai cỡ cửa sổ chứ
+   Cả cột cao khoảng 1,70 x --home + 29px — đo thẳng trên hai cỡ cửa sổ chứ
    không cộng tay từng phần, vì cỡ chữ và đệm cũng đo theo --home nên gần như
-   không có phần nào thật sự cố định. Lấy `62dvh - 20` cho dư một khoảng.
-   Thiếu vế chiều cao thì cửa sổ thấp bị cắt mất dòng cuối. */
+   không có phần nào thật sự cố định. Riêng tranh nền chiếm 1,33 vì nó rộng
+   đúng bằng --home và tỉ lệ 3:4. Lấy `55dvh - 20` cho dư một khoảng; thiếu vế
+   chiều cao thì cửa sổ thấp bị cắt mất nút Play. */
 
 .home {
-  --home: min(92vw, 620px, max(260px, 62vh - 20px));
+  --home: min(92vw, 620px, max(260px, 55vh - 20px));
   justify-content: flex-start;
   gap: 0;
   padding: 14px 18px 24px;
 }
 @supports (height: 1dvh) {
-  .home { --home: min(92vw, 620px, max(260px, 62dvh - 20px)); }
+  .home { --home: min(92vw, 620px, max(260px, 55dvh - 20px)); }
 }
 
 .home-top { align-items: center; width: var(--home); }
@@ -1293,16 +1294,18 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
 .nest {
   display: grid;
   flex: 1 1 auto;
-  /* Bám mép TRÊN, không căn giữa: dải cỏ phải nằm ngay đầu khối đất, còn chỗ
-     thừa thì dồn xuống dưới — nhìn ra đất sâu, đúng hướng tổ đào xuống. */
+  /* Bám mép TRÊN, không căn giữa: mặt cỏ trong tranh phải nằm ngay đầu khối
+     đất, còn chỗ thừa thì dồn xuống dưới — nhìn ra đất sâu. */
   place-items: start center;
   width: var(--home);
   margin-top: calc(var(--home) * 0.06);
-  padding: calc(var(--home) * 0.01) 0 0;
-  background: linear-gradient(#2a1a12, #1a1008 82%, var(--paper));
+  /* Đúng màu mép dưới của assets/nest-bg.png, để phần kéo dài dưới tranh không
+     lộ ra một đường cắt ngang. */
+  background: #110b0a;
   border-radius: 26px 26px 0 0;
+  overflow: hidden;
 }
-.nest svg { display: block; width: min(100%, calc(var(--home) * 0.88)); font-family: inherit; }
+.nest svg { display: block; width: 100%; font-family: inherit; }
 
 /* Nút Play bám bề ngang tổ chứ không phải 86% màn hình. */
 .home .pill {

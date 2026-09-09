@@ -85,18 +85,24 @@ const ICON_URL = {
   vault: "assets/room-vault.png",
   heart: "assets/room-heart.png",
 };
-const ICON = 62; // bề ngang hình trong hệ toạ độ của viewBox
 
-const ROOM_Y = [52, 132, 212, 292, 372];
-const SIDE = [-1, 1, -1, 1, 0];
-const RX = 58;
-const RY = 40;
+/* Tâm năm hốc buồng, đo trên chính ảnh nền bằng tools/measure_nest.py và ghi
+   theo hệ toạ độ của viewBox (360x480, đúng tỉ lệ 3:4 của ảnh). Đổi ảnh nền
+   thì phải đo lại và sửa bảng này. */
+const ROOM_AT = [
+  [89, 71],
+  [273, 157],
+  [93, 237],
+  [273, 306],
+  [179, 401],
+];
+const ICON = 52; // hốc hẹp nhất cao ~57 đơn vị, nên hình phải nhỏ hơn thế
 
 /** Đèn treo ở buồng đã gác xong — dấu hiệu buồng an toàn. */
 function lantern(x, y) {
   return (
-    `<circle cx="${x}" cy="${y}" r="30" fill="url(#lampglow)"/>` +
-    `<image href="assets/room-lantern.png" x="${x - 16}" y="${y - 20}" width="32" height="40"/>`
+    `<circle cx="${x}" cy="${y}" r="26" fill="url(#lampglow)"/>` +
+    `<image href="assets/room-lantern.png" x="${x - 13}" y="${y - 16}" width="26" height="32"/>`
   );
 }
 
@@ -106,32 +112,27 @@ function lantern(x, y) {
  */
 export function renderNest(container, rooms, names) {
   const out = [];
-  out.push(`<path d="M180 -10 V372" stroke="#2a1a12" stroke-width="26" stroke-linecap="round"/>`);
   rooms.forEach((room, i) => {
-    const y = ROOM_Y[i];
-    const side = SIDE[i];
-    const cx = 180 + side * 105;
-    if (side) out.push(`<path d="M180 ${y} H${cx}" stroke="#2a1a12" stroke-width="22" stroke-linecap="round"/>`);
-    const fill = { done: "#3d2a1e", now: "#4a3324", locked: "#1c1410" }[room.state];
-    // Viền nói trạng thái: buồng đang gác sáng và dày nhất, buồng đã xong trầm
-    // hơn, buồng chưa tới gần như chìm vào đất.
-    const stroke = { done: "#9a7a45", now: "#ffc46b", locked: "#2a1a12" }[room.state];
+    const [cx, cy] = ROOM_AT[i];
+    // Buồng đang gác có quầng ấm hắt ra sau hình, buồng chưa tới thì hình mờ
+    // đi. Không vẽ thêm viền nào — hốc buồng đã có sẵn trong ảnh nền.
+    if (room.state === "now") out.push(`<circle cx="${cx}" cy="${cy}" r="46" fill="url(#roomglow)"/>`);
     out.push(
-      `<ellipse cx="${cx}" cy="${y}" rx="${RX}" ry="${RY}" fill="${fill}"` +
-        ` stroke="${stroke}" stroke-width="${room.state === "now" ? 5 : 3}"/>`,
+      `<image href="${ICON_URL[room.key]}" x="${cx - ICON / 2}" y="${cy - ICON / 2}"` +
+        ` width="${ICON}" height="${ICON}"${room.state === "locked" ? ' opacity="0.32"' : ""}/>`,
     );
-    // Buồng chưa tới vẫn thấy hình, chỉ mờ đi — tên nó đã ghi ngay dưới rồi nên
-    // giấu hình cũng chẳng giữ được bí mật nào, mà dấu "?" thì trống trải.
+    if (room.state === "done") out.push(lantern(cx + 40, cy - 22));
     out.push(
-      `<image href="${ICON_URL[room.key]}" x="${cx - ICON / 2}" y="${y - ICON / 2}"` +
-        ` width="${ICON}" height="${ICON}"${room.state === "locked" ? ' opacity="0.3"' : ""}/>`,
+      `<text x="${cx}" y="${cy + 44}" text-anchor="middle" font-size="13" font-weight="700"` +
+        ` fill="${room.state === "locked" ? "#b3a288" : "#fff6e6"}">${names[i]}</text>`,
     );
-    if (room.state === "done") out.push(lantern(cx + 42, y - 28));
-    out.push(`<text x="${cx}" y="${y + 66}" text-anchor="middle" font-size="12" font-weight="700" fill="${room.state === "locked" ? "#8b93a8" : "#eef0f7"}">${names[i]}</text>`);
   });
-  container.innerHTML = `<svg viewBox="0 -24 360 480" aria-hidden="true">
-<defs><radialGradient id="lampglow"><stop offset="0" stop-color="#ffc46b" stop-opacity=".55"/><stop offset="1" stop-color="#ffc46b" stop-opacity="0"/></radialGradient></defs>
-<rect x="-10" y="-20" width="380" height="14" fill="#5e8f35"/>
-<path d="M120 -6 q60 -70 120 0 z" fill="#8a5a3c"/><rect x="168" y="-30" width="24" height="26" rx="12" fill="#2a1a12"/>
-${out.join("")}</svg>`;
+  container.innerHTML = `<svg viewBox="0 0 360 480" aria-hidden="true">
+<defs>
+ <radialGradient id="lampglow"><stop offset="0" stop-color="#ffc46b" stop-opacity=".6"/><stop offset="1" stop-color="#ffc46b" stop-opacity="0"/></radialGradient>
+ <radialGradient id="roomglow"><stop offset="0" stop-color="#ffc46b" stop-opacity=".5"/><stop offset=".55" stop-color="#ffa63c" stop-opacity=".2"/><stop offset="1" stop-color="#ffa63c" stop-opacity="0"/></radialGradient>
+ <filter id="labelshadow" x="-20%" y="-40%" width="140%" height="180%"><feDropShadow dx="0" dy="1" stdDeviation="1.6" flood-color="#100a06" flood-opacity="0.95"/></filter>
+</defs>
+<image href="assets/nest-bg.png" x="0" y="0" width="360" height="480"/>
+<g filter="url(#labelshadow)">${out.join("")}</g></svg>`;
 }

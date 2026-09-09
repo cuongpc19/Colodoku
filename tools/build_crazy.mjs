@@ -1,4 +1,4 @@
-// Dựng gói nộp CrazyGames vào dist/crazy/.
+// Dựng gói nộp CrazyGames vào dist/.
 //
 //   node tools/build_crazy.mjs
 //
@@ -17,7 +17,12 @@ import { readFileSync, writeFileSync, mkdirSync, rmSync, cpSync, existsSync, sta
 import { join, dirname } from "node:path";
 
 const root = new URL("../", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1");
-const out = join(root, "dist", "crazy");
+// Gói nộp chiếm trọn dist/, không nằm trong thư mục con: ô tải lên của họ nhận
+// NỘI DUNG thư mục, nên "chọn hết trong dist/ rồi kéo" là thao tác đúng, khỏi
+// phải nhớ vào thêm một cấp. Vì vậy hai build còn lại (bản một file, thư mục
+// Firebase) ra build/ — để chung ở đây thì vòng dọn bên dưới xoá mất chúng, mà
+// tệ hơn là chúng lọt vào gói nộp.
+const out = join(root, "dist");
 
 /** Đúng những file game cần lúc chạy. Không có gì khác được vào gói. */
 const FILES = [

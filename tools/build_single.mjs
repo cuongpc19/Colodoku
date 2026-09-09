@@ -4,7 +4,7 @@
 // bảng chữ (data/i18n/en.json, vi.json), ảnh con kiến và CSS. Không mang theo
 // một byte nào từ bank giải mã của Meowdoku.
 //
-//   node tools/build_single.mjs        →  dist/ant-guard.html
+//   node tools/build_single.mjs        →  build/ant-guard.html
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 
@@ -73,8 +73,10 @@ const html = read("index.html")
   // Bản một file không kèm trang phân tích.
   .replace(/\s*<a class="linkish" href="lab\.html">[^<]*<\/a>/, "");
 
-mkdirSync(new URL("dist/", root), { recursive: true });
-writeFileSync(new URL("dist/ant-guard.html", root), html);
+// build/ chứ không phải dist/: dist/ là gói nộp CrazyGames, build_crazy.mjs
+// dọn sạch nó mỗi lần chạy.
+mkdirSync(new URL("build/", root), { recursive: true });
+writeFileSync(new URL("build/ant-guard.html", root), html);
 
 // Bản cho Artifact: nơi đó tự bọc <html>/<head>/<body> nên chỉ nộp phần ruột,
 // và class "app" trên <body> phải gắn bằng script vì thẻ body không phải của mình.
@@ -82,9 +84,9 @@ const artifact = html
   .replace(/^[\s\S]*?<title>/, "<title>")
   .replace(/<\/head>\s*<body class="app">/, '<script>document.body.classList.add("app");</script>')
   .replace(/\s*<\/body>\s*<\/html>\s*$/, "");
-writeFileSync(new URL("dist/ant-guard-artifact.html", root), artifact);
+writeFileSync(new URL("build/ant-guard-artifact.html", root), artifact);
 
 const kb = (n) => `${(n / 1024).toFixed(0)} KB`;
 const poolCount = Object.values(pools).reduce((a, list) => a + list.length, 0);
-console.log(`dist/ant-guard.html · ${kb(html.length)} (ảnh ${kb(embedded)}, ${poolCount} bàn trong ${Object.keys(pools).length} kho, ${Object.keys(specials).length} màn đặc biệt)`);
-console.log(`dist/ant-guard-artifact.html · ${kb(artifact.length)}`);
+console.log(`build/ant-guard.html · ${kb(html.length)} (ảnh ${kb(embedded)}, ${poolCount} bàn trong ${Object.keys(pools).length} kho, ${Object.keys(specials).length} màn đặc biệt)`);
+console.log(`build/ant-guard-artifact.html · ${kb(artifact.length)}`);

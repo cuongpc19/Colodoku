@@ -2,8 +2,11 @@
 *.xapk
 Recording*.mp4
 
-# Kết quả build, dựng lại được bằng tools/build_single.mjs.
+# Kết quả build, dựng lại được bằng tools/. dist/ là gói nộp CrazyGames (nội
+# dung của nó chính là thứ kéo lên portal); build/ là bản một file và thư mục
+# Firebase Hosting.
 dist/
+build/
 
 # Bản giải mã thô từ APK (15MB); data/*.json đã là bản đóng gói dùng được.
 data/raw/

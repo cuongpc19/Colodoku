@@ -31,13 +31,17 @@ Bản "crazy": 47 file · 1.28 MB
 
 Rồi tải lên:
 
-> Developer Portal → game của mình → **Builds / Files** → kéo **toàn bộ nội dung
-> thư mục `dist/crazy/`** vào ô tải lên → lưu → gửi duyệt.
+> Developer Portal → game của mình → **Builds / Files** → mở `dist/`, **chọn hết
+> rồi kéo** vào ô tải lên → lưu → gửi duyệt.
+
+`dist/` chứa đúng gói nộp và không có gì khác — `build_crazy.mjs` dọn sạch nó
+trước mỗi lần dựng. Hai build còn lại (bản một file, thư mục Firebase Hosting)
+ra `build/` chính vì vậy.
 
 ⚠ **Đừng nén thành zip.** Ô tải lên từ chối file nén: *"Archive files are not
 supported, please drag and drop the files directly in the upload zone"*.
 
-⚠ **Kéo `dist/crazy/`, tuyệt đối không kéo cả kho.** Kho này còn chứa bộ level
+⚠ **Kéo nội dung `dist/`, tuyệt đối không kéo cả kho.** Kho này còn chứa bộ level
 giải mã từ APK của Meowdoku và trang phân tích `lab.html`. Bộ level là dữ liệu
 có bản quyền của họ; `lab.html` là công cụ nội bộ, đặt trước mặt người kiểm
 duyệt là trượt. `build_crazy` chọn file theo **danh sách trắng** chính vì thế —
@@ -100,7 +104,7 @@ lặng không làm gì, nên bản GitHub Pages và bản chạy ở máy vẫn 
 đặt vào. Bản web thường vì thế không gọi sang máy chủ của họ lần nào — kiểm được:
 
 ```bash
-node tools/build_single.mjs && grep -c crazygames dist/ant-guard.html   # phải ra 0
+node tools/build_single.mjs && grep -c crazygames build/ant-guard.html   # phải ra 0
 ```
 
 Bốn chỗ dễ làm sai, đều đã xử lý:
@@ -149,7 +153,7 @@ này rất dễ quên.
 **Chạy chính gói đã dựng, không phải mã nguồn:**
 
 ```bash
-cd dist/crazy && python -m http.server 8125
+cd dist && python -m http.server 8125
 ```
 
 Console phải in đúng chuỗi này — thiếu dòng nào là phần nối SDK chưa chạy:

@@ -1,4 +1,4 @@
-// Dựng thư mục đem đăng công khai (dist/site) rồi mới deploy Firebase Hosting.
+// Dựng thư mục đem đăng công khai (build/site) rồi mới deploy Firebase Hosting.
 //
 //   node tools/build_site.mjs
 //   npx firebase-tools deploy --only hosting
@@ -16,7 +16,9 @@ import { readFileSync, writeFileSync, mkdirSync, cpSync, readdirSync, rmSync } f
 import { join } from "node:path";
 
 const root = new URL("../", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1");
-const out = join(root, "dist", "site");
+// build/ chứ không phải dist/: dist/ là gói nộp CrazyGames và bị dọn sạch mỗi
+// lần build_crazy.mjs chạy.
+const out = join(root, "build", "site");
 
 // Dọn nội dung chứ không xoá thư mục gốc — Windows khoá thư mục đang mở.
 mkdirSync(out, { recursive: true });
@@ -53,5 +55,5 @@ writeFileSync(
 );
 
 const bytes = readdirSync(out).reduce((a, f) => a + readFileSync(join(out, f)).length, 0);
-console.log(`dist/site: ${readdirSync(out).join(", ")} · ${(bytes / 1024).toFixed(1)} KB`);
+console.log(`build/site: ${readdirSync(out).join(", ")} · ${(bytes / 1024).toFixed(1)} KB`);
 console.log("Đăng lên:  npx firebase-tools deploy --only hosting");

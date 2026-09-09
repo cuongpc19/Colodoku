@@ -698,7 +698,19 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
 .bar .icon { padding: 6px 12px; font-size: 17px; line-height: 1; }
 
 /* Trong màn chơi hai nút góc là hình tròn, không phải nút chữ như ở màn chọn. */
-.play .bar { grid-template-columns: var(--icon-btn) 1fr var(--icon-btn); }
+/* Thanh tiêu đề màn chơi là lưới có tên vùng. .hud không còn là hộp (display:
+   contents) để số màn và kho kẹo tự là ô lưới; hàng chip nằm cùng lưới, trên
+   điện thoại là hàng thứ hai, trên màn rộng chen vào giữa (xem @media dưới). */
+.play .bar {
+  grid-template-columns: var(--icon-btn) 1fr auto var(--icon-btn);
+  grid-template-areas:
+    "back level pills gear"
+    "chips chips chips chips";
+  row-gap: 12px;
+}
+.play .hud { display: contents; }
+.play .hud-level { grid-area: level; }
+.play .hud-pills { grid-area: pills; }
 .play .bar .icon {
   display: grid;
   place-items: center;
@@ -758,11 +770,13 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
 /* Hàng dưới thanh tiêu đề, rộng đúng bằng bàn cờ: ba viên kẹo mạng bên trái,
    chuỗi thắng ở giữa, đếm kiến bên phải. Không nền, không viền — chỉ là chữ. */
 .chips {
+  grid-area: chips;
+  justify-self: center;
   display: flex;
   gap: 10px;
   align-items: center;
   justify-content: space-between;
-  width: var(--board);
+  width: min(var(--board), 100%);
 }
 .chip {
   display: flex;
@@ -832,16 +846,18 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
    phình lên 640px mà HUD giữ nguyên px thì teo hẳn lại so với nó. Các tỉ lệ
    dưới đây lấy từ ảnh chụp bản gốc, chia cho bề rộng bàn cờ trong ảnh. */
 .play {
-  /* Chiều cao cũng phải vào công thức, không chỉ bề rộng. Cả cột cao xấp xỉ
-     1,38 x bàn cờ + 200px cố định (thanh tiêu đề, hàng chip, dòng trạng thái,
-     hai nút trợ giúp, các khe hở) — giải ra `board <= 72dvh - 145px`. Thiếu vế
-     này thì trên máy màn hình ngắn bàn cờ vẫn lấy 88vw và đẩy nút trợ giúp
-     xuống dưới mép màn hình. */
-  /* Hai chế độ, lấy chế độ nào cho bàn LỚN hơn — đo được ở tools, xem
-     CRAZYGAMES.md: bàn <=460px thì khung còn phình theo nên cao = 1,40*bàn +
-     168; quá 460px thì khung đứng yên, cao = bàn + 354. Hai vế cắt nhau đúng
-     tại 460px nên công thức liền mạch. */
-  --board: min(96vw, 760px, max(210px, 100vh - 388px, 71vh - 152px));
+  /* Chiều cao cũng phải vào công thức, không chỉ bề rộng: thiếu vế này thì
+     trên máy màn hình ngắn bàn cờ vẫn lấy 96vw và đẩy nút trợ giúp xuống dưới
+     mép màn hình.
+
+     Hai chế độ, lấy chế độ nào cho bàn LỚN hơn. Khung (thanh tiêu đề gồm cả
+     hàng chip, dòng trạng thái, nút trợ giúp, khe hở) đo bằng trang dò iframe
+     ở nhiều cỡ: bàn <= 460px thì khung phình theo bàn, cao ≈ 0,41 x bàn + 91px;
+     quá 460px thì --ui đứng yên nên khung cố định 281px. Cộng đệm đáy 44px và
+     8px thở, giải ra `bàn <= 71vh - 106px` và `bàn <= 100vh - 333px`; hai vế
+     cắt nhau đúng ở 460px nên công thức liền mạch. Đổi khung thì đo lại,
+     đừng chỉnh tay. */
+  --board: min(96vw, 760px, max(210px, 100vh - 333px, 71vh - 106px));
   /* Bề ngang thẻ hướng dẫn — KHAI MỘT CHỖ, vì .slot phải rộng ít nhất bằng nó.
      Trước đây hai bên ghi cứng hai con số, và màn hình rộng đổi thẻ lên 640px
      mà quên đổi khung chứa: thẻ tràn khỏi màn hình 18px. */
@@ -861,7 +877,8 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
   --chip-h: calc(var(--ui) * 0.094);
   --icon-btn: calc(var(--ui) * 0.112);
   --booster: calc(var(--ui) * 0.150);
-  gap: 12px;
+  --play-gap: 12px;
+  gap: var(--play-gap);
   padding-bottom: 44px;
 }
 .play .board { --board: inherit; }
@@ -927,6 +944,7 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
    chơi mở hướng dẫn từ trang chủ còn có đường ra. */
 .play.tutorial { justify-content: center; }
 .play.tutorial .chips { display: none; }
+.play.tutorial .bar { row-gap: 0; }
 .play.tutorial .hud { visibility: hidden; }
 .play.tutorial .bar .icon { position: relative; z-index: 4; }
 
@@ -1031,6 +1049,13 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
    phải, và cả trang sinh thanh cuộn ngang. Bàn cờ hẹp (màn hướng dẫn, hay khung
    nhúng thấp) là dính ngay: đo được tràn 23px ở 390px và 193px ở 800x450. */
 .slot { position: relative; width: max(var(--board), var(--coach-w)); }
+/* Ngoài bài hướng dẫn hai ô chừa cao 0 — chỉ là mốc neo cho thẻ nổi — nhưng
+   flex vẫn tính khe hở quanh chúng: hai khe 16px mất không trên desktop. Trả
+   lại bằng lề âm đúng bằng khe. Chọn phía sao cho mép neo không đổi: ô trên
+   neo thẻ ở đáy (giữ khe với bàn cờ, bỏ khe phía trên); ô dưới neo thẻ ở đỉnh
+   (giữ khe với bàn cờ, bỏ khe phía dưới). */
+.play:not(.tutorial) .slot-top { margin-top: calc(-1 * var(--play-gap)); }
+.play:not(.tutorial) .slot-bottom { margin-bottom: calc(-1 * var(--play-gap)); }
 /* Canh giữa bằng left/right + margin auto, KHÔNG dùng transform: luật
    `button.pill:active` đặt transform riêng và thắng về độ ưu tiên — nếu định vị
    bằng translateX thì lúc đè chuột nút văng sang một bên, mouseup rơi ra ngoài
@@ -1059,7 +1084,7 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
    vào chỗ dùng rồi mới hỏng ở đó. Nên không thể viết hai dòng vh/dvh chồng
    nhau như với thuộc tính thường; phải hỏi @supports trước. */
 @supports (height: 1dvh) {
-  .play { --board: min(96vw, 760px, max(210px, 100dvh - 388px, 71dvh - 152px)); }
+  .play { --board: min(96vw, 760px, max(210px, 100dvh - 333px, 71dvh - 106px)); }
   .play.tutorial { --board: min(96vw, 560px, max(155px, 50dvh - 125px)); }
 }
 
@@ -1322,10 +1347,20 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
    Trên điện thoại bàn cờ bị giới hạn bởi bề ngang; trên desktop thì ngược lại,
    chiều cao mới là thứ hiếm — nên lấy vh làm mốc và căn giữa cả cột. */
 @media (min-width: 760px) {
-  .play { justify-content: center; gap: 16px; padding-bottom: 24px; }
-  /* Cùng công thức chiều cao như bản hẹp, chỉ khác hằng số: khe hở 16px và
-     đệm đáy 24px thay cho 12/44. */
-  .play { --board: min(72vw, 860px, max(300px, 100vh - 388px, 71vh - 152px)); }
+  .play { justify-content: center; --play-gap: 16px; padding-bottom: 24px; }
+  /* Một hàng duy nhất: ← | ĐÊM 12 | 🍬🍬🍬 … 1/10 🐜 | [kho] | ⚙. Hàng chip
+     thành ô giữa co giãn, nên hai đầu của nó tự dạt về cạnh số màn và kho kẹo. */
+  .play .bar {
+    grid-template-columns: var(--icon-btn) auto 1fr auto var(--icon-btn);
+    grid-template-areas: "back level chips pills gear";
+    padding: 8px 4px;
+  }
+  .play .chips { width: auto; justify-self: stretch; margin: 0 18px; }
+  /* Cùng cách dựng như bản hẹp, hằng số đo riêng: khe 16px, đệm đáy 24px,
+     hàng chip đã gộp vào thanh tiêu đề nên khung cố định chỉ còn 242px khi
+     bàn >= 460px (1920x944 và 1440x900 cùng ra 242), còn dưới đó khung ≈
+     0,325 x bàn + 93px. Ra `100vh - 276px` và `75vh - 94px`. */
+  .play { --board: min(72vw, 860px, max(300px, 100vh - 276px, 75vh - 94px)); }
 
   .bar { width: min(760px, 94vw); }
   .status { font-size: 15px; }
@@ -1355,12 +1390,39 @@ button.pill:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 3p
    theo, vì mọi thứ đều đo bằng --board; thà bàn bé mà bấm được còn hơn bàn to
    mà nửa giao diện nằm ngoài màn hình. */
 @media (max-height: 780px) {
-  /* Khoảng đệm co lại trước, rồi mới tới bàn cờ. Phần khung cố định chiếm 221px
-     dù bàn to hay nhỏ — đo được bằng hai điểm: bàn 300px thì cột cao 604px, bàn
-     152px thì cao 415px. Cắt đệm đi ~56px là bàn to thêm được gần một nửa. */
-  .play { gap: 8px; padding-bottom: 10px; }
+  /* Khoảng đệm co lại trước, rồi mới tới bàn cờ: khe 8px, đệm đáy 10px. */
+  .play { --play-gap: 8px; padding-bottom: 10px; }
   .bar { padding: 6px 4px; }
-  .play { --board: min(72vw, 860px, max(120px, 100vh - 300px, 71vh - 96px)); }
+
+  /* Vế chiều cao đo với khe 8px: điện thoại (bề ngang < 760px) khung ≈ 0,41 x
+     bàn + 79px (393x700 → 235, 360x640 → 222), cộng đệm 10px và 8px thở ra
+     `71dvh - 70px`; vế bàn lớn `100dvh - 245px`. Vế BỀ NGANG thì tuỳ khung
+     rộng hay hẹp, nên tách xuống khối dưới.
+
+     Hai bản vh/dvh y hệt hằng số, giống cặp ở trên: `dvh` phải nằm trong
+     @supports vì đây là biến tuỳ biến — trình duyệt không hiểu `dvh` vẫn nhận
+     giá trị này rồi mới hỏng ở chỗ `width: var(--board)`, và bàn cờ mất luôn
+     bề rộng. */
+  .play { --board: min(96vw, 760px, max(120px, 100vh - 245px, 71vh - 70px)); }
+  .play.tutorial { --board: min(96vw, 560px, max(110px, 50vh - 105px)); }
+
+  @supports (height: 1dvh) {
+    .play { --board: min(96vw, 760px, max(120px, 100dvh - 245px, 71dvh - 70px)); }
+    .play.tutorial { --board: min(96vw, 560px, max(110px, 50dvh - 105px)); }
+  }
+}
+
+/* ⚠ `72vw` ở đây CHỈ đúng cho khung nhúng rộng-mà-thấp, nên phải kèm
+   `min-width: 760px`. Trước đây nó nằm thẳng trong `max-height: 780px` và thế là
+   trúng cả điện thoại dựng đứng — màn hình cao ~700px cũng lọt. Ở đó `72vw` là
+   tai hoạ: máy rộng 393px chỉ còn bàn 283px, vứt không 28% bề ngang, trong khi
+   hai vế chiều cao còn chưa chạm tới. Bàn 10x10 vì vậy ra ô 25px, gần như không
+   nhìn được — mà hai mép màn hình vẫn thừa cả trăm px. */
+@media (max-height: 780px) and (min-width: 760px) {
+  /* Màn rộng mà thấp: 1280x720 (bàn 420) khung 205px, 1024x768 (bàn >= 460)
+     khung 218px → khung ≈ 0,325 x bàn + 68px, đứng yên 218px từ 460px. Cộng
+     đệm 10px và 8px thở: `75vh - 65px` và `100vh - 236px`. */
+  .play { --board: min(72vw, 860px, max(120px, 100vh - 236px, 75vh - 65px)); }
   .play.tutorial { --board: min(62vw, 640px, max(110px, 50vh - 165px)); }
 }
 

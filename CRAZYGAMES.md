@@ -238,9 +238,25 @@ bao giờ gặp.
 thẳng bằng `--board`, thành vòng lặp: bàn to lên thì khung cũng to lên và ăn lại
 chỗ vừa giành được — ở 1920×1080 khung chiếm 474px, gần bằng cả bàn cờ. Nay
 chúng bám `--ui: min(var(--board), 460px)`, quá mức đó thì khung thôi lớn. Đo
-thẳng quan hệ cỡ bàn ↔ chiều cao nội dung ra hai đoạn tuyến tính cắt nhau đúng
-tại 460px: `cao = 1,40 × bàn + 168` khi bàn ≤ 460, `cao = bàn + 354` khi lớn hơn.
-Công thức `--board` giải ngược từ đó.
+thẳng quan hệ cỡ bàn ↔ chiều cao khung (mọi thứ trừ bàn cờ) ra hai đoạn tuyến
+tính cắt nhau đúng tại 460px; với desktop (khe 16px) là `khung ≈ 0,325 × bàn +
+93` khi bàn ≤ 460 và `khung = 242` khi lớn hơn. Công thức `--board` giải ngược
+từ đó, mỗi khối `@media` một bộ hằng số riêng vì khe hở và đệm khác nhau — số
+cụ thể ghi ngay cạnh từng công thức trong `style.css`.
+
+**Thanh tiêu đề gộp hàng chip.** Trên màn rộng, `ĐÊM 12`, ba viên kẹo, đếm
+kiến, kho kẹo và bánh răng nằm chung một hàng (lưới `grid-template-areas`, `.hud`
+là `display: contents`); điện thoại xếp hàng chip xuống hàng thứ hai rộng bằng
+bàn cờ. Hai hàng thưa thành một, cộng với bỏ khe hở của hai ô chừa cao 0px
+(`.slot-top`/`.slot-bottom` chỉ là mốc neo cho thẻ nổi), khung desktop từ 345px
+xuống 242px — bàn 10×10 ở 1920×944 từ 556px lên 668px.
+
+⚠ **`max-height: 780px` phải kèm `min-width: 760px` ở vế `72vw`.** Khối viết
+cho khung nhúng rộng-mà-thấp từng khớp cả điện thoại dựng đứng (cao ~700px cũng
+lọt), và `72vw` trên máy 393px chỉ còn bàn 283px trong khi hai vế chiều cao còn
+chưa chạm — bàn 10×10 ra ô 25px. Đo bằng iframe đúng cỡ (`vh` trong iframe =
+chiều cao iframe), đừng tin ảnh headless: Chrome headless trên Windows có bề
+ngang cửa sổ tối thiểu ~500px, dàn trang ở đó rồi mới cắt ảnh, trông y như tràn.
 
 ---
 

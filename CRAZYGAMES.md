@@ -45,9 +45,15 @@ thêm file mới vào kho thì phải khai tên mới đi được, quên khai t
 
 ### Nếu sửa trang riêng tư
 
-`privacy.html` vừa nằm trong gói vừa phải đăng công khai để điền vào đơn, nên
-sửa là phải cập nhật cả hai chỗ. Bản công khai hiện đăng cùng GitHub Pages của
-game.
+```bash
+node tools/build_site.mjs
+npx firebase-tools deploy --only hosting     # → https://colodoku-7dba5.web.app/privacy.html
+```
+
+Bản gốc **duy nhất** là `privacy.html` ở thư mục gốc kho. Gói nộp và thư mục
+đăng đều chép từ đó ra (`build_crazy.mjs` và `build_site.mjs`), nên không có
+chuyện hai bản lệch nhau — nhưng đăng lại thì vẫn phải làm tay, vì nó nằm ngoài
+gói nộp.
 
 ⚠ **Nội dung phải khớp với thứ game thật sự lưu.** Thêm một khoá localStorage
 là trang đó sai ngay hôm ấy. Ba khoá hiện có liệt kê ở §5.
@@ -61,7 +67,8 @@ là trang đó sai ngay hôm ấy. Ba khoá hiện có liệt kê ở §5.
 - [ ] Chạy **Quality Assurance Tool** của họ, dọn sạch mọi cảnh báo
 - [x] Ba ảnh bìa: [store/crazygames/](store/crazygames/) — 1920×1080 · 800×1200 · 800×800
 - [x] Hai video preview 15-20 giây
-- [ ] Địa chỉ trang chính sách riêng tư (bản công khai của `privacy.html`)
+- [x] Địa chỉ chính sách riêng tư: `https://colodoku-7dba5.web.app/privacy.html`
+      (Firebase Hosting, dự án `colodoku-7dba5`; cấu hình ở `firebase.json` + `.firebaserc`)
 
 Các ô trong đơn có hệ quả thật:
 
@@ -73,7 +80,7 @@ Các ô trong đơn có hệ quả thật:
 | SDK muting | **tích** | đã làm thật, xem §3; bỏ trống thì phần xử lý tắt tiếng thành vô nghĩa |
 | Saves progress | **Có, qua localStorage** | *và bật luôn tính năng Progress Save* — xem §5 |
 | Online game | **không** | không có nhiều người chơi |
-| Privacy policy | địa chỉ bản công khai | ⚠ chỉ điền vào đơn |
+| Privacy policy | `https://colodoku-7dba5.web.app/privacy.html` | ⚠ chỉ điền vào đơn |
 
 ⚠ **Link chính sách riêng tư điền vào ĐƠN và có trong GAME, nhưng không bao giờ
 là link trỏ ra ngoài trong giao diện.** Họ cấm hẳn link ra ngoài. Đường trong
@@ -204,7 +211,6 @@ khung hình đầu. Nên đừng thêm gì vào đường khởi động mà kh�
 ## 7. Còn thiếu
 
 - Chạy Quality Assurance Tool của họ và dọn cảnh báo.
-- Đăng `privacy.html` lên một địa chỉ công khai rồi điền vào đơn.
 - Khai báo thanh toán.
 - ⚠ Kho GitHub `cuongpc19/Colodoku` đang **công khai** và trong cây vẫn còn bộ
   level giải mã của Meowdoku. Gói nộp thì sạch (danh sách trắng lo việc đó),

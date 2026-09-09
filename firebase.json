@@ -1,0 +1,12 @@
+{
+  "hosting": {
+    "public": "dist/site",
+    "ignore": ["firebase.json", "**/.*"],
+    "headers": [
+      {
+        "source": "**/*.html",
+        "headers": [{ "key": "Cache-Control", "value": "public, max-age=300" }]
+      }
+    ]
+  }
+}

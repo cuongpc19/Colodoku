@@ -37,7 +37,7 @@ jobs:
       - name: Gom file cần cho trang
         run: |
           mkdir -p _site
-          cp -r index.html lab.html src data assets _site/
+          cp -r index.html lab.html manifest.webmanifest src data assets _site/
 
       - uses: actions/configure-pages@v5
         with:

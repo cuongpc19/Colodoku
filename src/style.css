@@ -12,8 +12,11 @@
 
   /* Bảng màu vùng, lấy mẫu pixel từ bản ghi màn hình Meowdoku 1.15.0.
      --gN là màu ô, --kN là bản đậm hơn dùng cho chữ trên nền trắng. */
-  /* Nhân vật kiến — dùng lại ở bàn cờ, mini-map, logo và chip đếm. */
-  --ant: url("../assets/ant-512.png");
+  /* Nhân vật kiến — dùng lại ở bàn cờ, mini-map, logo và chip đếm.
+     Bản 256px là đủ: chỗ vẽ to nhất là ô bàn 4x4, cỡ ~84px, tức ~252px thật
+     trên màn hình 3x. Ảnh 512px chỉ dành cho hai tư thế trong hộp thoại, mà
+     hai ảnh đó tới lúc mở hộp thoại mới tải. */
+  --ant: url("../assets/ant-256.png");
   --ant-happy: url("../assets/ant-happy-512.png");
   --ant-sad: url("../assets/ant-sad-512.png");
 
